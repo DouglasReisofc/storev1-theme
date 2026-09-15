@@ -272,7 +272,7 @@ body.loja1-contasvip-theme .sv1-rail-arrow:not(:disabled):hover{background:#e8f1
 }
 /* Desktop composition: category trigger and rail stay together on the left; banner stays alongside. */
 @media(min-width:768px){
- .sv1-discovery-with-promo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.85fr);align-items:center;gap:28px}
+ .sv1-discovery-with-promo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.85fr);align-items:start;gap:28px}
  .sv1-discovery-with-promo>.loja1-primary-nav{min-width:0}
  .sv1-discovery-with-promo .sv1-nav-row{display:flex;flex-direction:row;align-items:center;gap:18px;padding:0}
  .sv1-discovery-with-promo .sv1-desktop-categories{flex:0 0 248px;width:248px}
