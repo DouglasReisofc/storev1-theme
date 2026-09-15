@@ -1,0 +1,37 @@
+/* Gold storefront palette. Do not recolor third-party payment dialogs. */
+body.loja1-contasvip-theme{
+ --loja-green:#bd850f;--loja-green-dark:#805500;--loja-purple:#bd850f;
+ --loja-gold:#efba3b;--sv1-primary:#bd850f;
+}
+body.loja1-contasvip-theme :is(ul.products,.summary,.woocommerce-cart-form,.cart_totals,.widget_shopping_cart,.woocommerce-MyAccount-content) .button,
+body.loja1-contasvip-theme .sv1-floating-cart,
+body.loja1-contasvip-theme .sv1-desktop-categories summary,
+body.loja1-contasvip-theme .sv1-categories{
+ background:linear-gradient(135deg,#f5cc65,#dfa52a)!important;
+ color:#251b08!important;border-color:#c59123!important;
+ box-shadow:0 3px 10px #a972091c;
+}
+body.loja1-contasvip-theme :is(ul.products,.summary,.woocommerce-cart-form,.cart_totals,.widget_shopping_cart) .button:hover,
+body.loja1-contasvip-theme .sv1-floating-cart:hover,
+body.loja1-contasvip-theme .sv1-desktop-categories summary:hover{
+ background:linear-gradient(135deg,#ffdc82,#edb53a)!important;color:#251b08!important;
+}
+body.loja1-contasvip-theme :is(.price,.price ins){color:#8b5d06!important}
+body.loja1-contasvip-theme .price del{color:#747474!important}
+body.loja1-contasvip-theme .sv1-cart-count{background:#bd850f;color:#fff}
+body.loja1-contasvip-theme .sv1-quantity button{background:#fff5dc;color:#694804}
+body.loja1-contasvip-theme .sv1-search-toggle{background:#fff8e7;border-color:#ecd9aa;color:#76510b}
+body.loja1-contasvip-theme .sv1-promo,
+body.loja1-contasvip-theme .sv1-promo-slide :is(img,video){background:#fff}
+body.loja1-contasvip-theme .sv1-promo{border:1px solid #f0e4c8}
+body.loja1-contasvip-theme .sv1-promo-cta{background:#f5cc65;color:#251b08;box-shadow:none}
+body.loja1-contasvip-theme .sv1-gold-slide img{height:100%!important;object-fit:contain!important}
+.sv1-banner-copy{position:absolute;left:5%;top:50%;transform:translateY(-50%);width:43%;text-align:left;color:#111827;pointer-events:none}
+.sv1-banner-eyebrow{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px;color:#79500a}
+.sv1-banner-copy strong{display:block;font-size:clamp(18px,2.2vw,34px);line-height:1.13;letter-spacing:-.04em}
+.sv1-banner-copy em{display:block;font-style:normal;color:#a36c06;margin-top:5px}
+@media(max-width:767px){
+ .sv1-banner-copy strong{font-size:clamp(18px,5.2vw,24px)}
+ .sv1-banner-eyebrow{font-size:8px;margin-bottom:7px;letter-spacing:.06em}
+ .sv1-banner-copy{top:43%;width:43%}
+}

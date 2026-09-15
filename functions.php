@@ -24,6 +24,7 @@ add_filter('body_class', function($classes) {
 function storev1_assets(){
     wp_enqueue_style('storev1-storefront',get_template_directory_uri() . '/assets/storev1-storefront.css',[],wp_get_theme()->get('Version'));
     wp_enqueue_style('storev1-components',get_template_directory_uri() . '/assets/storev1-components.css',['storev1-storefront'],wp_get_theme()->get('Version'));
+    wp_enqueue_style('storev1-gold',get_template_directory_uri() . '/assets/storev1-gold.css',['storev1-components'],wp_get_theme()->get('Version'));
     if (class_exists('WooCommerce')) wp_enqueue_script('wc-cart-fragments');
     wp_enqueue_script('storev1-ui',get_template_directory_uri() . '/assets/storev1-ui.js',[],wp_get_theme()->get('Version'),true);
     wp_enqueue_script('storev1-notices',get_template_directory_uri() . '/assets/storev1-notices.js',[],wp_get_theme()->get('Version'),true);
