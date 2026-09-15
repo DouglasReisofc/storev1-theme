@@ -70,7 +70,8 @@ function storev1_mobile_banner() {
     }
     if (!$images) {
         $images[]=['url'=>get_template_directory_uri().'/assets/banners/storev1-gold-piggybank.png','video'=>'','cta'=>'Ver produtos','link'=>$shop,'alt'=>'Cofrinho e moedas douradas com produtos digitais','headline'=>'Mais possibilidades.','highlight'=>'Mais economia.'];
-        $images[]=['url'=>get_template_directory_uri().'/assets/banners/storev1-gold-cart.png','video'=>'','cta'=>'Explorar a loja','link'=>$shop,'alt'=>'Carrinho dourado com produtos digitais','headline'=>'Seus favoritos,','highlight'=>'em um só lugar.'];
+        $images[]=['url'=>get_template_directory_uri().'/assets/banners/storev1-gold-payment.png','video'=>'','cta'=>'Pagar com segurança','link'=>$shop,'alt'=>'Pagamentos automáticos e seguros','headline'=>'Pagamentos','highlight'=>'automáticos e seguros.'];
+        $images[]=['url'=>get_template_directory_uri().'/assets/banners/storev1-gold-support.png','video'=>'','cta'=>'Falar com suporte','link'=>$shop,'alt'=>'Suporte quando precisar','headline'=>'Receba suporte','highlight'=>'quando precisar.'];
     }
     echo '<section class="loja1-shell sv1-promo" data-promo-carousel aria-roledescription="carrossel" aria-label="Destaques da loja"><div class="sv1-promo-track" tabindex="0" aria-label="Banners promocionais. Arraste para os lados ou use as teclas de seta para navegar.">';
     foreach ($images as $i=>$slide) {
