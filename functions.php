@@ -13,6 +13,10 @@ function storev1_setup() {
     register_nav_menus(['primary'=>__('Menu principal','storev1-theme')]);
 }
 add_action('after_setup_theme','storev1_setup');
+// Hide only the generic shop heading; retain category and search context.
+add_filter('woocommerce_show_page_title', function($show) {
+    return is_shop() && !is_search() ? false : $show;
+});
 function storev1_assets(){
     wp_enqueue_style('storev1-storefront',get_template_directory_uri() . '/assets/storev1-storefront.css',[],wp_get_theme()->get('Version'));
     wp_enqueue_style('storev1-components',get_template_directory_uri() . '/assets/storev1-components.css',['storev1-storefront'],wp_get_theme()->get('Version'));
