@@ -270,3 +270,18 @@ body.loja1-contasvip-theme .sv1-rail-arrow:not(:disabled):hover{background:#e8f1
  .sv1-discovery .sv1-desktop-categories{flex-basis:220px;width:220px}
  .sv1-discovery .sv1-nav-row{gap:12px}
 }
+/* Desktop composition: category trigger and rail stay together on the left; banner stays alongside. */
+@media(min-width:768px){
+ .sv1-discovery-with-promo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.85fr);align-items:center;gap:28px}
+ .sv1-discovery-with-promo>.loja1-primary-nav{min-width:0}
+ .sv1-discovery-with-promo .sv1-nav-row{display:flex;flex-direction:row;align-items:center;gap:18px;padding:0}
+ .sv1-discovery-with-promo .sv1-desktop-categories{flex:0 0 248px;width:248px}
+ .sv1-discovery-with-promo .sv1-category-rail{flex:1;min-width:0;width:auto;max-width:none}
+ .sv1-discovery-with-promo>.sv1-promo{margin:0;max-width:none;width:100%;justify-self:stretch}
+ .sv1-discovery-with-promo .sv1-promo-track{height:clamp(200px,min(20vw,32svh),280px)}
+ .sv1-discovery-with-promo .sv1-promo-slide img,.sv1-discovery-with-promo .sv1-promo-slide video{height:100%;object-fit:contain}
+}
+@media(min-width:768px) and (max-width:1100px){
+ .sv1-discovery-with-promo{gap:20px;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+ .sv1-discovery-with-promo .sv1-desktop-categories{flex-basis:220px;width:220px}
+}
