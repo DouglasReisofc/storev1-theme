@@ -18,7 +18,7 @@ function setup() {
     querySelectorAll:()=>options};
   const Observer=class {observe(){}};
   runInNewContext(readFileSync(require.resolve('../assets/storev1-ui.js'),'utf8'),{MutationObserver:Observer,matchMedia:()=>({addEventListener(){}}),document:{body:{},
-    getElementById:()=>null,addEventListener(){},
+    getElementById:()=>null,querySelector:()=>null,addEventListener(){},
     querySelectorAll:selector=>selector==='[data-sv1-open]'||selector==='[data-sv1-carousel]'?[]:[picker]
   }});
   return {search,status,options,handlers,picker,pickerHandlers,summary};

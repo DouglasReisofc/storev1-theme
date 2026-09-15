@@ -70,10 +70,12 @@
     });
   };
   if (document.querySelector('[data-sv1-view]')) {
-    const initial = localStorage.getItem(viewKey) || 'cards';
+    let initial = 'grid';
+    try { if (localStorage.getItem(viewKey) === 'cards') initial = 'cards'; } catch (_) {}
     applyView(initial);
     document.querySelectorAll('[data-sv1-view]').forEach(button => button.addEventListener('click', () => {
-      localStorage.setItem(viewKey, button.dataset.sv1View); applyView(button.dataset.sv1View);
+      try { localStorage.setItem(viewKey, button.dataset.sv1View); } catch (_) {}
+      applyView(button.dataset.sv1View);
     }));
   }
 })();

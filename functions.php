@@ -17,11 +17,16 @@ add_action('after_setup_theme','storev1_setup');
 add_filter('woocommerce_show_page_title', function($show) {
     return is_shop() && !is_search() ? false : $show;
 });
-add_action('woocommerce_before_shop_loop', function() {
-    if (!is_shop() && !is_product_category()) return;
+add_filter('body_class', function($classes) { $classes[] = 'sv1-compact-grid'; return $classes; });
+function storev1_view_switcher() {
+    static $rendered = false;
+    if ($rendered || (!is_front_page() && !is_shop() && !is_product_taxonomy() && !is_search())) return;
+    $rendered = true;
     echo '<div class="sv1-view-switcher" role="group" aria-label="Visualização dos produtos">';
-    echo '<span>Visualização</span><button type="button" class="sv1-view-switch" data-sv1-view="grid" aria-pressed="false">Grade</button><button type="button" class="sv1-view-switch" data-sv1-view="cards" aria-pressed="true">Cartões</button></div>';
-}, 12);
+    echo '<span>Visualização</span><button type="button" class="sv1-view-switch" data-sv1-view="grid" aria-pressed="true">Grade</button><button type="button" class="sv1-view-switch" data-sv1-view="cards" aria-pressed="false">Cartões</button></div>';
+}
+add_action('woocommerce_before_shop_loop', 'storev1_view_switcher', 12);
+add_action('woocommerce_shortcode_before_products_loop', 'storev1_view_switcher');
 function storev1_assets(){
     wp_enqueue_style('storev1-storefront',get_template_directory_uri() . '/assets/storev1-storefront.css',[],wp_get_theme()->get('Version'));
     wp_enqueue_style('storev1-components',get_template_directory_uri() . '/assets/storev1-components.css',['storev1-storefront'],wp_get_theme()->get('Version'));
