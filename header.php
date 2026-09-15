@@ -35,5 +35,4 @@ $storev1_promo = ob_get_clean();
 <div class="sv1-drawer-scroll"><?php storev1_search(); ?><?php if(class_exists('WooCommerce')) wc_get_template('loop/orderby.php',['sv1_drawer'=>true]); else storev1_categories(); ?>
 <?php if (class_exists('WooCommerce')) : ?><a class="sv1-drawer-account" href="<?php echo esc_url(wc_get_page_permalink('myaccount')); ?>">Minha conta</a><?php endif; ?>
 </div></dialog>
-<div id="sv1-notice-portal" class="sv1-notice-portal" aria-live="polite" aria-atomic="true"></div>
 <main id="main-content" class="site-content loja1-shell">
