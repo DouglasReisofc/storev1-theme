@@ -1,4 +1,8 @@
 (() => {
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!document.querySelector('[data-sv1-cart-added]')) return;
+    document.querySelector('.loja1-cart-link')?.click();
+  });
   function quantities() {
     document.querySelectorAll('.quantity input.qty[type="number"]').forEach(input => {
       const box = input.closest('.quantity');

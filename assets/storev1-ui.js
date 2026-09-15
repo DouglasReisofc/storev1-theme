@@ -56,7 +56,9 @@
     const restart=()=>{clearInterval(timer);timer=setInterval(()=>show(current+1),6000)};
     carousel.querySelector('[data-carousel-prev]')?.addEventListener('click',()=>{show(current-1);restart()}); carousel.querySelector('[data-carousel-next]')?.addEventListener('click',()=>{show(current+1);restart()}); dots.forEach((d,i)=>d.addEventListener('click',()=>{show(i);restart()})); restart();
   });
-  document.addEventListener('click',event=>{const button=event.target.closest('.add_to_cart_button,.ajax_add_to_cart,.single_add_to_cart_button'); if(!button||button.dataset.sv1Busy) return; button.dataset.sv1Busy='1'; button.classList.add('sv1-buying'); const original=button.textContent.trim(); button.textContent='Adicionando…'; setTimeout(()=>{button.classList.remove('sv1-buying');button.classList.add('sv1-added');button.textContent='Adicionado ✓';setTimeout(()=>{button.classList.remove('sv1-added');button.textContent=original;delete button.dataset.sv1Busy},1800)},650)});
-  const markAdded=button=>{if(button.matches('.add_to_cart_button.added')&&!button.dataset.sv1Confirmed){button.dataset.sv1Confirmed='1';button.classList.add('sv1-added');button.textContent='Adicionado ✓';setTimeout(()=>{button.classList.remove('sv1-added');button.textContent='Comprar';delete button.dataset.sv1Confirmed},1800)}};
-  new MutationObserver(records=>records.forEach(record=>{if(record.type==='attributes'&&record.target.matches?.('.add_to_cart_button')) markAdded(record.target)})).observe(document.body,{subtree:true,attributes:true,attributeFilter:['class']});
+  document.addEventListener('submit', event => {
+    if (!event.target.matches('form.cart')) return;
+    const button = event.submitter || event.target.querySelector('.single_add_to_cart_button');
+    if (button) { button.classList.add('sv1-buying'); button.textContent = 'Adicionando…'; }
+  });
 })();

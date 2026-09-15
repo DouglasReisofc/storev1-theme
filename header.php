@@ -19,9 +19,6 @@
 <?php wp_nav_menu(['theme_location'=>'primary','container'=>false,'menu_class'=>'loja1-menu','fallback_cb'=>false]); ?>
 </div></nav>
 </header>
-<?php if (is_front_page() || (function_exists('is_shop') && (is_shop() || is_product_category()))) : ?>
-<div class="loja1-shell sv1-mobile-discovery"><button type="button" data-sv1-open aria-controls="sv1-drawer" aria-expanded="false" aria-label="Buscar produtos e categorias"><?php storev1_icon('search'); ?></button></div>
-<?php endif; ?>
 <?php if (is_front_page() || (function_exists('is_shop') && is_shop())) storev1_mobile_banner(); ?>
 <dialog id="sv1-drawer" class="sv1-drawer" aria-labelledby="sv1-drawer-title">
 <div class="sv1-drawer-head"><strong id="sv1-drawer-title">Menu da loja</strong><button type="button" data-sv1-close aria-label="Fechar menu"><?php storev1_icon('close'); ?></button></div>
