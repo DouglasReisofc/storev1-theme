@@ -186,6 +186,18 @@ body.loja1-contasvip-theme .sv1-toast a.restore-item,body.loja1-contasvip-theme 
 .sv1-promo-track:active{cursor:grabbing}
 .sv1-promo-slide{position:absolute;inset:0;height:100%;overflow:hidden}
 .sv1-promo-slide img,.sv1-promo-slide video{width:100%;height:100%;display:block;object-fit:contain;object-position:center;background:#153427}
+.woocommerce-account .woocommerce{width:min(calc(100% - 40px),var(--loja-width));margin:0 auto}
+.woocommerce-account .woocommerce-MyAccount-navigation{width:240px;padding:18px;border:1px solid #eadfca;border-radius:18px;background:#fff8e7}
+.woocommerce-account .woocommerce-MyAccount-navigation ul{margin:0;padding:0;list-style:none}
+.woocommerce-account .woocommerce-MyAccount-navigation li{margin:0 0 6px}
+.woocommerce-account .woocommerce-MyAccount-navigation a{display:block;padding:11px 13px;border-radius:10px;color:#5f4615;font-weight:700}
+.woocommerce-account .woocommerce-MyAccount-navigation .is-active a,.woocommerce-account .woocommerce-MyAccount-navigation a:hover{color:#251b08;background:#f5cc65}
+.woocommerce-account .woocommerce-MyAccount-content{width:calc(100% - 270px);padding:24px;border:1px solid #eee5d4;border-radius:18px;background:#fff;box-shadow:0 8px 26px rgba(63,42,8,.06)}
+.woocommerce-account .woocommerce-MyAccount-content form .form-row{margin-bottom:16px}
+.woocommerce-account .woocommerce-MyAccount-content input,.woocommerce-account .woocommerce-MyAccount-content select{min-height:44px;border:1px solid #d9cba9;border-radius:10px;padding:0 12px;background:#fff}
+.woocommerce-account .woocommerce-MyAccount-content .button{border-radius:999px!important}
+.sv1-account-cards{margin-top:28px}.sv1-account-cards h2{margin:0 0 14px;font-size:22px}.sv1-account-card-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.sv1-account-card{display:grid;grid-template-columns:42px 1fr 18px;align-items:center;gap:10px;padding:14px;border:1px solid #eadfca;border-radius:14px;background:#fffdf8;color:#3b2b0c!important}.sv1-account-card:hover{border-color:#d3a32d;transform:translateY(-1px)}.sv1-account-card-icon{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:#f5cc65;color:#5d4308;font-size:20px}.sv1-account-card strong,.sv1-account-card small{display:block}.sv1-account-card small{margin-top:2px;color:#897857;font-size:11px}.sv1-account-card b{font-size:24px;color:#bd850f}
+@media(max-width:767px){.woocommerce-account .woocommerce{width:calc(100% - 24px)}.woocommerce-account .woocommerce-MyAccount-navigation,.woocommerce-account .woocommerce-MyAccount-content{float:none;width:100%;padding:16px;border-radius:14px}.woocommerce-account .woocommerce-MyAccount-navigation{margin-bottom:14px}.woocommerce-account .woocommerce-MyAccount-navigation ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.woocommerce-account .woocommerce-MyAccount-navigation li{margin:0}.woocommerce-account .woocommerce-MyAccount-navigation a{font-size:12px;padding:10px 8px;text-align:center}.sv1-account-card-grid{grid-template-columns:1fr}.sv1-account-cards h2{font-size:19px}}
 body.loja1-contasvip-theme .sv1-promo-cta{position:absolute;right:24px;bottom:70px;display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:10px 20px;border-radius:999px;color:#163728;background:#e2f4c8;font-weight:700;box-shadow:0 4px 18px #0002}
 .loja1-footer,.loja1-footer-grid,.loja1-footer-bottom{text-align:center}
 .loja1-footer p{margin-left:auto;margin-right:auto}
