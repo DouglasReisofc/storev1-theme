@@ -39,7 +39,7 @@
         option.hidden = !normalize(option.querySelector('a').firstChild.textContent).includes(query);
         if (!option.hidden) count++;
       });
-      status.textContent = count ? (query ? `${count} categoria${count === 1 ? '' : 's'} encontrada${count === 1 ? '' : 's'}` : '') : 'Nenhuma categoria encontrada.';
+      status.textContent = count ? (query ? `${count} resultado${count === 1 ? '' : 's'} encontrado${count === 1 ? '' : 's'}` : '') : 'Nenhum resultado encontrado.';
     });
     search.addEventListener('keydown', event => {
       if (event.key === 'ArrowDown') {

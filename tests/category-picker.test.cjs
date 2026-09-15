@@ -27,9 +27,9 @@ test('filters immediately, ignores case and accents, and resets',()=>{
   const x=setup();
   x.search.value='PROMOCOES';x.handlers.input();
   assert.equal(x.options.filter(o=>!o.hidden).length,1);
-  assert.equal(x.status.textContent,'1 categoria encontrada');
+  assert.equal(x.status.textContent,'1 resultado encontrado');
   x.search.value='30';x.handlers.input();assert.equal(x.options[1].hidden,false);
-  x.search.value='zzz';x.handlers.input();assert.equal(x.status.textContent,'Nenhuma categoria encontrada.');
+  x.search.value='zzz';x.handlers.input();assert.equal(x.status.textContent,'Nenhum resultado encontrado.');
   assert.ok(x.options.every(o=>o.hidden));
   x.search.value='';x.handlers.input();assert.ok(x.options.every(o=>!o.hidden));
   assert.equal(x.status.textContent,'');
