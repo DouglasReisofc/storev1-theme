@@ -14,12 +14,12 @@
 <a class="loja1-cart-link" href="<?php echo esc_url(wc_get_cart_url()); ?>" aria-label="Abrir carrinho"><?php storev1_icon('cart'); ?><span class="loja1-cart-copy"><strong>Carrinho</strong><small>Ver meus produtos</small></span><?php storev1_cart_count(); ?></a>
 <?php endif; ?></div>
 </div>
-<div class="loja1-shell loja1-mobile-banner-slot"><?php storev1_mobile_banner(); ?></div>
 <nav class="loja1-primary-nav" aria-label="Produtos e categorias"><div class="loja1-shell sv1-nav-row">
 <details class="sv1-categories"><summary><?php storev1_icon('menu'); ?> Todos os produtos <?php storev1_icon('chevron'); ?></summary><div class="sv1-category-list"><?php storev1_categories(); ?></div></details>
 <?php wp_nav_menu(['theme_location'=>'primary','container'=>false,'menu_class'=>'loja1-menu','fallback_cb'=>false]); ?>
 </div></nav>
 </header>
+<?php if (is_front_page() || (function_exists('is_shop') && is_shop())) storev1_mobile_banner(); ?>
 <dialog id="sv1-drawer" class="sv1-drawer" aria-labelledby="sv1-drawer-title">
 <div class="sv1-drawer-head"><strong id="sv1-drawer-title">Menu da loja</strong><button type="button" data-sv1-close aria-label="Fechar menu"><?php storev1_icon('close'); ?></button></div>
 <div class="sv1-drawer-scroll"><?php storev1_search(); ?><details open class="sv1-mobile-categories"><summary>Produtos e categorias</summary><?php storev1_categories(); ?></details>

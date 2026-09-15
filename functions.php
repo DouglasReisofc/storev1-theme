@@ -21,17 +21,28 @@ function storev1_assets(){
     if (class_exists('WooCommerce')) wp_enqueue_script('wc-cart-fragments');
     wp_enqueue_script('storev1-ui',get_template_directory_uri() . '/assets/storev1-ui.js',[],wp_get_theme()->get('Version'),true);
     wp_enqueue_script('storev1-notices',get_template_directory_uri() . '/assets/storev1-notices.js',[],wp_get_theme()->get('Version'),true);
+    wp_enqueue_script('storev1-shopping',get_template_directory_uri() . '/assets/storev1-shopping.js',[],wp_get_theme()->get('Version'),true);
     if (is_singular() && comments_open() && get_option('thread_comments')) wp_enqueue_script('comment-reply');
 }
 add_action('wp_enqueue_scripts','storev1_assets');
 add_action('customize_register', function($wp_customize) {
-    $wp_customize->add_section('storev1_banner', ['title'=>__('Banner mobile','storev1-theme'),'priority'=>35]);
-    for ($i=1; $i<=3; $i++) {
+    $wp_customize->add_section('storev1_banner', ['title'=>__('Banners da loja','storev1-theme'),'description'=>'Carrossel no início e na loja, em desktop e celular. Envie imagens horizontais; use a mesma proporção em todas. Sem imagens próprias, mostramos duas capas demonstrativas.','priority'=>35]);
+    $wp_customize->add_setting('storev1_banner_enabled',['default'=>true,'sanitize_callback'=>'rest_sanitize_boolean']);
+    $wp_customize->add_control('storev1_banner_enabled',['label'=>'Exibir carrossel','section'=>'storev1_banner','type'=>'checkbox']);
+    $wp_customize->add_setting('storev1_show_reviews',['default'=>false,'sanitize_callback'=>'rest_sanitize_boolean']);
+    $wp_customize->add_control('storev1_show_reviews',['label'=>'Mostrar avaliações nos produtos','section'=>'storev1_banner','type'=>'checkbox']);
+    for ($i=1; $i<=5; $i++) {
         $setting = 'storev1_banner_' . $i;
         $wp_customize->add_setting($setting, ['default'=>'','sanitize_callback'=>'esc_url_raw']);
         $wp_customize->add_control(new WP_Customize_Image_Control($wp_customize, $setting, ['label'=>sprintf(__('Imagem %d','storev1-theme'),$i),'section'=>'storev1_banner']));
+        $wp_customize->add_setting($setting.'_link',['default'=>'','sanitize_callback'=>'esc_url_raw']);
+        $wp_customize->add_control($setting.'_link',['label'=>'Link do banner '.$i,'section'=>'storev1_banner','type'=>'url']);
+        $wp_customize->add_setting($setting.'_alt',['default'=>'','sanitize_callback'=>'sanitize_text_field']);
+        $wp_customize->add_control($setting.'_alt',['label'=>'Descrição da imagem '.$i,'section'=>'storev1_banner','type'=>'text']);
     }
 });
 add_filter('woocommerce_product_add_to_cart_text',function($text,$product){return $product->is_type('simple') && $product->is_purchasable() && $product->is_in_stock() ? __('Comprar','storev1-theme') : $text;},10,2);
 add_filter('woocommerce_product_single_add_to_cart_text',function(){return __('Comprar agora','storev1-theme');});
 require_once get_template_directory() . '/inc/storefront.php';
+add_filter('woocommerce_product_tabs',function($tabs){if(!get_theme_mod('storev1_show_reviews',false)) unset($tabs['reviews']);return $tabs;},99);
+add_filter('woocommerce_output_related_products_args',function($args){$args['posts_per_page']=8;return $args;});

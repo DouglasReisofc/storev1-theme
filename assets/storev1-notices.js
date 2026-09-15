@@ -1,7 +1,8 @@
 (() => {
   const portal = document.getElementById('sv1-notice-portal');
   if (!portal) return;
-  const selector = '.woocommerce-message,.woocommerce-info,.woocommerce-error';
+  // Empty cart is a persistent state inside the cart, not an alert on every page load.
+  const selector = '.woocommerce-message:not(.cart-empty),.woocommerce-info:not(.cart-empty),.woocommerce-error:not(.cart-empty)';
   const initialized = new WeakSet();
   function decorate(notice) {
     if (initialized.has(notice)) return;

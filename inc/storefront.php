@@ -58,12 +58,17 @@ add_filter('woocommerce_add_to_cart_fragments', function($fragments) {
 });
 
 function storev1_mobile_banner() {
+    if (!get_theme_mod('storev1_banner_enabled',true)) return;
     $images = [];
-    for ($i=1; $i<=3; $i++) { $url = esc_url(get_theme_mod('storev1_banner_'.$i, '')); if ($url) $images[] = $url; }
-    if (!$images) return;
-    echo '<section class="sv1-mobile-banner" data-sv1-carousel aria-label="Destaques da loja"><div class="sv1-carousel-track">';
-    foreach ($images as $i=>$url) echo '<a class="sv1-carousel-slide'.($i===0?' is-active':''). '" href="'.esc_url(wc_get_page_permalink('shop')).'"'.($i===0?'':' tabindex="-1"').' style="background-image:url('.esc_url($url).')"><span class="screen-reader-text">Destaque '.($i+1).'</span></a>';
+    $shop = function_exists('wc_get_page_permalink') ? wc_get_page_permalink('shop') : home_url('/');
+    for ($i=1; $i<=5; $i++) {
+        $url = get_theme_mod('storev1_banner_'.$i, '');
+        if ($url) $images[] = ['url'=>$url,'link'=>get_theme_mod('storev1_banner_'.$i.'_link','') ?: $shop,'alt'=>get_theme_mod('storev1_banner_'.$i.'_alt','') ?: 'Destaque '.$i];
+    }
+    if (!$images) foreach ([1,2] as $i) $images[]=['url'=>get_template_directory_uri().'/assets/banner-demo-'.$i.'.svg','link'=>$shop,'alt'=>$i===1?'Explore a loja. Encontre seu próximo favorito.':'Tudo em um só lugar. Conheça nosso catálogo.'];
+    echo '<section class="loja1-shell sv1-promo" data-promo-carousel aria-roledescription="carrossel" aria-label="Destaques da loja"><div class="sv1-promo-track">';
+    foreach ($images as $i=>$slide) echo '<a class="sv1-promo-slide" href="'.esc_url($slide['link']).'"'.($i===0?'':' hidden').'><img src="'.esc_url($slide['url']).'" alt="'.esc_attr($slide['alt']).'" decoding="async"></a>';
     echo '</div>';
-    if (count($images)>1) { echo '<button type="button" class="sv1-carousel-prev" data-carousel-prev aria-label="Imagem anterior">‹</button><button type="button" class="sv1-carousel-next" data-carousel-next aria-label="Próxima imagem">›</button><div class="sv1-carousel-dots">'; foreach ($images as $i=>$url) echo '<button type="button" data-carousel-dot="'.absint($i).'" aria-label="Ir para imagem '.($i+1).'"'.($i===0?' aria-current="true"':'').'></button>'; echo '</div>'; }
+    if (count($images)>1) { echo '<div class="sv1-promo-controls"><button type="button" data-promo-prev aria-label="Banner anterior">‹</button><span data-promo-count>1 / '.count($images).'</span><button type="button" data-promo-next aria-label="Próximo banner">›</button><button type="button" data-promo-pause aria-label="Pausar carrossel">Pausar</button></div>'; }
     echo '</section>';
 }
