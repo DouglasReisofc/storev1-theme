@@ -60,6 +60,7 @@ add_filter('woocommerce_product_add_to_cart_text',function($text,$product){retur
 add_filter('woocommerce_product_single_add_to_cart_text',function(){return __('Comprar agora','storev1-theme');});
 require_once get_template_directory() . '/inc/storefront.php';
 require_once get_template_directory() . '/inc/catalog-search.php';
+require_once get_template_directory() . '/inc/site-quality.php';
 // Preserve WooCommerce validation and POST/redirect flow; flag only a successful addition.
 add_action('woocommerce_add_to_cart', function() {
     if (isset($_POST['add-to-cart']) && !wp_doing_ajax() && WC()->session) {

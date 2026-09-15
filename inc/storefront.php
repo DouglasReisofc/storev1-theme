@@ -20,7 +20,7 @@ function storev1_icon($name) {
 
 function storev1_brand($extra = '') {
     $name = get_bloginfo('name');
-    echo '<a class="loja1-logo ' . esc_attr($extra) . '" href="' . esc_url(home_url('/')) . '" aria-label="' . esc_attr($name) . '">';
+    echo '<a class="loja1-logo ' . esc_attr($extra) . '" href="' . esc_url(home_url('/')) . '">';
     $logo = absint(get_theme_mod('custom_logo'));
     if ($logo) {
         echo wp_get_attachment_image($logo, 'full', false, ['class'=>'sv1-brand-image','alt'=>$name]);
@@ -93,7 +93,24 @@ function storev1_mobile_banner() {
     foreach ($images as $i=>$slide) {
         echo '<a class="sv1-promo-slide'.(!empty($slide['headline'])?' sv1-gold-slide':'').'" draggable="false" href="'.esc_url($slide['link']).'"'.($i===0?'':' hidden').'>';
         if ($slide['video']) echo '<video muted loop playsinline preload="metadata"'.($i===0?' autoplay':'').' poster="'.esc_url($slide['url']).'" aria-label="'.esc_attr($slide['alt']).'"><source src="'.esc_url($slide['video']).'">Seu navegador não suporta este vídeo.</video>';
-        else echo '<img draggable="false" src="'.esc_url($slide['url']).'" alt="'.esc_attr($slide['alt']).'" decoding="async">';
+        else {
+            $attr = ['alt'=>$slide['alt'], 'draggable'=>'false', 'decoding'=>'async', 'loading'=>$i === 0 ? 'eager' : 'lazy', 'fetchpriority'=>$i === 0 ? 'high' : 'low', 'sizes'=>'(max-width: 767px) 96vw, 45vw'];
+            $basename = basename($slide['url'], '.png');
+            if (strpos($slide['url'], get_template_directory_uri().'/assets/banners/') === 0 && in_array($basename, ['storev1-gold-piggybank','storev1-gold-payment','storev1-gold-support'], true)) {
+                $base = get_template_directory_uri().'/assets/banners/'.$basename;
+                $attr['src'] = $base.'-960.webp';
+                $attr['srcset'] = $base.'-480.webp 480w, '.$base.'-960.webp 960w, '.$base.'-1440.webp 1440w';
+                $attr['width'] = 960;
+                $attr['height'] = $basename === 'storev1-gold-piggybank' ? 540 : 270;
+                echo '<img';
+                foreach ($attr as $key=>$value) echo ' '.esc_attr($key).'="'.esc_attr($value).'"';
+                echo '>';
+            } else {
+                $id = attachment_url_to_postid($slide['url']);
+                if ($id) echo wp_get_attachment_image($id, 'large', false, $attr);
+                else echo '<img draggable="false" src="'.esc_url($slide['url']).'" alt="'.esc_attr($slide['alt']).'" decoding="async" loading="'.esc_attr($attr['loading']).'" fetchpriority="'.esc_attr($attr['fetchpriority']).'">';
+            }
+        }
         echo '</a>';
     }
     echo '</div>';

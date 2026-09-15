@@ -60,7 +60,7 @@
   document.querySelectorAll('[data-promo-carousel]').forEach(carousel => {
     const slides = [...carousel.querySelectorAll('.sv1-promo-slide')];
     const track = carousel.querySelector('.sv1-promo-track');
-    let current = 0, gesture = null, dragged = false, progressTimer;
+    let current = 0, gesture = null, dragged = false, progressTimer, progressAnimation;
     const progress = carousel.querySelector('.sv1-promo-progress span');
     const duration = 6500;
     const show = index => {
@@ -75,8 +75,11 @@
           else video.pause();
         }
       });
-      if (progress) { progress.style.transition = 'none'; progress.style.width = '0%'; requestAnimationFrame(() => { progress.style.transition = `width ${duration}ms linear`; progress.style.width = '100%'; }); }
-      if (slides.length > 1) progressTimer = setTimeout(() => show(current + 1), duration);
+      progressAnimation?.cancel();
+      if (slides.length > 1 && !document.hidden) {
+        if (progress) progressAnimation = progress.animate([{transform:'scaleX(0)'},{transform:'scaleX(1)'}], {duration, fill:'forwards'});
+        progressTimer = setTimeout(() => show(current + 1), duration);
+      }
     };
     carousel.querySelector('[data-promo-prev]')?.addEventListener('click', () => show(current - 1));
     carousel.querySelector('[data-promo-next]')?.addEventListener('click', () => show(current + 1));

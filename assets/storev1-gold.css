@@ -1,5 +1,6 @@
 /* Gold storefront palette. Do not recolor third-party payment dialogs. */
 body.loja1-contasvip-theme{
+ --loja-text:#626262;
  --loja-green:#bd850f;--loja-green-dark:#805500;--loja-purple:#bd850f;
  --loja-gold:#efba3b;--sv1-primary:#bd850f;
 }
@@ -26,7 +27,14 @@ body.loja1-contasvip-theme .sv1-promo-slide :is(img,video){background:#fff}
 body.loja1-contasvip-theme .sv1-promo{border:1px solid #f0e4c8}
 body.loja1-contasvip-theme .sv1-promo-cta{background:#f5cc65;color:#251b08;box-shadow:none}
 body.loja1-contasvip-theme .sv1-promo-progress{position:absolute;z-index:20;inset:0 0 auto;height:4px;background:#eadfca;box-shadow:0 1px 6px #6f4a1555;overflow:hidden;pointer-events:none}
-body.loja1-contasvip-theme .sv1-promo-progress span{display:block;width:0;height:100%;background:linear-gradient(90deg,#8b5d06,#ffd86a);box-shadow:0 0 9px #e0a928}
+body.loja1-contasvip-theme .sv1-promo-progress span{display:block;width:100%;height:100%;transform:scaleX(0);transform-origin:left;background:linear-gradient(90deg,#8b5d06,#ffd86a);box-shadow:0 0 9px #e0a928}
+body.loja1-contasvip-theme .storezap-wordmark small{color:#626262}
+body.loja1-contasvip-theme a:hover{color:#805500}
+body.loja1-contasvip-theme .loja1-menu a:hover{color:#805500}
+body.loja1-contasvip-theme .sv1-account-card small{color:#6b593b}
+body.loja1-contasvip-theme .loja1-cart-count{background:#805500;color:#fff}
+body.loja1-contasvip-theme :focus-visible{outline:2px solid #805500;outline-offset:3px}
+.sv1-search-toggle[hidden]{display:none!important}
 body.loja1-contasvip-theme .sv1-gold-slide img{height:100%!important;object-fit:contain!important}
 .sv1-banner-copy{position:absolute;left:5%;top:50%;transform:translateY(-50%);width:43%;text-align:left;color:#111827;pointer-events:none}
 .sv1-banner-eyebrow{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px;color:#79500a}

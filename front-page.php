@@ -4,7 +4,7 @@ if ('posts' === get_option('show_on_front')) { require get_template_directory() 
 get_header();
 while (have_posts()) : the_post();
     if (trim(get_the_content()) !== '') : ?>
-        <article <?php post_class('sv1-page'); ?>><div class="entry-content"><?php the_content(); wp_link_pages(); ?></div></article>
+        <article <?php post_class('sv1-page'); ?>><?php if (!preg_match('/<h1\b/i', get_the_content())) : ?><h1 class="screen-reader-text"><?php echo esc_html(get_bloginfo('name') . ' — ' . get_bloginfo('description')); ?></h1><?php endif; ?><div class="entry-content"><?php the_content(); wp_link_pages(); ?></div></article>
     <?php elseif (class_exists('WooCommerce')) : ?>
         <section class="sv1-hero">
             <p class="sv1-eyebrow"><?php echo esc_html(get_bloginfo('name')); ?></p>
