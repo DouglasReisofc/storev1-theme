@@ -11,6 +11,7 @@ function storev1_icon($name) {
         'menu'=>'<path d="M3 6h18M3 12h18M3 18h18"/>',
         'close'=>'<path d="m6 6 12 12M18 6 6 18"/>',
         'chevron'=>'<path d="m6 9 6 6 6-6"/>',
+        'search'=>'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>',
         'trash'=>'<path d="M4 7h16M10 11v6M14 11v6M9 7V4h6v3m-9 0 1 13h8l1-13"/>',
     ];
     if (!isset($paths[$name])) return;
@@ -63,12 +64,20 @@ function storev1_mobile_banner() {
     $shop = function_exists('wc_get_page_permalink') ? wc_get_page_permalink('shop') : home_url('/');
     for ($i=1; $i<=5; $i++) {
         $url = get_theme_mod('storev1_banner_'.$i, '');
-        if ($url) $images[] = ['url'=>$url,'link'=>get_theme_mod('storev1_banner_'.$i.'_link','') ?: $shop,'alt'=>get_theme_mod('storev1_banner_'.$i.'_alt','') ?: 'Destaque '.$i];
+        $video_id = absint(get_theme_mod('storev1_banner_'.$i.'_video',0));
+        $video = in_array(get_post_mime_type($video_id),['video/mp4','video/webm'],true) ? wp_get_attachment_url($video_id) : '';
+        if ($url || $video) $images[] = ['url'=>$url,'video'=>$video,'cta'=>get_theme_mod('storev1_banner_'.$i.'_cta','Ver produtos'),'link'=>get_theme_mod('storev1_banner_'.$i.'_link','') ?: $shop,'alt'=>get_theme_mod('storev1_banner_'.$i.'_alt','') ?: 'Destaque '.$i];
     }
-    if (!$images) foreach ([1,2] as $i) $images[]=['url'=>get_template_directory_uri().'/assets/banner-demo-'.$i.'.svg','link'=>$shop,'alt'=>$i===1?'Explore a loja. Encontre seu próximo favorito.':'Tudo em um só lugar. Conheça nosso catálogo.'];
-    echo '<section class="loja1-shell sv1-promo" data-promo-carousel aria-roledescription="carrossel" aria-label="Destaques da loja"><div class="sv1-promo-track">';
-    foreach ($images as $i=>$slide) echo '<a class="sv1-promo-slide" href="'.esc_url($slide['link']).'"'.($i===0?'':' hidden').'><img src="'.esc_url($slide['url']).'" alt="'.esc_attr($slide['alt']).'" decoding="async"></a>';
+    if (!$images) foreach ([1,2] as $i) $images[]=['url'=>get_template_directory_uri().'/assets/banner-demo-'.$i.'.svg','video'=>'','cta'=>$i===1?'Ver produtos':'Explorar categorias','link'=>$shop,'alt'=>$i===1?'Explore a loja. Encontre seu próximo favorito.':'Tudo em um só lugar. Conheça nosso catálogo.'];
+    echo '<section class="loja1-shell sv1-promo" data-promo-carousel aria-roledescription="carrossel" aria-label="Destaques da loja"><div class="sv1-promo-track" tabindex="0" aria-label="Banners promocionais. Use as setas para navegar.">';
+    foreach ($images as $i=>$slide) {
+        echo '<a class="sv1-promo-slide" draggable="false" href="'.esc_url($slide['link']).'"'.($i===0?'':' hidden').'>';
+        if ($slide['video']) echo '<video muted loop playsinline preload="metadata"'.($i===0?' autoplay':'').' poster="'.esc_url($slide['url']).'" aria-label="'.esc_attr($slide['alt']).'"><source src="'.esc_url($slide['video']).'">Seu navegador não suporta este vídeo.</video>';
+        else echo '<img draggable="false" src="'.esc_url($slide['url']).'" alt="'.esc_attr($slide['alt']).'" decoding="async">';
+        if ($slide['cta']) echo '<span class="sv1-promo-cta">'.esc_html($slide['cta']).' <span aria-hidden="true">→</span></span>';
+        echo '</a>';
+    }
     echo '</div>';
-    if (count($images)>1) { echo '<div class="sv1-promo-controls"><button type="button" data-promo-prev aria-label="Banner anterior">‹</button><span data-promo-count>1 / '.count($images).'</span><button type="button" data-promo-next aria-label="Próximo banner">›</button><button type="button" data-promo-pause aria-label="Pausar carrossel">Pausar</button></div>'; }
+    if (count($images)>1) { echo '<div class="sv1-promo-controls"><button type="button" data-promo-prev aria-label="Banner anterior">‹</button><span data-promo-count>1 / '.count($images).'</span><button type="button" data-promo-next aria-label="Próximo banner">›</button></div>'; }
     echo '</section>';
 }

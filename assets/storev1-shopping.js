@@ -53,18 +53,59 @@
     new ResizeObserver(refresh).observe(track); refresh();
   });
 
-  document.querySelectorAll('[data-promo-carousel]').forEach(carousel=>{
-    const slides=[...carousel.querySelectorAll('.sv1-promo-slide')];if(slides.length<2)return;
-    const pause=carousel.querySelector('[data-promo-pause]');let current=0,timer=null,paused=matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const show=index=>{current=(index+slides.length)%slides.length;slides.forEach((slide,i)=>slide.hidden=i!==current);carousel.querySelector('[data-promo-count]').textContent=`${current+1} / ${slides.length}`;};
-    const stop=()=>{clearInterval(timer);timer=null;};
-    const start=()=>{stop();if(!paused&&!document.hidden)timer=setInterval(()=>show(current+1),6000);};
-    const label=()=>{pause.textContent=paused?'Reproduzir':'Pausar';pause.setAttribute('aria-label',paused?'Reproduzir carrossel':'Pausar carrossel');};
-    carousel.querySelector('[data-promo-prev]').addEventListener('click',()=>{show(current-1);});
-    carousel.querySelector('[data-promo-next]').addEventListener('click',()=>{show(current+1);});
-    pause.addEventListener('click',()=>{paused=!paused;label();start();});
-    carousel.addEventListener('pointerenter',stop);carousel.addEventListener('pointerleave',start);
-    carousel.addEventListener('focusin',stop);carousel.addEventListener('focusout',e=>{if(!carousel.contains(e.relatedTarget))start();});
-    document.addEventListener('visibilitychange',()=>document.hidden?stop():start());label();start();
+  document.querySelectorAll('[data-promo-carousel]').forEach(carousel => {
+    const slides = [...carousel.querySelectorAll('.sv1-promo-slide')];
+    const track = carousel.querySelector('.sv1-promo-track');
+    const count = carousel.querySelector('[data-promo-count]');
+    let current = 0, gesture = null, dragged = false;
+    const show = index => {
+      current = (index + slides.length) % slides.length;
+      slides.forEach((slide, i) => {
+        slide.hidden = i !== current;
+        slide.style.transform = '';
+        const video = slide.querySelector('video');
+        if (video) {
+          if (i === current && !document.hidden) video.play().catch(() => {});
+          else video.pause();
+        }
+      });
+      if (count) count.textContent = `${current + 1} / ${slides.length}`;
+    };
+    carousel.querySelector('[data-promo-prev]')?.addEventListener('click', () => show(current - 1));
+    carousel.querySelector('[data-promo-next]')?.addEventListener('click', () => show(current + 1));
+    track.addEventListener('keydown', event => {
+      if (!['ArrowLeft','ArrowRight'].includes(event.key)) return;
+      event.preventDefault(); show(current + (event.key === 'ArrowLeft' ? -1 : 1));
+    });
+    track.addEventListener('dragstart', event => event.preventDefault());
+    track.addEventListener('pointerdown', event => {
+      if (!event.isPrimary || event.button !== 0 || slides.length < 2) return;
+      gesture = {id:event.pointerId, x:event.clientX, y:event.clientY}; dragged = false;
+    });
+    track.addEventListener('pointermove', event => {
+      if (!gesture || event.pointerId !== gesture.id) return;
+      const dx = event.clientX - gesture.x, dy = event.clientY - gesture.y;
+      if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) {
+        dragged = true; track.setPointerCapture(event.pointerId);
+        slides[current].style.transform = `translateX(${dx * .35}px)`;
+      }
+    });
+    track.addEventListener('pointerup', event => {
+      if (!gesture || event.pointerId !== gesture.id) return;
+      const dx = event.clientX - gesture.x, dy = event.clientY - gesture.y;
+      if (Math.abs(dx) >= 45 && Math.abs(dx) > Math.abs(dy)) {
+        dragged = true; show(current + (dx < 0 ? 1 : -1));
+      } else slides[current].style.transform = '';
+      gesture = null;
+      setTimeout(() => { dragged = false; }, 250);
+    });
+    track.addEventListener('pointercancel', () => {
+      gesture = null; dragged = false; slides[current].style.transform = '';
+    });
+    track.addEventListener('click', event => {
+      if (dragged) { event.preventDefault(); event.stopPropagation(); }
+    }, true);
+    document.addEventListener('visibilitychange', () => show(current));
+    show(0);
   });
 })();

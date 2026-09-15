@@ -122,6 +122,12 @@ body.loja1-contasvip-theme .sv1-notice-portal .sv1-notice-close{position:static;
 body.loja1-contasvip-theme .sv1-notice-portal .sv1-toast .button{float:none!important;display:inline-flex;margin:6px 8px 6px 0;border-radius:10px}
 @media(max-width:767px){body.admin-bar.loja1-contasvip-theme .sv1-notice-portal{top:56px}}
 /* Fluid storefront and centered product details. */
+/* Mobile discovery panel and promotion links. */
+.sv1-mobile-discovery{display:none}
+.sv1-drawer .sv1-catalog-categories{float:none;width:100%;margin:0;display:block!important}
+.sv1-drawer .sv1-category-panel{position:static;width:100%;box-shadow:none;border:0;padding:14px 0}
+.sv1-drawer .sv1-category-options{max-height:none;overflow:visible}
+.sv1-drawer .sv1-catalog-categories summary{font-size:13px}
 .loja1-shell,body.loja1-contasvip-theme .col-full{width:calc(100% - clamp(24px,4vw,80px));max-width:none}
 body.loja1-contasvip-theme .summary{text-align:center;min-width:0;align-self:center}
 body.loja1-contasvip-theme div.product .summary form.cart{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:14px}
@@ -151,3 +157,25 @@ body.loja1-contasvip-theme .sv1-toast a.restore-item,body.loja1-contasvip-theme 
 @media(max-width:1024px){body.loja1-contasvip-theme .sv1-related ul.products li.product{flex-basis:calc((100% - 20px)/2)}}
 .sv1-related-controls[hidden]{display:none}.sv1-related-controls button:disabled{opacity:.35;cursor:default}body.loja1-contasvip-theme .sv1-related ul.products.sv1-related-static{justify-content:center}
 @media(max-width:767px){.sv1-promo{margin-top:8px;border-radius:14px}.sv1-promo-track{height:auto;aspect-ratio:2/1}.sv1-promo-slide{position:absolute;inset:0;height:calc(100% - 40px)}.sv1-promo-slide img{object-fit:cover;object-position:left center}.sv1-promo-controls{position:static;justify-content:center;border-radius:0;padding:2px 8px;min-height:40px}.sv1-promo:not(:has(.sv1-promo-controls)) .sv1-promo-slide{height:100%}.sv1-related>h2{margin:0 0 10px!important;font-size:22px}.sv1-related-controls{justify-content:center}body.loja1-contasvip-theme .sv1-related ul.products li.product{flex-basis:84%}body.loja1-contasvip-theme div.product .summary form.cart{flex-direction:column}body.loja1-contasvip-theme div.product .summary form.cart .button{width:min(100%,340px)}}
+.sv1-promo-track{position:relative;touch-action:pan-y;user-select:none;cursor:grab}
+.sv1-promo-track:active{cursor:grabbing}
+.sv1-promo-slide{position:absolute;inset:0;height:100%;overflow:hidden}
+.sv1-promo-slide img,.sv1-promo-slide video{width:100%;height:100%;display:block;object-fit:contain;object-position:center;background:#153427}
+body.loja1-contasvip-theme .sv1-promo-cta{position:absolute;right:24px;bottom:70px;display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:10px 20px;border-radius:999px;color:#163728;background:#e2f4c8;font-weight:700;box-shadow:0 4px 18px #0002}
+.loja1-footer,.loja1-footer-grid,.loja1-footer-bottom{text-align:center}
+.loja1-footer p{margin-left:auto;margin-right:auto}
+.loja1-footer a.loja1-logo{justify-content:center}
+.loja1-footer-bottom .loja1-shell{justify-content:center;align-items:center;flex-wrap:wrap}
+@media(max-width:767px){
+ .sv1-mobile-discovery{display:flex;justify-content:flex-end;align-items:center;min-height:44px}
+ .sv1-mobile-discovery button{display:grid;place-items:center;width:44px;height:44px;padding:0;border:1px solid #e3e9dc;border-radius:50%;background:#f6f8f2;color:#395b26}
+ main .sv1-catalog-categories{display:none!important}
+ body.post-type-archive-product .woocommerce-products-header__title,body.post-type-archive-product .page-title{display:none}
+ .sv1-promo-track{height:210px;aspect-ratio:auto}
+ .sv1-promo-slide,.sv1-promo:not(:has(.sv1-promo-controls)) .sv1-promo-slide{height:100%}
+ .sv1-promo-slide img,.sv1-promo-slide video{height:155px;object-fit:contain;object-position:center}
+ body.loja1-contasvip-theme .sv1-promo-cta{right:12px;bottom:10px;font-size:12px;min-height:36px;padding:7px 14px}
+ .sv1-promo-controls{position:absolute;left:8px;right:auto;bottom:10px;border-radius:999px;padding:0 4px;min-height:36px;font-size:11px;gap:3px}
+ .sv1-promo-controls button{width:30px;min-width:30px;height:36px;font-size:22px;padding:0}
+ .loja1-footer-bottom .loja1-shell{flex-direction:column}
+}

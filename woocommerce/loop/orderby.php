@@ -6,7 +6,7 @@ $current = is_product_category() ? get_queried_object_id() : 0;
 $label = $current ? single_term_title('', false) : __('Todas as categorias', 'storev1-theme');
 $search_id = wp_unique_id('sv1-category-search-');
 ?>
-<details class="sv1-catalog-categories" data-category-picker>
+<details class="sv1-catalog-categories" data-category-picker <?php if (!empty($sv1_drawer)) echo 'open'; ?>>
     <summary><?php storev1_icon('menu'); ?><span><?php echo esc_html($label); ?></span><?php storev1_icon('chevron'); ?></summary>
     <div class="sv1-category-panel">
         <label for="<?php echo esc_attr($search_id); ?>"><?php esc_html_e('Buscar categoria', 'storev1-theme'); ?></label>

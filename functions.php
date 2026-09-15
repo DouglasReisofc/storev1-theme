@@ -39,6 +39,10 @@ add_action('customize_register', function($wp_customize) {
         $wp_customize->add_control($setting.'_link',['label'=>'Link do banner '.$i,'section'=>'storev1_banner','type'=>'url']);
         $wp_customize->add_setting($setting.'_alt',['default'=>'','sanitize_callback'=>'sanitize_text_field']);
         $wp_customize->add_control($setting.'_alt',['label'=>'Descrição da imagem '.$i,'section'=>'storev1_banner','type'=>'text']);
+        $wp_customize->add_setting($setting.'_cta',['default'=>'Ver produtos','sanitize_callback'=>'sanitize_text_field']);
+        $wp_customize->add_control($setting.'_cta',['label'=>'Texto do botão '.$i,'section'=>'storev1_banner','type'=>'text']);
+        $wp_customize->add_setting($setting.'_video',['default'=>0,'sanitize_callback'=>'absint']);
+        $wp_customize->add_control(new WP_Customize_Media_Control($wp_customize,$setting.'_video',['label'=>'Vídeo do banner '.$i.' (opcional)','description'=>'MP4 ou WebM compatível com o navegador. Substitui a imagem; reproduz sem som. A imagem vira capa de carregamento.','mime_type'=>'video','section'=>'storev1_banner']));
     }
 });
 add_filter('woocommerce_product_add_to_cart_text',function($text,$product){return $product->is_type('simple') && $product->is_purchasable() && $product->is_in_stock() ? __('Comprar','storev1-theme') : $text;},10,2);

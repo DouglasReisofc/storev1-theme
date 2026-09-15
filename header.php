@@ -19,10 +19,13 @@
 <?php wp_nav_menu(['theme_location'=>'primary','container'=>false,'menu_class'=>'loja1-menu','fallback_cb'=>false]); ?>
 </div></nav>
 </header>
+<?php if (is_front_page() || (function_exists('is_shop') && (is_shop() || is_product_category()))) : ?>
+<div class="loja1-shell sv1-mobile-discovery"><button type="button" data-sv1-open aria-controls="sv1-drawer" aria-expanded="false" aria-label="Buscar produtos e categorias"><?php storev1_icon('search'); ?></button></div>
+<?php endif; ?>
 <?php if (is_front_page() || (function_exists('is_shop') && is_shop())) storev1_mobile_banner(); ?>
 <dialog id="sv1-drawer" class="sv1-drawer" aria-labelledby="sv1-drawer-title">
 <div class="sv1-drawer-head"><strong id="sv1-drawer-title">Menu da loja</strong><button type="button" data-sv1-close aria-label="Fechar menu"><?php storev1_icon('close'); ?></button></div>
-<div class="sv1-drawer-scroll"><?php storev1_search(); ?><details open class="sv1-mobile-categories"><summary>Produtos e categorias</summary><?php storev1_categories(); ?></details>
+<div class="sv1-drawer-scroll"><?php storev1_search(); ?><?php if(class_exists('WooCommerce')) wc_get_template('loop/orderby.php',['sv1_drawer'=>true]); else storev1_categories(); ?>
 <?php if (class_exists('WooCommerce')) : ?><a class="sv1-drawer-account" href="<?php echo esc_url(wc_get_page_permalink('myaccount')); ?>">Minha conta</a><?php endif; ?>
 </div></dialog>
 <div id="sv1-notice-portal" class="sv1-notice-portal" aria-live="polite" aria-atomic="true"></div>
