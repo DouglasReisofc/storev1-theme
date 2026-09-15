@@ -1,0 +1,72 @@
+/* StoreV1 components, independent of Storefront and payment plugins. */
+body.loja1-contasvip-theme{font-family:Arial,Helvetica,sans-serif}
+body.loja1-contasvip-theme h1,body.loja1-contasvip-theme h2,body.loja1-contasvip-theme h3,.storezap-wordmark{font-family:Arial,Helvetica,sans-serif}
+button,input,select,textarea{font:inherit}button,summary{cursor:pointer}img{max-width:100%;height:auto}
+.sv1-icon{flex-shrink:0;vertical-align:middle}
+.screen-reader-text{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+.skip-link:focus{clip:auto;width:auto;height:auto;left:12px;top:12px;z-index:10000;padding:14px;background:white}
+a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible{outline:2px solid #5b8424;outline-offset:4px}
+.loja1-topbar-inner{justify-content:space-between}.loja1-topbar-inner>span{font-size:12px}
+.loja1-brand-image,.sv1-brand-image{max-height:68px;width:auto;object-fit:contain}
+.loja1-header-main>.loja1-menu-toggle{display:none}
+.loja1-logo{flex-shrink:0}.storezap-wordmark{gap:0 3px}.storezap-wordmark strong{max-width:175px;overflow:hidden;text-overflow:ellipsis}
+.loja1-cart-link{color:#333}.sv1-cart-count{display:inline-grid;place-items:center;min-width:19px;height:19px;padding:0 4px;border-radius:50%;font-size:11px;line-height:1;background:#83b735;color:#fff;font-weight:700}
+.loja1-cart-link>.sv1-cart-count{position:absolute;left:16px;top:-8px;border:2px solid white}
+.sv1-nav-row{display:flex;align-items:stretch;gap:20px}.sv1-nav-row>.loja1-menu{flex:1;flex-wrap:wrap}
+.sv1-nav-row .loja1-menu a{padding:0 12px}.sv1-nav-row .loja1-menu>li:first-child{display:none}
+.sv1-categories{position:relative;flex:0 0 240px;background:#83b735;color:white}
+.sv1-categories summary{min-height:50px;display:flex;align-items:center;gap:12px;padding:12px 18px;font-size:13px;font-weight:bold;list-style:none}
+.sv1-categories summary::-webkit-details-marker{display:none}.sv1-categories summary .sv1-icon:last-child{margin-left:auto;width:16px}
+.sv1-category-list{position:absolute;left:0;top:100%;width:280px;max-height:65vh;overflow:auto;overscroll-behavior:contain;background:white;border:1px solid #e7e7e7;box-shadow:0 10px 30px #0002}
+.sv1-category-links{padding:6px 0;margin:0;list-style:none}.sv1-category-links .children{padding-left:16px;list-style:none}
+.sv1-category-links a{display:block;padding:12px 18px;border-bottom:1px solid #eee;font-size:13px;line-height:1.4}
+.sv1-category-links a:hover{background:#f6f9f0}
+.loja1-menu li:focus-within>.sub-menu{display:block}
+.site-content{min-height:50vh}.site-content>article{margin:0}.site-content .entry-content{margin:0}
+body.loja1-contasvip-theme .woocommerce-ordering{float:right;margin-bottom:25px}
+body.loja1-contasvip-theme .woocommerce-result-count{float:left;margin:10px 0 25px}
+body.loja1-contasvip-theme ul.products{clear:both}
+body.loja1-contasvip-theme ul.products li.product{border-radius:0;box-shadow:none}
+body.loja1-contasvip-theme ul.products li.product img{height:auto;object-fit:contain;background:#fff;border:1px solid #f1f1f1}
+body.loja1-contasvip-theme ul.products li.product .woocommerce-loop-product__title{padding-top:0!important}
+body.loja1-contasvip-theme .onsale{min-height:0;right:auto;line-height:1.5}
+body.loja1-contasvip-theme div.product .woocommerce-tabs{min-width:0}
+.loja1-footer-grid{margin-top:0}.loja1-footer a.loja1-logo{display:flex}
+body.loja1-contasvip-theme .loja1-footer h2,body.loja1-contasvip-theme .loja1-footer .storezap-wordmark strong{color:#fff}
+body.loja1-contasvip-theme .loja1-footer a{color:#bbb}.loja1-footer-bottom .loja1-shell{display:flex;justify-content:space-between;gap:16px}
+.sv1-floating-cart{position:fixed;right:22px;bottom:22px;z-index:40;display:flex;align-items:center;gap:10px;padding:14px 18px;border-radius:6px;background:#83b735;box-shadow:0 5px 20px #0002}
+body.loja1-contasvip-theme .sv1-floating-cart,body.loja1-contasvip-theme .sv1-floating-cart:hover{color:white}
+.sv1-floating-cart .sv1-cart-count{background:white;color:#527c19}
+.sv1-drawer{position:fixed;inset:0 auto 0 0;width:min(86vw,360px);height:100dvh;max-height:100dvh;max-width:none;margin:0;padding:0;border:0;background:#fff;color:#333}
+.sv1-drawer[open]{display:flex;flex-direction:column}.sv1-drawer::backdrop{background:#10131888}
+.sv1-drawer-head{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid #eee}
+.sv1-drawer-head button{display:grid;place-items:center;width:40px;height:40px;border:0;background:#f5f5f5;color:#333}
+.sv1-drawer-scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:18px 20px 30px}
+.sv1-drawer .sv1-search-form{display:flex;margin-bottom:20px}.sv1-drawer input[type=search]{width:100%;min-width:0;padding:10px;border:1px solid #ddd}
+.sv1-drawer .sv1-search-form button{border:0;background:#83b735;color:#fff;padding:8px}
+.sv1-mobile-categories summary{padding:14px 0;font-weight:bold}.sv1-drawer-account{display:block;padding:18px 0;border-top:1px solid #ddd}
+html.sv1-menu-open,html.sv1-menu-open body{overflow:hidden;overscroll-behavior:none}
+.loja1-mobile-toolbar a,.loja1-mobile-toolbar button{position:relative}.loja1-mobile-toolbar .sv1-cart-count{position:absolute;top:3px;left:calc(50% + 7px)}
+@media(min-width:768px){.sv1-drawer{display:none}.sv1-drawer[open]{display:flex}}
+@media(max-width:1024px){.sv1-nav-row{gap:8px}.sv1-categories{flex-basis:210px}.sv1-nav-row .loja1-menu a{font-size:11px;padding:0 8px}}
+@media(max-width:767px){
+ body.loja1-contasvip-theme{padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+ .loja1-header-main>.loja1-menu-toggle{display:flex}.loja1-header-main{grid-template-columns:52px minmax(0,1fr) 52px;gap:6px}
+ .loja1-menu-toggle{width:48px}.loja1-header-main>.loja1-logo{justify-self:center;max-width:100%}
+ .sv1-brand-image{max-width:185px;max-height:48px}.storezap-wordmark strong{max-width:125px}
+ .loja1-primary-nav{display:none}.loja1-header-actions{min-width:0}.loja1-cart-link{justify-content:flex-end}
+ .loja1-header-main{min-height:72px}.loja1-mobile-search{padding-bottom:14px}
+ .sv1-floating-cart{display:none}
+ .loja1-mobile-toolbar{height:calc(64px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);z-index:40}
+ .loja1-mobile-toolbar button{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;border:0;background:white;color:#333;padding:0}
+ .loja1-mobile-toolbar a,.loja1-mobile-toolbar button{font-size:18px}.loja1-mobile-toolbar small{font:700 9px Arial;text-transform:uppercase}
+ body.loja1-contasvip-theme .woocommerce-ordering{float:none;margin:0 0 16px;width:100%}
+ body.loja1-contasvip-theme .woocommerce-ordering select{width:100%;max-width:100%}
+ body.loja1-contasvip-theme .woocommerce-result-count{float:none;display:block;margin:0 0 16px}
+ body.loja1-contasvip-theme ul.products li.product img{aspect-ratio:16/9}
+ body.loja1-contasvip-theme .site-content{padding-top:20px}
+ .loja1-footer-bottom .loja1-shell{flex-direction:column;gap:3px}
+ .loja1-footer-grid{gap:28px}
+ .woocommerce table.shop_table{font-size:13px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
