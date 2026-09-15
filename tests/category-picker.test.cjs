@@ -16,7 +16,8 @@ function setup() {
   const picker = {open:false,contains:()=>false,addEventListener:(name,fn)=>pickerHandlers[name]=fn,
     querySelector:selector=>selector==='[data-category-search]'?search:selector==='summary'?summary:status,
     querySelectorAll:()=>options};
-  runInNewContext(readFileSync(require.resolve('../assets/storev1-ui.js'),'utf8'),{document:{
+  const Observer=class {observe(){}};
+  runInNewContext(readFileSync(require.resolve('../assets/storev1-ui.js'),'utf8'),{MutationObserver:Observer,matchMedia:()=>({addEventListener(){}}),document:{body:{},
     getElementById:()=>null,addEventListener(){},
     querySelectorAll:selector=>selector==='[data-sv1-open]'||selector==='[data-sv1-carousel]'?[]:[picker]
   }});
