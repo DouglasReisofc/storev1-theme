@@ -147,7 +147,7 @@ body.loja1-contasvip-theme .sv1-related ul.products{display:flex!important;overf
 body.loja1-contasvip-theme .sv1-related ul.products li.product{flex:0 0 calc((100% - 60px)/4);scroll-snap-align:start;min-width:0}
 body.loja1-contasvip-theme .sv1-toast a.restore-item,body.loja1-contasvip-theme .sv1-toast a[href*="undo_item"]{display:inline-flex;align-items:center;justify-content:center;min-height:38px;margin:8px 0 0;padding:6px 15px;border-radius:999px;border:1px solid #608d36;color:#365c1e;background:white;font-weight:700;text-decoration:none}
 .sv1-promo{position:relative;margin:24px auto 0;overflow:hidden;border-radius:18px;background:#183527}
-.sv1-promo-track{width:100%;height:clamp(180px,30.55vw,460px)}
+.sv1-promo-track{width:100%;height:clamp(200px,min(20vw,32svh),280px)}
 .sv1-promo-slide{display:block;width:100%;height:100%}.sv1-promo-slide[hidden]{display:none}
 .sv1-promo-slide img{display:block;width:100%;height:100%;object-fit:cover;margin:0}
 .sv1-promo-controls{position:absolute;right:18px;bottom:14px;display:flex;align-items:center;gap:8px;padding:4px 8px;background:#fffef5f2;border-radius:999px;color:#243b2b;font-size:12px}
@@ -178,4 +178,9 @@ body.loja1-contasvip-theme .sv1-promo-cta{position:absolute;right:24px;bottom:70
  .sv1-promo-controls{position:absolute;left:8px;right:auto;bottom:10px;border-radius:999px;padding:0 4px;min-height:36px;font-size:11px;gap:3px}
  .sv1-promo-controls button{width:30px;min-width:30px;height:36px;font-size:22px;padding:0}
  .loja1-footer-bottom .loja1-shell{flex-direction:column}
+ body.loja1-contasvip-theme div.product .woocommerce-product-gallery{width:min(100%,260px);justify-self:center;margin:0 auto}
+ body.loja1-contasvip-theme div.product .woocommerce-product-gallery__image img:not(.zoomImg){width:100%;height:160px;object-fit:contain}
+ body.loja1-contasvip-theme div.product .woocommerce-product-gallery__wrapper{margin:0}
+ body.loja1-contasvip-theme div.product .woocommerce-product-gallery .flex-control-thumbs img{height:48px;object-fit:contain}
+ body.loja1-contasvip-theme div.product #tab-description img{display:block;max-width:min(100%,280px);max-height:180px;width:auto;height:auto;object-fit:contain;margin:14px auto}
 }

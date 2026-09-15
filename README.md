@@ -10,6 +10,10 @@ As páginas existentes renderizam seu conteúdo completo, incluindo os blocos e 
 
 Para publicar uma versão: altere Version em style.css, faça commit, crie a tag vX.Y.Z e anexe à release o ZIP com a pasta `storev1-theme/`. O workflow valida a sintaxe PHP e gera o pacote. Releases sem o ZIP esperado são ignoradas pelo atualizador.
 
+## 1.4.2
+- Banner desktop com altura adaptada à largura e altura da tela, limitada a 280 px.
+- Galeria mobile centralizada e compacta; imagens da descrição também limitadas sem distorção.
+
 ## 1.4.0
 - Vitrine fluida, detalhes e compra centralizados, quantidade com botões menos/mais respeitando limites do produto.
 - Relacionados com rolagem horizontal e controles adaptados ao espaço; avaliações ocultas por padrão sem apagar dados.
