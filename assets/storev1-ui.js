@@ -61,21 +61,4 @@
     const button = event.submitter || event.target.querySelector('.single_add_to_cart_button');
     if (button) { button.classList.add('sv1-buying'); button.textContent = 'Adicionando…'; }
   });
-  const viewKey = 'storev1-product-view';
-  const applyView = view => {
-    document.body.classList.toggle('sv1-compact-grid', view === 'grid');
-    document.querySelectorAll('[data-sv1-view]').forEach(button => {
-      const active = button.dataset.sv1View === view;
-      button.setAttribute('aria-pressed', active ? 'true' : 'false');
-    });
-  };
-  if (document.querySelector('[data-sv1-view]')) {
-    let initial = 'grid';
-    try { if (localStorage.getItem(viewKey) === 'cards') initial = 'cards'; } catch (_) {}
-    applyView(initial);
-    document.querySelectorAll('[data-sv1-view]').forEach(button => button.addEventListener('click', () => {
-      try { localStorage.setItem(viewKey, button.dataset.sv1View); } catch (_) {}
-      applyView(button.dataset.sv1View);
-    }));
-  }
 })();

@@ -17,16 +17,10 @@ add_action('after_setup_theme','storev1_setup');
 add_filter('woocommerce_show_page_title', function($show) {
     return is_shop() && !is_search() ? false : $show;
 });
-add_filter('body_class', function($classes) { $classes[] = 'sv1-compact-grid'; return $classes; });
-function storev1_view_switcher() {
-    static $rendered = false;
-    if ($rendered || (!is_front_page() && !is_shop() && !is_product_taxonomy() && !is_search())) return;
-    $rendered = true;
-    echo '<div class="sv1-view-switcher" role="group" aria-label="Visualização dos produtos">';
-    echo '<span>Visualização</span><button type="button" class="sv1-view-switch" data-sv1-view="grid" aria-pressed="true">Grade</button><button type="button" class="sv1-view-switch" data-sv1-view="cards" aria-pressed="false">Cartões</button></div>';
-}
-add_action('woocommerce_before_shop_loop', 'storev1_view_switcher', 12);
-add_action('woocommerce_shortcode_before_products_loop', 'storev1_view_switcher');
+add_filter('body_class', function($classes) {
+    if (get_theme_mod('storev1_product_layout', 'grid') === 'grid') $classes[] = 'sv1-compact-grid';
+    return $classes;
+});
 function storev1_assets(){
     wp_enqueue_style('storev1-storefront',get_template_directory_uri() . '/assets/storev1-storefront.css',[],wp_get_theme()->get('Version'));
     wp_enqueue_style('storev1-components',get_template_directory_uri() . '/assets/storev1-components.css',['storev1-storefront'],wp_get_theme()->get('Version'));
@@ -40,6 +34,9 @@ function storev1_assets(){
 }
 add_action('wp_enqueue_scripts','storev1_assets');
 add_action('customize_register', function($wp_customize) {
+    $wp_customize->add_section('storev1_catalog', ['title'=>__('Catálogo de produtos','storev1-theme'),'priority'=>30]);
+    $wp_customize->add_setting('storev1_product_layout',['default'=>'grid','sanitize_callback'=>function($value){return in_array($value,['grid','cards'],true)?$value:'grid';}]);
+    $wp_customize->add_control('storev1_product_layout',['label'=>'Layout dos produtos no celular','description'=>'Escolha Grade (duas colunas) ou Cartões (uma coluna).','section'=>'storev1_catalog','type'=>'radio','choices'=>['grid'=>'Grade','cards'=>'Cartões']]);
     $wp_customize->add_section('storev1_banner', ['title'=>__('Banners da loja','storev1-theme'),'description'=>'Carrossel no início e na loja, em desktop e celular. Envie imagens horizontais; use a mesma proporção em todas. Sem imagens próprias, mostramos duas capas demonstrativas.','priority'=>35]);
     $wp_customize->add_setting('storev1_banner_enabled',['default'=>true,'sanitize_callback'=>'rest_sanitize_boolean']);
     $wp_customize->add_control('storev1_banner_enabled',['label'=>'Exibir carrossel','section'=>'storev1_banner','type'=>'checkbox']);
