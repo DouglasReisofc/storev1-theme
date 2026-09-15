@@ -10,8 +10,8 @@
   toolbar.prepend(toggle);
   const panel = document.createElement('section'); panel.id='sv1-inline-search'; panel.className='sv1-inline-search'; panel.hidden=true; panel.dataset.endpoint=window.location.origin+'/wp-admin/admin-ajax.php'; panel.setAttribute('aria-label','Busca de produtos');
   panel.innerHTML='<div class="sv1-inline-search-head"><label class="screen-reader-text" for="sv1-live-query">Pesquisar produtos</label><input id="sv1-live-query" type="search" placeholder="O que você procura?" autocomplete="off"><button type="button" data-search-close aria-label="Fechar busca">×</button></div><p data-search-status role="status" aria-live="polite"></p><div data-search-results class="woocommerce"></div>';
-  const firstProducts = toolbar.querySelector('ul.products');
-  toolbar.insertBefore(panel, firstProducts || null);
+  const panelHost = document.querySelector('.sv1-discovery') || toolbar;
+  panelHost.insertBefore(panel, panelHost.firstChild);
   const input = panel.querySelector('input');
   const results = panel.querySelector('[data-search-results]');
   const status = panel.querySelector('[data-search-status]');
@@ -50,6 +50,8 @@
   function setOpen(open) {
     if (open && !mobileViewport.matches) return;
     panel.hidden = !open;
+    toggle.hidden = open;
+    panel.classList.toggle('is-open', open);
     toggle.setAttribute('aria-expanded', String(open));
     catalog.forEach(el => el.classList.toggle('sv1-search-hidden',open));
     if (open) { if(banner) banner.hidden = true; input.focus({preventScroll:true}); search(); }
