@@ -53,7 +53,7 @@
     toggle.hidden = open;
     toggle.setAttribute('aria-expanded', String(open));
     catalog.forEach(el => el.classList.toggle('sv1-search-hidden',open));
-    if (open) { if(banner) banner.hidden = true; panel.scrollIntoView({block:'start',behavior:'instant'}); input.focus({preventScroll:true}); search(); }
+    if (open) { if(banner) banner.hidden = true; input.focus({preventScroll:true}); search(); }
     else { controller?.abort(); sequence++; input.value = ''; if(banner) banner.hidden = false; if(mobileViewport.matches) toggle.focus({preventScroll:true}); }
   }
   toggle.addEventListener('click',()=>setOpen(panel.hidden));
