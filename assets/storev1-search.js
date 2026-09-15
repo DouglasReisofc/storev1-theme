@@ -2,6 +2,7 @@
   const resultCount = document.querySelector('.woocommerce-result-count');
   if (!resultCount) return;
   const toolbar = resultCount.parentElement;
+  const mobileViewport = matchMedia('(max-width:767px)');
   const toggle = document.createElement('button');
   toggle.type='button'; toggle.className='sv1-search-toggle'; toggle.setAttribute('aria-label','Buscar produtos'); toggle.setAttribute('aria-expanded','false'); toggle.setAttribute('aria-controls','sv1-inline-search');
   toggle.innerHTML='<svg class="sv1-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 5 5"></path></svg>';
@@ -47,19 +48,16 @@
     } finally { if (request === sequence) results.removeAttribute('aria-busy'); }
   }
   function setOpen(open) {
+    if (open && !mobileViewport.matches) return;
     panel.hidden = !open;
     toggle.setAttribute('aria-expanded', String(open));
     catalog.forEach(el => el.classList.toggle('sv1-search-hidden',open));
     if (open) { if(banner) banner.hidden = true; input.focus({preventScroll:true}); search(); }
-    else { controller?.abort(); sequence++; input.value = ''; if(banner) banner.hidden = false; toggle.focus({preventScroll:true}); }
+    else { controller?.abort(); sequence++; input.value = ''; if(banner) banner.hidden = false; if(mobileViewport.matches) toggle.focus({preventScroll:true}); }
   }
   toggle.addEventListener('click',()=>setOpen(panel.hidden));
   panel.querySelector('[data-search-close]').addEventListener('click',()=>setOpen(false));
   panel.addEventListener('keydown',event=>{if(event.key==='Escape') setOpen(false);});
   input.addEventListener('input',search);
-  document.querySelectorAll('.loja1-search .sv1-search-form').forEach(form=>{
-    const field=form.querySelector('input[type=search]');
-    field.addEventListener('input',()=>{input.value=field.value;if(panel.hidden)setOpen(true);else search();field.focus({preventScroll:true});});
-    form.addEventListener('submit',event=>{event.preventDefault();input.value=field.value;setOpen(true);});
-  });
+  mobileViewport.addEventListener('change',event=>{if(!event.matches) setOpen(false);});
 })();

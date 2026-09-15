@@ -205,3 +205,18 @@ body.loja1-contasvip-theme .sv1-notice-portal .woocommerce-error{background:#fff
 body.loja1-contasvip-theme .sv1-notice-portal .sv1-notice-close{width:46px;height:46px;min-width:46px;font-size:30px;font-weight:400;border-radius:10px;background:#f0f3ed;color:#151a12}
 body.loja1-contasvip-theme .sv1-notice-portal .sv1-notice-close:hover{background:#e2e8dc}
 body.loja1-contasvip-theme .sv1-notice-portal .sv1-toast{padding:20px 68px 20px 48px!important;min-height:70px}
+/* Desktop discovery stays in the header; the inline product canvas is mobile-only. */
+@media(min-width:768px){
+ .sv1-search-toggle,#sv1-inline-search,main .sv1-catalog-categories{display:none!important}
+ .sv1-nav-row{align-items:center;gap:20px;padding-top:10px;padding-bottom:10px}
+ .sv1-desktop-categories{flex:0 0 248px;position:relative;z-index:60}
+ .sv1-desktop-categories .sv1-catalog-categories{float:none;width:100%;margin:0}
+ .sv1-desktop-categories summary{min-height:46px;border:0;border-radius:12px;background:#83b735;color:#fff;padding:12px 16px}
+ .sv1-desktop-categories summary:hover,.sv1-desktop-categories details[open] summary{background:#709f29}
+ .sv1-desktop-categories .sv1-category-panel{top:calc(100% + 10px);width:320px;max-width:calc(100vw - 50px);border-radius:16px;box-shadow:0 14px 40px #1a2c1726}
+ .sv1-nav-row>.loja1-menu{min-width:0;flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;gap:4px}
+ .sv1-nav-row .loja1-menu a{height:auto;min-height:42px;display:flex;align-items:center;padding:10px 14px;border-radius:10px;font-size:12px;line-height:1.3;white-space:nowrap}
+ .sv1-nav-row .loja1-menu a:hover,.sv1-nav-row .loja1-menu .current-menu-item>a{background:#f0f6e8;color:#4b731b}
+ body.loja1-contasvip-theme .sv1-promo-cta{bottom:20px}
+}
+@media(min-width:768px) and (max-width:1100px){.sv1-desktop-categories{flex-basis:220px}.sv1-nav-row{gap:12px}}

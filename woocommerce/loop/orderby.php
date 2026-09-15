@@ -4,6 +4,7 @@ defined('ABSPATH') || exit;
 $terms = get_terms(['taxonomy' => 'product_cat', 'hide_empty' => true]);
 $current = is_product_category() ? get_queried_object_id() : 0;
 $label = $current ? single_term_title('', false) : __('Todas as categorias', 'storev1-theme');
+if (!empty($sv1_header) && !$current) $label = __('Todos os produtos','storev1-theme');
 $search_id = wp_unique_id('sv1-category-search-');
 ?>
 <details class="sv1-catalog-categories" data-category-picker <?php if (!empty($sv1_drawer)) echo 'open'; ?>>

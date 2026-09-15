@@ -17,11 +17,12 @@ function setup(){
     createElement(tag){const n=node();if(tag==='section')n.querySelector=s=>s==='input'?input:s==='[data-search-results]'?results:s==='[data-search-status]'?status:close;return n;}
   };
   const calls=[];
+  const viewport={matches:true,addEventListener(name,fn){this.change=fn;}};
   runInNewContext(readFileSync(require.resolve('../assets/storev1-search.js'),'utf8'),{
-    document,window:{location:{origin:'https://shop.test'}},location:{href:'https://shop.test/'},URL,AbortController,
+    document,matchMedia:()=>viewport,window:{location:{origin:'https://shop.test'}},location:{href:'https://shop.test/'},URL,AbortController,
     fetch(url,opts){return new Promise(resolve=>calls.push({url,opts,resolve}));}
   });
-  return {input,results,banner,grid,toolbar,count,close,calls};
+  return {input,results,banner,grid,toolbar,count,close,calls,viewport};
 }
 test('opening empty search hides banner immediately, places panel before grid, and closing restores both',()=>{
   const x=setup();assert.equal(x.count.removed,true);assert.equal(x.toolbar.before,x.grid);
@@ -31,4 +32,10 @@ test('opening empty search hides banner immediately, places panel before grid, a
   x.input.value='';x.input.events.input();assert.equal(x.banner.hidden,true);
   x.close.events.click();assert.equal(x.banner.hidden,false);assert.equal(x.grid.searchHidden,false);
   assert.equal(x.toolbar.panel.hidden,true);assert.equal(x.calls.at(-1).opts.signal.aborted,true);
+});
+test('desktop disables mobile canvas and breakpoint change restores the catalog',()=>{
+  const x=setup();x.toolbar.toggle.events.click();
+  x.viewport.matches=false;x.viewport.change({matches:false});
+  assert.equal(x.toolbar.panel.hidden,true);assert.equal(x.banner.hidden,false);assert.equal(x.grid.searchHidden,false);
+  x.toolbar.toggle.events.click();assert.equal(x.toolbar.panel.hidden,true);
 });

@@ -69,7 +69,7 @@ function storev1_mobile_banner() {
         if ($url || $video) $images[] = ['url'=>$url,'video'=>$video,'cta'=>get_theme_mod('storev1_banner_'.$i.'_cta','Ver produtos'),'link'=>get_theme_mod('storev1_banner_'.$i.'_link','') ?: $shop,'alt'=>get_theme_mod('storev1_banner_'.$i.'_alt','') ?: 'Destaque '.$i];
     }
     if (!$images) foreach ([1,2] as $i) $images[]=['url'=>get_template_directory_uri().'/assets/banner-demo-'.$i.'.svg','video'=>'','cta'=>$i===1?'Ver produtos':'Explorar categorias','link'=>$shop,'alt'=>$i===1?'Explore a loja. Encontre seu próximo favorito.':'Tudo em um só lugar. Conheça nosso catálogo.'];
-    echo '<section class="loja1-shell sv1-promo" data-promo-carousel aria-roledescription="carrossel" aria-label="Destaques da loja"><div class="sv1-promo-track" tabindex="0" aria-label="Banners promocionais. Use as setas para navegar.">';
+    echo '<section class="loja1-shell sv1-promo" data-promo-carousel aria-roledescription="carrossel" aria-label="Destaques da loja"><div class="sv1-promo-track" tabindex="0" aria-label="Banners promocionais. Arraste para os lados ou use as teclas de seta para navegar.">';
     foreach ($images as $i=>$slide) {
         echo '<a class="sv1-promo-slide" draggable="false" href="'.esc_url($slide['link']).'"'.($i===0?'':' hidden').'>';
         if ($slide['video']) echo '<video muted loop playsinline preload="metadata"'.($i===0?' autoplay':'').' poster="'.esc_url($slide['url']).'" aria-label="'.esc_attr($slide['alt']).'"><source src="'.esc_url($slide['video']).'">Seu navegador não suporta este vídeo.</video>';
@@ -78,6 +78,5 @@ function storev1_mobile_banner() {
         echo '</a>';
     }
     echo '</div>';
-    if (count($images)>1) { echo '<div class="sv1-promo-controls"><button type="button" data-promo-prev aria-label="Banner anterior">‹</button><button type="button" data-promo-next aria-label="Próximo banner">›</button></div>'; }
     echo '</section>';
 }

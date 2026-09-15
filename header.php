@@ -15,7 +15,7 @@
 <?php endif; ?></div>
 </div>
 <nav class="loja1-primary-nav" aria-label="Produtos e categorias"><div class="loja1-shell sv1-nav-row">
-<details class="sv1-categories"><summary><?php storev1_icon('menu'); ?> Todos os produtos <?php storev1_icon('chevron'); ?></summary><div class="sv1-category-list"><?php storev1_categories(); ?></div></details>
+<div class="sv1-desktop-categories"><?php if(class_exists('WooCommerce')) wc_get_template('loop/orderby.php',['sv1_header'=>true]); else storev1_categories(); ?></div>
 <?php wp_nav_menu(['theme_location'=>'primary','container'=>false,'menu_class'=>'loja1-menu','fallback_cb'=>false]); ?>
 </div></nav>
 </header>
