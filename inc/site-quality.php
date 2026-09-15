@@ -1,6 +1,16 @@
 <?php
 defined('ABSPATH') || exit;
 
+// Discover the default LCP banner in the head instead of waiting for body parsing.
+add_action('wp_head', function() {
+    if (!(is_front_page() || (function_exists('is_shop') && is_shop())) || !get_theme_mod('storev1_banner_enabled', true)) return;
+    for ($i = 1; $i <= 5; $i++) {
+        if (get_theme_mod('storev1_banner_'.$i, '') || get_theme_mod('storev1_banner_'.$i.'_video', 0)) return;
+    }
+    $base = get_template_directory_uri().'/assets/banners/storev1-gold-piggybank';
+    echo '<link rel="preload" as="image" href="'.esc_url($base.'-960.webp').'" imagesrcset="'.esc_attr($base.'-480.webp 480w, '.$base.'-960.webp 960w, '.$base.'-1440.webp 1440w').'" imagesizes="(max-width: 767px) 96vw, 45vw" fetchpriority="high">' . "\n";
+}, 2);
+
 // Add only missing presentation metadata; leave indexing and specialist SEO plugins in control.
 function storev1_has_seo_provider() {
     return defined('WPSEO_VERSION') || defined('RANK_MATH_VERSION') || defined('AIOSEO_VERSION') || defined('SEOPRESS_VERSION') || defined('THE_SEO_FRAMEWORK_VERSION') || !apply_filters('storev1_fallback_metadata', true);
