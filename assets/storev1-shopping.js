@@ -60,7 +60,6 @@
   document.querySelectorAll('[data-promo-carousel]').forEach(carousel => {
     const slides = [...carousel.querySelectorAll('.sv1-promo-slide')];
     const track = carousel.querySelector('.sv1-promo-track');
-    const count = carousel.querySelector('[data-promo-count]');
     let current = 0, gesture = null, dragged = false;
     const show = index => {
       current = (index + slides.length) % slides.length;
@@ -73,7 +72,6 @@
           else video.pause();
         }
       });
-      if (count) count.textContent = `${current + 1} / ${slides.length}`;
     };
     carousel.querySelector('[data-promo-prev]')?.addEventListener('click', () => show(current - 1));
     carousel.querySelector('[data-promo-next]')?.addEventListener('click', () => show(current + 1));

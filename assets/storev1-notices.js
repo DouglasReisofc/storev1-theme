@@ -19,10 +19,12 @@
     control.appendChild(button);
     notice.appendChild(control);
     const dismiss = () => {
+      if (notice._sv1Timer && typeof clearTimeout === 'function') clearTimeout(notice._sv1Timer);
       if (notice.contains(document.activeElement)) document.activeElement.blur();
       notice.remove();
     };
     button.addEventListener('click', event => { event.preventDefault(); event.stopPropagation(); dismiss(); });
+    if (typeof setTimeout === 'function') notice._sv1Timer = setTimeout(dismiss, notice.matches('.woocommerce-error') ? 9000 : 6000);
     let gesture = null;
     notice.addEventListener('pointerdown', event => {
       if (!event.isPrimary || event.button !== 0 || event.target.closest('a,button,input,select,textarea,label')) return;

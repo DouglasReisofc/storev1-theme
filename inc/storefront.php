@@ -78,6 +78,6 @@ function storev1_mobile_banner() {
         echo '</a>';
     }
     echo '</div>';
-    if (count($images)>1) { echo '<div class="sv1-promo-controls"><button type="button" data-promo-prev aria-label="Banner anterior">‹</button><span data-promo-count>1 / '.count($images).'</span><button type="button" data-promo-next aria-label="Próximo banner">›</button></div>'; }
+    if (count($images)>1) { echo '<div class="sv1-promo-controls"><button type="button" data-promo-prev aria-label="Banner anterior">‹</button><button type="button" data-promo-next aria-label="Próximo banner">›</button></div>'; }
     echo '</section>';
 }

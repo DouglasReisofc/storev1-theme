@@ -1,11 +1,11 @@
 /* StoreV1 components, independent of Storefront and payment plugins. */
 /* Inline live discovery; its own bounded scroll keeps the search field within reach. */
-.sv1-search-toggle{display:inline-grid;place-items:center;width:40px;height:40px;padding:0;margin:0 0 16px 0;border:1px solid #e0e8d8;border-radius:50%;background:#f5f8f0;color:#395b26;vertical-align:middle}
+.sv1-search-toggle{display:inline-grid;place-items:center;float:right;width:40px;height:40px;padding:0;margin:0 0 16px;border:1px solid #e0e8d8;border-radius:50%;background:#f5f8f0;color:#395b26;vertical-align:middle}
 .sv1-inline-search{clear:both;margin:0 0 24px;padding:16px;border:1px solid #e4e9df;border-radius:20px;background:#fafcf8;max-height:70svh;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin}
 .sv1-inline-search[hidden],.sv1-search-hidden,.sv1-promo[hidden]{display:none!important}
 .sv1-inline-search-head{position:sticky;top:-16px;z-index:3;display:flex;gap:8px;padding:12px 0;background:#fafcf8}
 .sv1-inline-search-head input{min-width:0;flex:1;padding:12px 16px;border:1px solid #ccd8c1;background:white;font-size:16px}
-.sv1-inline-search-head button{display:grid;place-items:center;flex:0 0 44px;padding:0;border:0;border-radius:50%;background:#eaf0e3;color:#34452d}
+.sv1-inline-search-head button{display:grid;place-items:center;flex:0 0 46px;width:46px;height:46px;padding:0;border:0;border-radius:10px;background:#eaf0e3;color:#34452d;font-size:26px;line-height:1}
 .sv1-inline-search [data-search-status]{font-size:13px;color:#57634e;margin:0 0 16px}
 body.loja1-contasvip-theme .sv1-inline-search ul.products{margin-bottom:0}
 body.loja1-contasvip-theme div.product .sku_wrapper,body.loja1-contasvip-theme .woocommerce-product-gallery__trigger{display:none!important}
@@ -195,5 +195,12 @@ body.loja1-contasvip-theme .sv1-promo-cta{position:absolute;right:24px;bottom:70
  body.loja1-contasvip-theme div.product .woocommerce-product-gallery__image img:not(.zoomImg){width:100%;height:160px;object-fit:contain}
  body.loja1-contasvip-theme div.product .woocommerce-product-gallery__wrapper{margin:0}
  body.loja1-contasvip-theme div.product .woocommerce-product-gallery .flex-control-thumbs img{height:48px;object-fit:contain}
- body.loja1-contasvip-theme div.product #tab-description img{display:block;max-width:min(100%,280px);max-height:180px;width:auto;height:auto;object-fit:contain;margin:14px auto}
+body.loja1-contasvip-theme div.product #tab-description img{display:block;max-width:min(100%,280px);max-height:180px;width:auto;height:auto;object-fit:contain;margin:14px auto}
 }
+/* High-contrast global notices with a predictable, non-blocking lifetime. */
+body.loja1-contasvip-theme .sv1-notice-portal .sv1-toast,
+body.loja1-contasvip-theme .sv1-notice-portal .woocommerce-message,
+body.loja1-contasvip-theme .sv1-notice-portal .woocommerce-info,
+body.loja1-contasvip-theme .sv1-notice-portal .woocommerce-error{background:#fff!important;color:#111!important;font-weight:700!important;border:1px solid #e4e7e1!important;box-shadow:0 14px 38px rgba(20,28,18,.18)!important}
+body.loja1-contasvip-theme .sv1-notice-portal .sv1-notice-close{width:46px;height:46px;min-width:46px;font-size:30px;font-weight:400;border-radius:10px;background:#f0f3ed;color:#151a12}
+body.loja1-contasvip-theme .sv1-notice-portal .sv1-notice-close:hover{background:#e2e8dc}
