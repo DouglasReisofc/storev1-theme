@@ -18,7 +18,7 @@ function setup() {
     querySelectorAll:()=>options};
   runInNewContext(readFileSync(require.resolve('../assets/storev1-ui.js'),'utf8'),{document:{
     getElementById:()=>null,addEventListener(){},
-    querySelectorAll:selector=>selector==='[data-sv1-open]'?[]:[picker]
+    querySelectorAll:selector=>selector==='[data-sv1-open]'||selector==='[data-sv1-carousel]'?[]:[picker]
   }});
   return {search,status,options,handlers,picker,pickerHandlers,summary};
 }

@@ -14,7 +14,7 @@
 <a class="loja1-cart-link" href="<?php echo esc_url(wc_get_cart_url()); ?>" aria-label="Abrir carrinho"><?php storev1_icon('cart'); ?><span class="loja1-cart-copy"><strong>Carrinho</strong><small>Ver meus produtos</small></span><?php storev1_cart_count(); ?></a>
 <?php endif; ?></div>
 </div>
-<div class="loja1-shell loja1-mobile-search"><?php storev1_search(); ?></div>
+<div class="loja1-shell loja1-mobile-banner-slot"><?php storev1_mobile_banner(); ?></div>
 <nav class="loja1-primary-nav" aria-label="Produtos e categorias"><div class="loja1-shell sv1-nav-row">
 <details class="sv1-categories"><summary><?php storev1_icon('menu'); ?> Todos os produtos <?php storev1_icon('chevron'); ?></summary><div class="sv1-category-list"><?php storev1_categories(); ?></div></details>
 <?php wp_nav_menu(['theme_location'=>'primary','container'=>false,'menu_class'=>'loja1-menu','fallback_cb'=>false]); ?>
@@ -25,4 +25,5 @@
 <div class="sv1-drawer-scroll"><?php storev1_search(); ?><details open class="sv1-mobile-categories"><summary>Produtos e categorias</summary><?php storev1_categories(); ?></details>
 <?php if (class_exists('WooCommerce')) : ?><a class="sv1-drawer-account" href="<?php echo esc_url(wc_get_page_permalink('myaccount')); ?>">Minha conta</a><?php endif; ?>
 </div></dialog>
+<div id="sv1-notice-portal" class="sv1-notice-portal" aria-live="polite" aria-atomic="true"></div>
 <main id="main-content" class="site-content loja1-shell">

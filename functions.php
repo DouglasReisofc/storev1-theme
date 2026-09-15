@@ -23,6 +23,14 @@ function storev1_assets(){
     if (is_singular() && comments_open() && get_option('thread_comments')) wp_enqueue_script('comment-reply');
 }
 add_action('wp_enqueue_scripts','storev1_assets');
+add_action('customize_register', function($wp_customize) {
+    $wp_customize->add_section('storev1_banner', ['title'=>__('Banner mobile','storev1-theme'),'priority'=>35]);
+    for ($i=1; $i<=3; $i++) {
+        $setting = 'storev1_banner_' . $i;
+        $wp_customize->add_setting($setting, ['default'=>'','sanitize_callback'=>'esc_url_raw']);
+        $wp_customize->add_control(new WP_Customize_Image_Control($wp_customize, $setting, ['label'=>sprintf(__('Imagem %d','storev1-theme'),$i),'section'=>'storev1_banner']));
+    }
+});
 add_filter('woocommerce_product_add_to_cart_text',function($text,$product){return $product->is_type('simple') && $product->is_purchasable() && $product->is_in_stock() ? __('Comprar','storev1-theme') : $text;},10,2);
 add_filter('woocommerce_product_single_add_to_cart_text',function(){return __('Comprar agora','storev1-theme');});
 require_once get_template_directory() . '/inc/storefront.php';

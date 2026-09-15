@@ -10,6 +10,11 @@ As páginas existentes renderizam seu conteúdo completo, incluindo os blocos e 
 
 Para publicar uma versão: altere Version em style.css, faça commit, crie a tag vX.Y.Z e anexe à release o ZIP com a pasta `storev1-theme/`. O workflow valida a sintaxe PHP e gera o pacote. Releases sem o ZIP esperado são ignoradas pelo atualizador.
 
+## 1.3.0
+- Slot mobile de banner configurável em Aparência > Personalizar > Banner mobile, com até três imagens e carrossel acessível.
+- Feedback visual de Adicionando/Adicionado nos botões de compra.
+- Avisos WooCommerce movidos para overlay global no topo; remoção do carrinho usa ícone de lixeira.
+
 ## 1.2.0
 - Cards com nome, preço e botão Comprar centralizados; botões e campos arredondados.
 - A ordenação da vitrine foi substituída por categorias com busca instantânea dentro do dropdown, sem diferenciar acentos ou maiúsculas.

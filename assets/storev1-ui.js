@@ -49,4 +49,16 @@
     });
     picker.addEventListener('toggle', () => { if (picker.open) search.focus({preventScroll:true}); });
   });
+  document.querySelectorAll('[data-sv1-carousel]').forEach(carousel => {
+    const slides=[...carousel.querySelectorAll('.sv1-carousel-slide')], dots=[...carousel.querySelectorAll('[data-carousel-dot]')]; let current=0, timer;
+    if(slides.length<2) return;
+    const show=index=>{current=(index+slides.length)%slides.length;slides.forEach((s,i)=>{s.classList.toggle('is-active',i===current);s.tabIndex=i===current?0:-1});dots.forEach((d,i)=>d.setAttribute('aria-current',i===current?'true':'false'));};
+    const restart=()=>{clearInterval(timer);timer=setInterval(()=>show(current+1),6000)};
+    carousel.querySelector('[data-carousel-prev]')?.addEventListener('click',()=>{show(current-1);restart()}); carousel.querySelector('[data-carousel-next]')?.addEventListener('click',()=>{show(current+1);restart()}); dots.forEach((d,i)=>d.addEventListener('click',()=>{show(i);restart()})); restart();
+  });
+  const portal=document.getElementById('sv1-notice-portal');
+  const moveNotices=()=>{ if(!portal) return; document.querySelectorAll('.woocommerce-message,.woocommerce-info,.woocommerce-error,.woocommerce-notices-wrapper').forEach(node=>{if(!node.closest('#sv1-notice-portal')) portal.appendChild(node)}); };
+  moveNotices(); if(portal) new MutationObserver(moveNotices).observe(document.body,{childList:true,subtree:true});
+  document.addEventListener('click',event=>{const button=event.target.closest('.add_to_cart_button,.ajax_add_to_cart,.single_add_to_cart_button'); if(!button||button.dataset.sv1Busy) return; button.dataset.sv1Busy='1'; button.classList.add('sv1-buying'); const original=button.textContent.trim(); button.textContent='Adicionando…'; setTimeout(()=>{button.classList.remove('sv1-buying');button.classList.add('sv1-added');button.textContent='Adicionado ✓';setTimeout(()=>{button.classList.remove('sv1-added');button.textContent=original;delete button.dataset.sv1Busy},1800)},650)});
+  document.addEventListener('click',event=>{const remove=event.target.closest('[aria-label*="Remover"],.remove,.remove_from_cart_button'); if(remove&&!remove.querySelector('.sv1-trash-icon')) {remove.textContent='';remove.innerHTML='<svg class="sv1-trash-icon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M9 7V4h6v3m-9 0 1 13h8l1-13"/></svg><span class="screen-reader-text">Remover produto</span>';}});
 })();

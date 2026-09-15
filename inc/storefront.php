@@ -11,6 +11,7 @@ function storev1_icon($name) {
         'menu'=>'<path d="M3 6h18M3 12h18M3 18h18"/>',
         'close'=>'<path d="m6 6 12 12M18 6 6 18"/>',
         'chevron'=>'<path d="m6 9 6 6 6-6"/>',
+        'trash'=>'<path d="M4 7h16M10 11v6M14 11v6M9 7V4h6v3m-9 0 1 13h8l1-13"/>',
     ];
     if (!isset($paths[$name])) return;
     echo '<svg class="sv1-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' . $paths[$name] . '</svg>';
@@ -55,3 +56,14 @@ function storev1_cart_count() {
 add_filter('woocommerce_add_to_cart_fragments', function($fragments) {
     ob_start(); storev1_cart_count(); $fragments['span.sv1-cart-count'] = ob_get_clean(); return $fragments;
 });
+
+function storev1_mobile_banner() {
+    $images = [];
+    for ($i=1; $i<=3; $i++) { $url = esc_url(get_theme_mod('storev1_banner_'.$i, '')); if ($url) $images[] = $url; }
+    if (!$images) return;
+    echo '<section class="sv1-mobile-banner" data-sv1-carousel aria-label="Destaques da loja"><div class="sv1-carousel-track">';
+    foreach ($images as $i=>$url) echo '<a class="sv1-carousel-slide'.($i===0?' is-active':''). '" href="'.esc_url(wc_get_page_permalink('shop')).'"'.($i===0?'':' tabindex="-1"').' style="background-image:url('.esc_url($url).')"><span class="screen-reader-text">Destaque '.($i+1).'</span></a>';
+    echo '</div>';
+    if (count($images)>1) { echo '<button type="button" class="sv1-carousel-prev" data-carousel-prev aria-label="Imagem anterior">‹</button><button type="button" class="sv1-carousel-next" data-carousel-next aria-label="Próxima imagem">›</button><div class="sv1-carousel-dots">'; foreach ($images as $i=>$url) echo '<button type="button" data-carousel-dot="'.absint($i).'" aria-label="Ir para imagem '.($i+1).'"'.($i===0?' aria-current="true"':'').'></button>'; echo '</div>'; }
+    echo '</section>';
+}
