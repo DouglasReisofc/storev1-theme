@@ -1,4 +1,45 @@
 <?php
-if (! defined('ABSPATH')) exit;
-final class StoreV1_Updater { const API='https://api.github.com/repos/DouglasReisofc/storev1-theme/releases/latest'; const SLUG='storev1-theme'; public static function boot(){ add_filter('pre_set_site_transient_update_themes',[__CLASS__,'check']); add_filter('themes_api_result',[__CLASS__,'info'],10,3); } private static function release(){ $r=wp_remote_get(self::API,['timeout'=>8,'headers'=>['Accept'=>'application/vnd.github+json','User-Agent'=>'StoreV1-Theme-Updater']]); if(is_wp_error($r)||wp_remote_retrieve_response_code($r)!==200)return null; return json_decode(wp_remote_retrieve_body($r),true); } private static function package($r){ if(!empty($r['assets'])&&is_array($r['assets']))foreach($r['assets'] as $asset)if(!empty($asset['name'])&&preg_match('/^storev1-theme-[\d.]+\.zip$/',$asset['name'])&&!empty($asset['browser_download_url']))return $asset['browser_download_url']; return ''; } public static function check($t){ if(!is_object($t))$t=new stdClass(); $r=self::release(); $theme=wp_get_theme(self::SLUG); if(!$r||empty($r['tag_name'])||!$theme->exists())return $t; $v=ltrim($r['tag_name'],'v'); $zip=self::package($r); if($zip&&version_compare($v,$theme->get('Version'),'>'))$t->response[self::SLUG]=['theme'=>self::SLUG,'new_version'=>$v,'url'=>'https://github.com/DouglasReisofc/storev1-theme','package'=>$zip]; return $t; } public static function info($res,$action,$args){ if($action!=='theme_information'||empty($args->slug)||$args->slug!==self::SLUG)return $res; $r=self::release(); $zip=$r?self::package($r):''; if(!$r||!$zip)return $res; return (object)['name'=>'StoreV1 Theme','slug'=>self::SLUG,'version'=>ltrim($r['tag_name'],'v'),'homepage'=>'https://github.com/DouglasReisofc/storev1-theme','download_link'=>$zip,'sections'=>['description'=>'Tema responsivo para WooCommerce.']]; } }
+defined('ABSPATH') || exit;
+
+final class StoreV1_Updater {
+    const REPO = 'https://github.com/DouglasReisofc/storev1-theme';
+    const API = 'https://api.github.com/repos/DouglasReisofc/storev1-theme/releases/latest';
+    const SLUG = 'storev1-theme';
+
+    public static function boot() {
+        add_filter('update_themes_github.com', [__CLASS__, 'check'], 10, 4);
+    }
+
+    public static function check($update, $theme_data, $stylesheet, $locales) {
+        if (self::SLUG !== $stylesheet) return $update;
+        $release = get_transient('storev1_latest_release');
+        $force = is_admin() && current_user_can('update_themes') && isset($_GET['force-check']);
+        if (false === $release || $force) {
+            $response = wp_remote_get(self::API, [
+                'timeout' => 10,
+                'headers' => ['Accept'=>'application/vnd.github+json','User-Agent'=>'StoreV1-Theme-Updater'],
+            ]);
+            if (is_wp_error($response) || 200 !== wp_remote_retrieve_response_code($response)) return $update;
+            $release = json_decode(wp_remote_retrieve_body($response), true);
+            if (!is_array($release)) return $update;
+            set_transient('storev1_latest_release', $release, HOUR_IN_SECONDS);
+        }
+        if (empty($release['tag_name']) || !empty($release['draft']) || !empty($release['prerelease'])) return $update;
+        $version = ltrim($release['tag_name'], 'v');
+        if (!preg_match('/^\d+\.\d+\.\d+$/', $version)) return $update;
+        foreach (isset($release['assets']) && is_array($release['assets']) ? $release['assets'] : [] as $asset) {
+            $expected = self::REPO . '/releases/download/v' . $version . '/storev1-theme-' . $version . '.zip';
+            if (isset($asset['name'], $asset['browser_download_url']) &&
+                'storev1-theme-' . $version . '.zip' === $asset['name'] &&
+                $expected === $asset['browser_download_url']) {
+                return [
+                    'id'=>self::REPO, 'theme'=>self::SLUG, 'version'=>$version,
+                    'url'=>self::REPO . '/releases/tag/v' . $version,
+                    'package'=>$expected, 'requires'=>'6.1', 'requires_php'=>'7.4',
+                ];
+            }
+        }
+        return $update;
+    }
+}
 StoreV1_Updater::boot();

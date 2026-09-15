@@ -1,3 +1,16 @@
 # StoreV1 Theme
 
 Tema WordPress leve e responsivo para WooCommerce. As atualizações são verificadas automaticamente no GitHub Releases, sem chave no cliente.
+
+Instale o arquivo `storev1-theme-VERSAO.zip` anexado à release em Aparência > Temas > Adicionar tema > Enviar tema. A pasta instalada deve ser `storev1-theme`.
+
+Em Aparência > Temas > Informações do tema, habilite as atualizações automáticas se desejar instalar novas versões em segundo plano. A execução depende do agendamento do WordPress. A verificação usa o endpoint público do GitHub e está sujeita aos limites da API. O atualizador é carregado quando o tema ou um tema filho dele está ativo.
+
+As páginas existentes renderizam seu conteúdo completo, incluindo os blocos e shortcodes de carrinho, checkout e conta. Uma página inicial sem conteúdo recebe uma vitrine com os últimos produtos publicados. Nenhum produto, pedido ou configuração de pagamento é criado pelo tema.
+
+Para publicar uma versão: altere Version em style.css, faça commit, crie a tag vX.Y.Z e anexe à release o ZIP com a pasta `storev1-theme/`. O workflow valida a sintaxe PHP e gera o pacote. Releases sem o ZIP esperado são ignoradas pelo atualizador.
+
+## 1.0.2
+- Templates de páginas, posts, produto e vitrine inicial.
+- Navegação para conta e carrinho; ajustes de layout e acessibilidade.
+- Integração com o mecanismo nativo de atualizações de temas do WordPress 6.1+.
