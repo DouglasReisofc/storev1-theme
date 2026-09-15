@@ -35,6 +35,31 @@
   new MutationObserver(quantities).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['disabled','min','max','readonly']});
   document.addEventListener('input',e=>{if(e.target.matches('.quantity input.qty')) quantities();});
 
+  // Remove cart items in place so the cart stays open for consecutive deletions.
+  document.addEventListener('click', event => {
+    const link = event.target.closest('a.remove, a.remove_from_cart_button');
+    if (!link || !document.querySelector('.woocommerce-cart-form') || !link.href) return;
+    event.preventDefault();
+    event.stopPropagation();
+    if (link.dataset.sv1Removing) return;
+    link.dataset.sv1Removing = '1';
+    link.setAttribute('aria-busy', 'true');
+    fetch(link.href, {credentials:'same-origin', headers:{'X-Requested-With':'XMLHttpRequest'}})
+      .then(response => response.ok ? response.text() : Promise.reject(new Error('cart update failed')))
+      .then(html => {
+        const parsed = new DOMParser().parseFromString(html, 'text/html');
+        const currentForm = document.querySelector('.woocommerce-cart-form');
+        const nextForm = parsed.querySelector('.woocommerce-cart-form');
+        if (currentForm && nextForm) currentForm.replaceWith(nextForm);
+        const currentTotals = document.querySelector('.cart_totals');
+        const nextTotals = parsed.querySelector('.cart_totals');
+        if (currentTotals && nextTotals) currentTotals.replaceWith(nextTotals);
+        document.body.dispatchEvent(new CustomEvent('updated_wc_div'));
+        if (window.jQuery) window.jQuery(document.body).trigger('wc_fragment_refresh');
+      })
+      .catch(() => { window.location.assign(link.href); });
+  }, true);
+
   document.querySelectorAll('.related.products').forEach(section => {
     const track = section.querySelector('ul.products'); if(!track) return;
     section.classList.add('sv1-related'); track.tabIndex=0; track.setAttribute('aria-label','Produtos relacionados — role para ver mais');

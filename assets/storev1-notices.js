@@ -49,12 +49,17 @@
     notice.addEventListener('pointercancel', reset);
     notice.addEventListener('lostpointercapture', reset);
   }
+  function isCartRemovalNotice(notice) {
+    const text = (notice.textContent || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    return /removid|removed|excluid|exclu[ií]do/.test(text) && /carrinho|produto|item/.test(text);
+  }
   function sync() {
     // Keep AJAX notice containers in place; move only the individual messages.
     const dialogs = [...document.querySelectorAll('dialog[open]')];
     const host = dialogs[dialogs.length - 1] || document.body;
     if (portal.parentElement !== host) host.appendChild(portal);
     document.querySelectorAll(selector).forEach(notice => {
+      if (isCartRemovalNotice(notice)) { notice.remove(); return; }
       decorate(notice);
       if (!portal.contains(notice)) portal.appendChild(notice);
     });
