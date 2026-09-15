@@ -23,7 +23,8 @@ function storev1_brand($extra = '') {
     if ($logo) {
         echo wp_get_attachment_image($logo, 'full', false, ['class'=>'sv1-brand-image','alt'=>$name]);
     } else {
-        echo '<span class="storezap-mark" aria-hidden="true"><span>' . esc_html(mb_substr($name,0,1)) . '</span><i>ϟ</i></span>';
+        preg_match('/^./us', $name, $initial);
+        echo '<span class="storezap-mark" aria-hidden="true"><span>' . esc_html($initial[0] ?? 'S') . '</span><i>ϟ</i></span>';
         echo '<span class="storezap-wordmark">';
         if (strtolower($name) === 'storezap') echo '<strong>STORE</strong><b>ZAP</b>';
         else echo '<strong>' . esc_html($name) . '</strong>';

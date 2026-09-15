@@ -29,6 +29,7 @@ body.loja1-contasvip-theme ul.products{clear:both}
 body.loja1-contasvip-theme ul.products li.product{border-radius:0;box-shadow:none}
 body.loja1-contasvip-theme ul.products li.product img{height:auto;object-fit:contain;background:#fff;border:1px solid #f1f1f1}
 body.loja1-contasvip-theme ul.products li.product .woocommerce-loop-product__title{padding-top:0!important}
+body.loja1-contasvip-theme .woocommerce ul.products li.product .button,body.loja1-contasvip-theme.woocommerce ul.products li.product .button{display:inline-flex;align-items:center;justify-content:center;line-height:1.2}
 body.loja1-contasvip-theme .onsale{min-height:0;right:auto;line-height:1.5}
 body.loja1-contasvip-theme div.product .woocommerce-tabs{min-width:0}
 .loja1-footer-grid{margin-top:0}.loja1-footer a.loja1-logo{display:flex}
