@@ -1,0 +1,61 @@
+(() => {
+  const portal = document.getElementById('sv1-notice-portal');
+  if (!portal) return;
+  const selector = '.woocommerce-message,.woocommerce-info,.woocommerce-error';
+  const initialized = new WeakSet();
+  function decorate(notice) {
+    if (initialized.has(notice)) return;
+    initialized.add(notice);
+    notice.classList.add('sv1-toast');
+    // A list must keep valid list-item children; controls live in their own item.
+    const control = document.createElement(notice.matches('ul,ol') ? 'li' : 'span');
+    control.className = 'sv1-toast-control';
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'sv1-notice-close';
+    button.setAttribute('aria-label', 'Fechar aviso');
+    button.textContent = '×';
+    control.appendChild(button);
+    notice.appendChild(control);
+    const dismiss = () => {
+      if (notice.contains(document.activeElement)) document.activeElement.blur();
+      notice.remove();
+    };
+    button.addEventListener('click', event => { event.preventDefault(); event.stopPropagation(); dismiss(); });
+    let gesture = null;
+    notice.addEventListener('pointerdown', event => {
+      if (!event.isPrimary || event.button !== 0 || event.target.closest('a,button,input,select,textarea,label')) return;
+      gesture = {id:event.pointerId, x:event.clientX, y:event.clientY, dx:0};
+      notice.setPointerCapture(event.pointerId);
+    });
+    notice.addEventListener('pointermove', event => {
+      if (!gesture || event.pointerId !== gesture.id) return;
+      gesture.dx = event.clientX - gesture.x;
+      if (Math.abs(gesture.dx) > Math.abs(event.clientY - gesture.y)) {
+        notice.style.transform = `translateX(${gesture.dx}px)`;
+        notice.style.opacity = String(Math.max(.3, 1 - Math.abs(gesture.dx) / notice.offsetWidth));
+      }
+    });
+    const reset = () => { gesture = null; notice.style.transform = ''; notice.style.opacity = ''; };
+    notice.addEventListener('pointerup', event => {
+      if (!gesture || event.pointerId !== gesture.id) return;
+      const dx = event.clientX - gesture.x, dy = event.clientY - gesture.y;
+      if (Math.abs(dx) >= 60 && Math.abs(dx) > Math.abs(dy)) dismiss();
+      reset();
+    });
+    notice.addEventListener('pointercancel', reset);
+    notice.addEventListener('lostpointercapture', reset);
+  }
+  function sync() {
+    // Keep AJAX notice containers in place; move only the individual messages.
+    const dialogs = [...document.querySelectorAll('dialog[open]')];
+    const host = dialogs[dialogs.length - 1] || document.body;
+    if (portal.parentElement !== host) host.appendChild(portal);
+    document.querySelectorAll(selector).forEach(notice => {
+      decorate(notice);
+      if (!portal.contains(notice)) portal.appendChild(notice);
+    });
+  }
+  sync();
+  new MutationObserver(sync).observe(document.body, {childList:true, subtree:true, attributes:true, attributeFilter:['open']});
+})();
