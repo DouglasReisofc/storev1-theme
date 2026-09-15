@@ -220,3 +220,53 @@ body.loja1-contasvip-theme .sv1-notice-portal .sv1-toast{padding:20px 68px 20px 
  body.loja1-contasvip-theme .sv1-promo-cta{bottom:20px}
 }
 @media(min-width:768px) and (max-width:1100px){.sv1-desktop-categories{flex-basis:220px}.sv1-nav-row{gap:12px}}
+/* Compact discovery: categories on the left, promotional media on the right. */
+.sv1-discovery{min-width:0}
+.sv1-discovery>.sv1-promo{width:100%;max-width:none}
+.sv1-category-rail{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
+.sv1-category-rail>.loja1-menu{flex:1;min-width:0;flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;user-select:none;cursor:grab}
+.sv1-category-rail>.loja1-menu::-webkit-scrollbar{display:none}
+.sv1-category-rail>.loja1-menu.is-dragging{cursor:grabbing}
+.sv1-category-rail .loja1-menu>li{flex:0 0 auto}
+.sv1-category-rail>.loja1-menu:focus-visible{outline:2px solid #709f29;outline-offset:3px;border-radius:12px}
+body.loja1-contasvip-theme .sv1-rail-arrow{flex:0 0 34px;min-width:34px;width:34px;height:34px;min-height:34px;display:grid;place-items:center;padding:0;border:1px solid #e1e8d9;border-radius:50%;background:#f5f8ef;color:#4b731b;font-size:25px;line-height:1;box-shadow:none}
+body.loja1-contasvip-theme .sv1-rail-arrow[hidden]{display:none}
+body.loja1-contasvip-theme .sv1-rail-arrow:disabled{opacity:.3;cursor:default}
+body.loja1-contasvip-theme .sv1-rail-arrow:not(:disabled):hover{background:#e8f1dc}
+@media(min-width:768px){
+ .sv1-discovery{padding-top:18px;padding-bottom:18px}
+ .sv1-discovery-with-promo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.85fr);align-items:center;gap:28px}
+ .sv1-discovery>.loja1-primary-nav{min-width:0;border:0;overflow:visible;max-height:none}
+ .sv1-discovery .sv1-nav-row{padding:0;min-width:0}
+ .sv1-discovery-with-promo .sv1-nav-row{flex-direction:column;align-items:stretch;gap:20px}
+ .sv1-discovery-with-promo .sv1-category-rail{width:100%;max-width:560px}
+ .sv1-discovery-with-promo .sv1-desktop-categories{flex:0 0 auto;width:248px;max-width:100%}
+ .sv1-discovery .sv1-category-rail .loja1-menu a{white-space:nowrap;padding:10px 16px;min-height:44px}
+ .sv1-discovery-with-promo>.sv1-promo{margin:0;border-radius:16px;max-width:680px;justify-self:end}
+ .sv1-discovery-with-promo .sv1-promo-track{height:192px}
+ .sv1-discovery-with-promo .sv1-promo-slide img,.sv1-discovery-with-promo .sv1-promo-slide video{height:148px;object-fit:contain}
+ body.loja1-contasvip-theme .sv1-discovery .sv1-promo-cta{bottom:7px;right:12px;min-height:32px;padding:5px 12px;font-size:12px;gap:8px}
+}
+@media(min-width:768px) and (max-width:1100px){
+ .sv1-discovery-with-promo{gap:20px;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+ .sv1-discovery-with-promo .sv1-promo-track{height:168px}
+ .sv1-discovery-with-promo .sv1-promo-slide img,.sv1-discovery-with-promo .sv1-promo-slide video{height:124px}
+}
+/* Keep the category rail beside the green trigger, with the banner aligned below it. */
+@media(min-width:768px){
+ .sv1-discovery{display:block;padding-top:14px;padding-bottom:18px}
+ .sv1-discovery-with-promo{display:block}
+ .sv1-discovery>.loja1-primary-nav{width:100%;border:0;overflow:visible;max-height:none}
+ .sv1-discovery .sv1-nav-row{display:flex;flex-direction:row;align-items:center;gap:18px;padding:0;min-width:0}
+ .sv1-discovery .sv1-desktop-categories{flex:0 0 248px;width:248px;max-width:none}
+ .sv1-discovery .sv1-category-rail{display:flex;align-items:center;flex:1;width:auto;max-width:none;min-width:0}
+ .sv1-discovery .sv1-category-rail>.loja1-menu{width:100%}
+ .sv1-discovery-with-promo>.sv1-promo{width:100%;max-width:none;margin:18px auto 0;border-radius:16px}
+ .sv1-discovery-with-promo .sv1-promo-track{height:clamp(200px,min(20vw,32svh),280px)}
+ .sv1-discovery-with-promo .sv1-promo-slide img,.sv1-discovery-with-promo .sv1-promo-slide video{height:100%;object-fit:contain}
+ .sv1-discovery .sv1-desktop-categories .sv1-category-panel{left:0;right:auto}
+}
+@media(min-width:768px) and (max-width:1100px){
+ .sv1-discovery .sv1-desktop-categories{flex-basis:220px;width:220px}
+ .sv1-discovery .sv1-nav-row{gap:12px}
+}
