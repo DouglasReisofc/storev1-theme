@@ -5,10 +5,12 @@
   const toggle = document.createElement('button');
   toggle.type='button'; toggle.className='sv1-search-toggle'; toggle.setAttribute('aria-label','Buscar produtos'); toggle.setAttribute('aria-expanded','false'); toggle.setAttribute('aria-controls','sv1-inline-search');
   toggle.innerHTML='<svg class="sv1-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 5 5"></path></svg>';
-  resultCount.after(toggle);
+  resultCount.remove();
+  toolbar.prepend(toggle);
   const panel = document.createElement('section'); panel.id='sv1-inline-search'; panel.className='sv1-inline-search'; panel.hidden=true; panel.dataset.endpoint=window.location.origin+'/wp-admin/admin-ajax.php'; panel.setAttribute('aria-label','Busca de produtos');
   panel.innerHTML='<div class="sv1-inline-search-head"><label class="screen-reader-text" for="sv1-live-query">Pesquisar produtos</label><input id="sv1-live-query" type="search" placeholder="O que você procura?" autocomplete="off"><button type="button" data-search-close aria-label="Fechar busca">×</button></div><p data-search-status role="status" aria-live="polite"></p><div data-search-results class="woocommerce"></div>';
-  toolbar.after(panel);
+  const firstProducts = toolbar.querySelector('ul.products');
+  toolbar.insertBefore(panel, firstProducts || null);
   const input = panel.querySelector('input');
   const results = panel.querySelector('[data-search-results]');
   const status = panel.querySelector('[data-search-status]');
