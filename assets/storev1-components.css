@@ -75,7 +75,7 @@ body.loja1-contasvip-theme ul.products li.product{text-align:center;border-radiu
 body.loja1-contasvip-theme ul.products li.product .price,body.loja1-contasvip-theme ul.products li.product .woocommerce-loop-product__title{text-align:center}
 body.loja1-contasvip-theme ul.products li.product .star-rating{align-self:center;margin-left:auto;margin-right:auto}
 body.loja1-contasvip-theme ul.products li.product .button{align-self:center!important;min-width:140px;max-width:calc(100% - 32px);margin:auto 16px 0!important;border-radius:999px!important;min-height:44px}
-body.loja1-contasvip-theme .button,body.loja1-contasvip-theme .wp-element-button{border-radius:999px}
+body.loja1-contasvip-theme .site-content .button,body.loja1-contasvip-theme .site-content .wp-element-button{border-radius:999px}
 body.loja1-contasvip-theme input.input-text,body.loja1-contasvip-theme .quantity .qty,body.loja1-contasvip-theme select,body.loja1-contasvip-theme textarea,body.loja1-contasvip-theme .select2-container .select2-selection,body.loja1-contasvip-theme input[type=text],body.loja1-contasvip-theme input[type=email],body.loja1-contasvip-theme input[type=password],body.loja1-contasvip-theme input[type=tel],body.loja1-contasvip-theme input[type=search]{border-radius:12px;border-width:1px}
 body.loja1-contasvip-theme .loja1-search input,body.loja1-contasvip-theme .loja1-mobile-search input{border-radius:999px}
 .loja1-search button,.loja1-mobile-search button{border-radius:50%}
