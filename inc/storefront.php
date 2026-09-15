@@ -73,7 +73,7 @@ function storev1_mobile_banner() {
         $images[]=['url'=>get_template_directory_uri().'/assets/banners/storev1-gold-payment.png','video'=>'','cta'=>'Pagar com segurança','link'=>$shop,'alt'=>'Pagamentos automáticos e seguros','headline'=>'Pagamentos','highlight'=>'automáticos e seguros.'];
         $images[]=['url'=>get_template_directory_uri().'/assets/banners/storev1-gold-support.png','video'=>'','cta'=>'Falar com suporte','link'=>$shop,'alt'=>'Suporte quando precisar','headline'=>'Receba suporte','highlight'=>'quando precisar.'];
     }
-    echo '<section class="loja1-shell sv1-promo" data-promo-carousel aria-roledescription="carrossel" aria-label="Destaques da loja"><div class="sv1-promo-track" tabindex="0" aria-label="Banners promocionais. Arraste para os lados ou use as teclas de seta para navegar.">';
+    echo '<section class="loja1-shell sv1-promo" data-promo-carousel aria-roledescription="carrossel" aria-label="Destaques da loja"><div class="sv1-promo-progress" aria-hidden="true"><span></span></div><div class="sv1-promo-track" tabindex="0" aria-label="Banners promocionais. Arraste para os lados ou use as teclas de seta para navegar.">';
     foreach ($images as $i=>$slide) {
         echo '<a class="sv1-promo-slide'.(!empty($slide['headline'])?' sv1-gold-slide':'').'" draggable="false" href="'.esc_url($slide['link']).'"'.($i===0?'':' hidden').'>';
         if ($slide['video']) echo '<video muted loop playsinline preload="metadata"'.($i===0?' autoplay':'').' poster="'.esc_url($slide['url']).'" aria-label="'.esc_attr($slide['alt']).'"><source src="'.esc_url($slide['video']).'">Seu navegador não suporta este vídeo.</video>';
