@@ -42,6 +42,15 @@
       controls.appendChild(button);
     });
     section.insertBefore(controls,track);
+    const refresh = () => {
+      const overflow = track.scrollWidth > track.clientWidth + 2;
+      controls.hidden = !overflow;
+      track.classList.toggle('sv1-related-static',!overflow);
+      controls.children[0].disabled = track.scrollLeft <= 2;
+      controls.children[1].disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 2;
+    };
+    track.addEventListener('scroll',refresh,{passive:true});
+    new ResizeObserver(refresh).observe(track); refresh();
   });
 
   document.querySelectorAll('[data-promo-carousel]').forEach(carousel=>{

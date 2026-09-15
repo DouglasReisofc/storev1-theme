@@ -10,6 +10,12 @@ As páginas existentes renderizam seu conteúdo completo, incluindo os blocos e 
 
 Para publicar uma versão: altere Version em style.css, faça commit, crie a tag vX.Y.Z e anexe à release o ZIP com a pasta `storev1-theme/`. O workflow valida a sintaxe PHP e gera o pacote. Releases sem o ZIP esperado são ignoradas pelo atualizador.
 
+## 1.4.0
+- Vitrine fluida, detalhes e compra centralizados, quantidade com botões menos/mais respeitando limites do produto.
+- Relacionados com rolagem horizontal e controles adaptados ao espaço; avaliações ocultas por padrão sem apagar dados.
+- Link Desfazer com aparência de botão; estado de carrinho vazio fica no carrinho e não gera popup ao recarregar páginas.
+- Aparência > Personalizar > Banners da loja: até cinco imagens com links e descrições, carrossel desktop/mobile com pausa e navegação. Capas demonstrativas incluídas, substituídas automaticamente ao cadastrar imagens próprias.
+
 ## 1.3.0
 - Slot mobile de banner configurável em Aparência > Personalizar > Banner mobile, com até três imagens e carrossel acessível.
 - Feedback visual de Adicionando/Adicionado nos botões de compra.
