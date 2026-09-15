@@ -24,7 +24,7 @@
   }
   async function search() {
     const query = input.value.trim();
-    if (banner) banner.hidden = !!query;
+    if (banner) banner.hidden = !panel.hidden;
     controller?.abort();
     const request = ++sequence;
     if (cache.has(query)) { render(cache.get(query)); results.removeAttribute('aria-busy'); return; }

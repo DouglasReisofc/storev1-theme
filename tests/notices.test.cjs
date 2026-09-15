@@ -15,13 +15,16 @@ function setup(tag = 'div') {
   const doc={body,activeElement:null,createElement:element,getElementById:()=>portal,
     querySelectorAll:s=>s==='dialog[open]'?(open?[dialog]:[]):[notice]};
   let sync;
+  const timers = new Map(); let nextTimer=0;
   runInNewContext(readFileSync(require.resolve('../assets/storev1-notices.js'),'utf8'),{
-    document:doc,MutationObserver:class{constructor(fn){sync=fn}observe(){}}
+    document:doc,MutationObserver:class{constructor(fn){sync=fn}observe(){}},
+    setTimeout(fn,ms){timers.set(++nextTimer,{fn,ms});return nextTimer;},
+    clearTimeout(id){timers.delete(id);}
   });
   const button=notice.children[0].children[0];
   const down=(x=100,y=50,interactive=false)=>notice.events.pointerdown({isPrimary:true,button:0,pointerId:1,clientX:x,clientY:y,target:{closest:()=>interactive?button:null}});
   const up=(x,y=50)=>notice.events.pointerup({pointerId:1,clientX:x,clientY:y});
-  return {portal,notice,button,body,dialog,down,up,sync,closeDialog(){open=false;sync();}};
+  return {portal,notice,button,body,dialog,down,up,sync,timers,closeDialog(){open=false;sync();}};
 }
 test('real close button works inside modal, and portal follows modal close',()=>{
   const x=setup();assert.equal(x.portal.parentElement,x.dialog);
@@ -38,4 +41,12 @@ test('swipe dismisses both directions but not vertical scrolling, short drags or
 test('error lists have valid children, canceled gestures do not dismiss',()=>{
   const x=setup('ul');assert.equal(x.notice.children[0].tag,'li');
   x.down();x.notice.events.pointercancel();x.up(220);assert.notEqual(x.notice.removed,true);
+});
+test('automatically dismisses after six seconds and clears timer on manual close',()=>{
+  const x=setup();assert.equal(x.timers.size,1);
+  const timer=[...x.timers.values()][0];assert.equal(timer.ms,6000);
+  x.sync();assert.equal(x.timers.size,1);
+  timer.fn();assert.equal(x.notice.removed,true);assert.equal(x.timers.size,0);
+  const y=setup();y.button.events.click({preventDefault(){},stopPropagation(){}});
+  assert.equal(y.timers.size,0);
 });
