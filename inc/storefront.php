@@ -69,17 +69,15 @@ function storev1_mobile_banner() {
         if ($url || $video) $images[] = ['url'=>$url,'video'=>$video,'cta'=>get_theme_mod('storev1_banner_'.$i.'_cta','Ver produtos'),'link'=>get_theme_mod('storev1_banner_'.$i.'_link','') ?: $shop,'alt'=>get_theme_mod('storev1_banner_'.$i.'_alt','') ?: 'Destaque '.$i];
     }
     if (!$images) {
-        $images[]=['url'=>get_template_directory_uri().'/assets/banners/storev1-gold-piggybank.png','video'=>'','cta'=>'Ver produtos','link'=>$shop,'alt'=>'Cofrinho e moedas douradas com produtos digitais','headline'=>'Mais possibilidades.','highlight'=>'Mais economia.'];
-        $images[]=['url'=>get_template_directory_uri().'/assets/banners/storev1-gold-payment.png','video'=>'','cta'=>'Pagar com segurança','link'=>$shop,'alt'=>'Pagamentos automáticos e seguros','headline'=>'Pagamentos','highlight'=>'automáticos e seguros.'];
-        $images[]=['url'=>get_template_directory_uri().'/assets/banners/storev1-gold-support.png','video'=>'','cta'=>'Falar com suporte','link'=>$shop,'alt'=>'Suporte quando precisar','headline'=>'Receba suporte','highlight'=>'quando precisar.'];
+        $images[]=['url'=>get_template_directory_uri().'/assets/banners/storev1-gold-piggybank.png','video'=>'','cta'=>'','link'=>$shop,'alt'=>'Cofrinho e moedas douradas com produtos digitais'];
+        $images[]=['url'=>get_template_directory_uri().'/assets/banners/storev1-gold-payment.png','video'=>'','cta'=>'','link'=>$shop,'alt'=>'Pagamentos automáticos e seguros'];
+        $images[]=['url'=>get_template_directory_uri().'/assets/banners/storev1-gold-support.png','video'=>'','cta'=>'','link'=>$shop,'alt'=>'Suporte quando precisar'];
     }
     echo '<section class="loja1-shell sv1-promo" data-promo-carousel aria-roledescription="carrossel" aria-label="Destaques da loja"><div class="sv1-promo-progress" aria-hidden="true"><span></span></div><div class="sv1-promo-track" tabindex="0" aria-label="Banners promocionais. Arraste para os lados ou use as teclas de seta para navegar.">';
     foreach ($images as $i=>$slide) {
         echo '<a class="sv1-promo-slide'.(!empty($slide['headline'])?' sv1-gold-slide':'').'" draggable="false" href="'.esc_url($slide['link']).'"'.($i===0?'':' hidden').'>';
         if ($slide['video']) echo '<video muted loop playsinline preload="metadata"'.($i===0?' autoplay':'').' poster="'.esc_url($slide['url']).'" aria-label="'.esc_attr($slide['alt']).'"><source src="'.esc_url($slide['video']).'">Seu navegador não suporta este vídeo.</video>';
         else echo '<img draggable="false" src="'.esc_url($slide['url']).'" alt="'.esc_attr($slide['alt']).'" decoding="async">';
-        if (!empty($slide['headline'])) echo '<span class="sv1-banner-copy"><span class="sv1-banner-eyebrow">Sua loja digital</span><strong>'.esc_html($slide['headline']).'<em>'.esc_html($slide['highlight']).'</em></strong></span>';
-        if ($slide['cta']) echo '<span class="sv1-promo-cta">'.esc_html($slide['cta']).' <span aria-hidden="true">→</span></span>';
         echo '</a>';
     }
     echo '</div>';
