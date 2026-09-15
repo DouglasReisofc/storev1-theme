@@ -70,4 +70,27 @@ html.sv1-menu-open,html.sv1-menu-open body{overflow:hidden;overscroll-behavior:n
  .loja1-footer-grid{gap:28px}
  .woocommerce table.shop_table{font-size:13px}
 }
+/* Soft, centered storefront controls. Keep payment-provider widgets untouched. */
+body.loja1-contasvip-theme ul.products li.product{text-align:center;border-radius:16px;border-color:#edf0e8;overflow:hidden}
+body.loja1-contasvip-theme ul.products li.product .price,body.loja1-contasvip-theme ul.products li.product .woocommerce-loop-product__title{text-align:center}
+body.loja1-contasvip-theme ul.products li.product .star-rating{align-self:center;margin-left:auto;margin-right:auto}
+body.loja1-contasvip-theme ul.products li.product .button{align-self:center!important;min-width:140px;max-width:calc(100% - 32px);margin:auto 16px 0!important;border-radius:999px!important;min-height:44px}
+body.loja1-contasvip-theme .button,body.loja1-contasvip-theme .wp-element-button{border-radius:999px}
+body.loja1-contasvip-theme input.input-text,body.loja1-contasvip-theme .quantity .qty,body.loja1-contasvip-theme select,body.loja1-contasvip-theme textarea,body.loja1-contasvip-theme .select2-container .select2-selection,body.loja1-contasvip-theme input[type=text],body.loja1-contasvip-theme input[type=email],body.loja1-contasvip-theme input[type=password],body.loja1-contasvip-theme input[type=tel],body.loja1-contasvip-theme input[type=search]{border-radius:12px;border-width:1px}
+body.loja1-contasvip-theme .loja1-search input,body.loja1-contasvip-theme .loja1-mobile-search input{border-radius:999px}
+.loja1-search button,.loja1-mobile-search button{border-radius:50%}
+.sv1-drawer .sv1-search-form{gap:6px}.sv1-drawer .sv1-search-form button,.sv1-drawer-head button{border-radius:10px}
+.sv1-floating-cart{border-radius:999px}.sv1-category-list{border-radius:0 0 14px 14px}
+.sv1-catalog-categories{position:relative;float:right;width:300px;max-width:100%;margin:0 0 24px;z-index:10;text-align:left}
+.sv1-catalog-categories summary{display:flex;align-items:center;gap:10px;min-height:46px;padding:11px 16px;border:1px solid #dde4d4;border-radius:14px;background:#fff;list-style:none;color:#344028;font-weight:600;font-size:14px}
+.sv1-catalog-categories summary::-webkit-details-marker{display:none}.sv1-catalog-categories summary span{flex:1;min-width:0;overflow-wrap:anywhere}.sv1-catalog-categories summary .sv1-icon{width:20px}
+.sv1-catalog-categories[open] summary{border-color:#83b735;box-shadow:0 0 0 3px #83b73518}
+.sv1-category-panel{position:absolute;top:calc(100% + 8px);right:0;width:100%;padding:14px;background:white;border:1px solid #e7ebdf;border-radius:16px;box-shadow:0 14px 40px #25361520}
+.sv1-category-panel label{display:block;font-size:12px;font-weight:600;margin-bottom:8px}
+body.loja1-contasvip-theme .sv1-category-panel input{width:100%;min-height:44px;padding:10px 12px;border:1px solid #dce2d6;background:#f8faf6;font-size:16px;box-sizing:border-box}
+.sv1-category-options{list-style:none;margin:10px 0 0;padding:0;max-height: min(300px,40dvh);overflow-y:auto;overscroll-behavior:contain}
+.sv1-category-options li[hidden]{display:none!important}.sv1-category-options a{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 10px;border-radius:9px;font-size:14px;line-height:1.4}
+.sv1-category-options a:hover,.sv1-category-options a[aria-current=page]{background:#eff6e7;color:#476c20}.sv1-category-options small{color:#66765a;background:#f1f4ec;border-radius:20px;padding:2px 7px}
+.sv1-category-status{font-size:13px;color:#65725a;margin:10px 0 0}.sv1-category-status:empty{display:none}
+@media(max-width:767px){.sv1-catalog-categories{float:none;width:100%;margin-bottom:20px}body.loja1-contasvip-theme ul.products li.product .button{width:calc(100% - 40px)}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}

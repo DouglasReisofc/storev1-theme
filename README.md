@@ -10,6 +10,11 @@ As páginas existentes renderizam seu conteúdo completo, incluindo os blocos e 
 
 Para publicar uma versão: altere Version em style.css, faça commit, crie a tag vX.Y.Z e anexe à release o ZIP com a pasta `storev1-theme/`. O workflow valida a sintaxe PHP e gera o pacote. Releases sem o ZIP esperado são ignoradas pelo atualizador.
 
+## 1.2.0
+- Cards com nome, preço e botão Comprar centralizados; botões e campos arredondados.
+- A ordenação da vitrine foi substituída por categorias com busca instantânea dentro do dropdown, sem diferenciar acentos ou maiúsculas.
+- Selecionar uma categoria abre seu catálogo; a busca interna filtra os nomes das categorias sem recarregar a página.
+
 ## 1.1.0
 - Identidade visual restaurada a partir do StoreZap Woo Lab (BotAdmin), com estilos adaptados para funcionar sem o Storefront.
 - Cabeçalho mobile com marca centralizada, menu off-canvas acessível e rolagem interna isolada.
