@@ -18,6 +18,9 @@ add_action('after_setup_theme','storev1_setup');
 function storev1_assets(){
     wp_enqueue_style('storev1-style',get_stylesheet_uri(),[],wp_get_theme()->get('Version'));
     wp_enqueue_style('storev1-polish',get_template_directory_uri() . '/assets/storev1-polish.css',['storev1-style'],wp_get_theme()->get('Version'));
+    wp_enqueue_script('storev1-ui',get_template_directory_uri() . '/assets/storev1-ui.js',[],wp_get_theme()->get('Version'),true);
     if (is_singular() && comments_open() && get_option('thread_comments')) wp_enqueue_script('comment-reply');
 }
 add_action('wp_enqueue_scripts','storev1_assets');
+add_filter('woocommerce_product_add_to_cart_text',function(){return __('Comprar','storev1-theme');});
+add_filter('woocommerce_product_single_add_to_cart_text',function(){return __('Comprar agora','storev1-theme');});
