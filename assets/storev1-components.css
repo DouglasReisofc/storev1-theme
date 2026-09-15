@@ -196,9 +196,9 @@ body.loja1-contasvip-theme .sv1-promo-cta{position:absolute;right:24px;bottom:70
  .sv1-mobile-discovery button{display:grid;place-items:center;width:44px;height:44px;padding:0;border:1px solid #e3e9dc;border-radius:50%;background:#f6f8f2;color:#395b26}
  main .sv1-catalog-categories{display:none!important}
  body.post-type-archive-product .woocommerce-products-header__title,body.post-type-archive-product .page-title{display:none}
- .sv1-promo-track{height:210px;aspect-ratio:auto}
+ .sv1-promo-track{height:auto;aspect-ratio:16/9;min-height:0}
  .sv1-promo-slide,.sv1-promo:not(:has(.sv1-promo-controls)) .sv1-promo-slide{height:100%}
- .sv1-promo-slide img,.sv1-promo-slide video{height:155px;object-fit:contain;object-position:center}
+ .sv1-promo-slide img,.sv1-promo-slide video{height:100%;object-fit:cover;object-position:center}
  body.loja1-contasvip-theme .sv1-promo-cta{right:12px;bottom:10px;font-size:12px;min-height:36px;padding:7px 14px}
  .sv1-promo-controls{position:absolute;left:8px;right:auto;bottom:10px;border-radius:999px;padding:0 4px;min-height:36px;font-size:11px;gap:3px}
  .sv1-promo-controls button{width:30px;min-width:30px;height:36px;font-size:22px;padding:0}

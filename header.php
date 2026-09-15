@@ -3,7 +3,6 @@
 <meta charset="<?php bloginfo('charset'); ?>"><meta name="viewport" content="width=device-width, initial-scale=1">
 <?php wp_head(); ?></head><body <?php body_class(); ?>><?php wp_body_open(); ?>
 <a class="skip-link screen-reader-text" href="#main-content"><?php esc_html_e('Pular para o conteúdo','storev1-theme'); ?></a>
-<div class="loja1-topbar"><div class="loja1-shell loja1-topbar-inner"><span><?php echo esc_html(get_bloginfo('description')); ?></span><a href="<?php echo esc_url(home_url('/')); ?>"><?php echo esc_html(get_bloginfo('name')); ?></a></div></div>
 <header class="site-header loja1-header">
 <div class="loja1-shell loja1-header-main">
 <button type="button" class="loja1-menu-toggle" data-sv1-open aria-controls="sv1-drawer" aria-expanded="false" aria-label="Abrir menu"><span></span><span></span><span></span><b>Menu</b></button>
