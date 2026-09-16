@@ -1,5 +1,5 @@
 /* StoreV1 components, independent of Storefront and payment plugins. */
-/* Inline live discovery; its own bounded scroll keeps the search field within reach. */
+/* Inline live discovery. On mobile the document owns scrolling. */
 .sv1-search-toggle{display:inline-grid;place-items:center;float:right;width:40px;height:40px;padding:0;margin:0 0 16px;border:1px solid #e0e8d8;border-radius:50%;background:#f5f8f0;color:#395b26;vertical-align:middle}
 .sv1-inline-search{clear:both;width:100%;box-sizing:border-box;margin:0 0 24px;padding:16px;border:1px solid #e4e9df;border-radius:20px;background:#fafcf8;max-height:70svh;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin}
 .sv1-inline-search[hidden],body.loja1-contasvip-theme #main-content .sv1-search-hidden,.sv1-promo[hidden]{display:none!important}
@@ -13,6 +13,14 @@ body.loja1-contasvip-theme .price del{display:inline-block!important;opacity:1!i
 body.loja1-contasvip-theme .price ins{display:inline-block!important;text-decoration:none;background:transparent;color:#629525;font-weight:800}
 @media(max-width:767px){.sv1-search-toggle{margin:0 0 10px 0}.sv1-inline-search{display:block;margin:0 0 24px;padding:10px;min-height:55svh;max-height:none;overflow:visible;overscroll-behavior:auto;touch-action:pan-y;border-radius:16px}.sv1-inline-search-head{top:-10px}body.loja1-contasvip-theme .sv1-inline-search [data-search-results]{width:100%;min-width:0;overflow:visible}body.loja1-contasvip-theme .sv1-inline-search ul.products{display:grid!important;width:100%;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0!important;padding:0!important}body.loja1-contasvip-theme .sv1-inline-search ul.products li.product{width:auto!important;min-width:0}body.loja1-contasvip-theme .sv1-inline-search ul.products li.product .button{min-width:0;width:calc(100% - 16px);max-width:none;margin:auto 8px 0!important;font-size:11px}body.loja1-contasvip-theme .sv1-inline-search ul.products li.product .woocommerce-loop-product__title{font-size:12px!important;padding:0 6px!important}body.loja1-contasvip-theme .sv1-inline-search ul.products li.product .price{margin:8px 4px!important;font-size:15px!important}}
 .sv1-view-switcher{display:none}
+@media(max-width:767px){
+ .sv1-inline-search{min-height:0;padding:0 8px 12px;overflow:visible;overscroll-behavior:auto;touch-action:pan-y}
+ .sv1-inline-search-head{position:sticky;top:0;z-index:60;gap:6px;margin:0 -8px 8px;padding:6px 8px;background:#fffdf8;border-bottom:1px solid #eadfca;border-radius:14px 14px 0 0;box-shadow:0 3px 8px #3826000a}
+ body.loja1-contasvip-theme .sv1-inline-search-head input{height:38px;min-height:38px;padding:6px 12px;line-height:24px;border-radius:999px;font-size:16px}
+ body.loja1-contasvip-theme .sv1-inline-search-head button{flex:0 0 38px;width:38px;height:38px;min-height:38px;padding:0;border-radius:50%;font-size:24px}
+ .sv1-inline-search [data-search-status]{margin:0 0 10px;font-size:12px}
+}
+@media(min-width:601px) and (max-width:767px){body.admin-bar .sv1-inline-search-head{top:46px}}
 @media(max-width:767px){
  .sv1-view-switcher{display:flex;align-items:center;justify-content:flex-end;gap:6px;margin:0 0 12px;color:#64705d;font-size:12px;font-weight:700}
  .sv1-view-switch{border:1px solid #dce6d3;border-radius:999px;padding:7px 11px;background:#fff;color:#48662f;font-weight:700}
@@ -197,12 +205,14 @@ body.loja1-contasvip-theme .sv1-toast a.restore-item,body.loja1-contasvip-theme 
 .woocommerce-account .woocommerce-MyAccount-content input,.woocommerce-account .woocommerce-MyAccount-content select{min-height:44px;border:1px solid #d9cba9;border-radius:10px;padding:0 12px;background:#fff}
 .woocommerce-account .woocommerce-MyAccount-content .button{border-radius:999px!important}
 .sv1-account-cards{margin-top:28px}.sv1-account-cards h2{margin:0 0 14px;font-size:22px}.sv1-account-card-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.sv1-account-card{display:grid;grid-template-columns:42px 1fr 18px;align-items:center;gap:10px;padding:14px;border:1px solid #eadfca;border-radius:14px;background:#fffdf8;color:#3b2b0c!important}.sv1-account-card:hover{border-color:#d3a32d;transform:translateY(-1px)}.sv1-account-card-icon{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:#f5cc65;color:#5d4308;font-size:20px}.sv1-account-card strong,.sv1-account-card small{display:block}.sv1-account-card small{margin-top:2px;color:#897857;font-size:11px}.sv1-account-card b{font-size:24px;color:#bd850f}
+.sv1-account-hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(260px,.85fr);align-items:center;gap:28px;margin:0 auto 24px;padding:18px 24px;border:1px solid #eadfca;border-radius:20px;background:linear-gradient(110deg,#fffdf8,#fff);overflow:hidden}.sv1-account-hero img{display:block;width:100%;max-height:220px;object-fit:contain}.sv1-account-hero h1{margin:0 0 8px;color:#3b2b0c;font-size:clamp(24px,3vw,38px)}.sv1-account-hero p{margin:0;color:#897857;font-size:15px;line-height:1.5}
 @media(max-width:767px){.woocommerce-account .woocommerce{width:calc(100% - 24px)}.woocommerce-account .woocommerce-MyAccount-navigation,.woocommerce-account .woocommerce-MyAccount-content{float:none;width:100%;padding:16px;border-radius:14px}.woocommerce-account .woocommerce-MyAccount-navigation{margin-bottom:14px}.woocommerce-account .woocommerce-MyAccount-navigation ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.woocommerce-account .woocommerce-MyAccount-navigation li{margin:0}.woocommerce-account .woocommerce-MyAccount-navigation a{font-size:12px;padding:10px 8px;text-align:center}.sv1-account-card-grid{grid-template-columns:1fr}.sv1-account-cards h2{font-size:19px}}
 body.loja1-contasvip-theme .sv1-promo-cta{position:absolute;right:24px;bottom:70px;display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:10px 20px;border-radius:999px;color:#163728;background:#e2f4c8;font-weight:700;box-shadow:0 4px 18px #0002}
 .loja1-footer,.loja1-footer-grid,.loja1-footer-bottom{text-align:center}
 .loja1-footer p{margin-left:auto;margin-right:auto}
 .loja1-footer a.loja1-logo{justify-content:center}
 .loja1-footer-bottom .loja1-shell{justify-content:center;align-items:center;flex-wrap:wrap}
+@media(max-width:767px){.sv1-account-hero{grid-template-columns:1fr;margin:0 0 18px;padding:12px 14px;gap:4px;text-align:center}.sv1-account-hero img{max-height:150px}.sv1-account-hero h1{font-size:25px}.sv1-account-hero p{font-size:13px}}
 @media(max-width:767px){
  .sv1-mobile-discovery{display:flex;justify-content:flex-end;align-items:center;min-height:44px}
  .sv1-mobile-discovery button{display:grid;place-items:center;width:44px;height:44px;padding:0;border:1px solid #e3e9dc;border-radius:50%;background:#f6f8f2;color:#395b26}

@@ -1,0 +1,21 @@
+.sv1-auth{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,440px);max-width:1100px;margin:20px auto 48px;border:1px solid #eadfca;border-radius:24px;overflow:hidden;background:#fff;box-shadow:0 14px 45px #482d0710}
+.sv1-auth-art{display:flex;align-items:center;justify-content:center;padding:24px;background:#fffdf8}
+.sv1-auth-art img{display:block;width:100%;height:auto;object-fit:contain}
+.sv1-auth-content{padding:32px;min-width:0}
+.sv1-auth-tabs{display:flex;gap:8px;margin-bottom:24px;padding:4px;background:#f6f2e9;border-radius:999px}
+.sv1-auth-tabs a{flex:1;padding:8px;text-align:center;border-radius:999px;color:#5a461c!important;font-weight:700}
+.sv1-auth-tabs a[aria-current]{background:#f5cc65;color:#241b09!important;box-shadow:0 2px 6px #3b2b0c12}
+.sv1-auth-content h2{font-size:27px;line-height:1.2;margin:0 0 8px}
+.sv1-auth-lead{color:#62583f;line-height:1.5;margin:0 0 22px}
+body.loja1-contasvip-theme .woocommerce .sv1-auth form{border:0;padding:0;margin:0}
+.sv1-auth form .form-row{float:none;width:100%;padding:0;margin:0 0 16px}
+.sv1-auth form label{display:block;font-weight:600;color:#403723;margin-bottom:6px}
+body.loja1-contasvip-theme .sv1-auth .input-text{box-sizing:border-box;width:100%;min-height:44px;padding:10px 14px;border:1px solid #d9cba9;border-radius:12px;background:#fff;font-size:16px;color:#26231c}
+.sv1-auth .input-text:focus{outline:2px solid #bd850f;outline-offset:2px}
+.sv1-auth-options{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px}
+.sv1-auth-options label{display:flex!important;align-items:center;gap:6px;margin:0!important}
+.sv1-auth a:not([aria-current]):hover{text-decoration:underline}
+.sv1-auth .woocommerce-privacy-policy-text{font-size:12px;color:#62583f;line-height:1.5}
+body.loja1-contasvip-theme .sv1-auth form button[type=submit]{display:block;float:none;width:100%;margin:18px 0 0;border:0;border-radius:999px;padding:12px 18px;min-height:44px;background:#f5cc65;color:#241b09;font-size:15px;font-weight:700}
+.sv1-registration-disabled{padding:12px;background:#fff5d9;border-radius:12px;color:#624716;font-size:13px}
+@media(max-width:767px){.sv1-auth{grid-template-columns:1fr;margin:4px auto 28px;border-radius:18px}.sv1-auth-art{padding:6px 16px}.sv1-auth-art img{height:150px;max-width:340px}.sv1-auth-content{padding:20px}.sv1-auth-content h2{font-size:24px}.sv1-auth-tabs{margin-bottom:18px}.woocommerce-account .woocommerce:has(>.sv1-auth){width:100%}}

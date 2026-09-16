@@ -25,6 +25,7 @@ function storev1_assets(){
     wp_enqueue_style('storev1-storefront',get_template_directory_uri() . '/assets/storev1-storefront.css',[],wp_get_theme()->get('Version'));
     wp_enqueue_style('storev1-components',get_template_directory_uri() . '/assets/storev1-components.css',['storev1-storefront'],wp_get_theme()->get('Version'));
     wp_enqueue_style('storev1-gold',get_template_directory_uri() . '/assets/storev1-gold.css',['storev1-components'],wp_get_theme()->get('Version'));
+    if (function_exists('is_account_page') && is_account_page()) wp_enqueue_style('storev1-account',get_template_directory_uri().'/assets/storev1-account.css',['storev1-gold'],wp_get_theme()->get('Version'));
     if (class_exists('WooCommerce')) wp_enqueue_script('wc-cart-fragments');
     wp_enqueue_script('storev1-ui',get_template_directory_uri() . '/assets/storev1-ui.js',[],wp_get_theme()->get('Version'),true);
     wp_enqueue_script('storev1-shopping',get_template_directory_uri() . '/assets/storev1-shopping.js',[],wp_get_theme()->get('Version'),true);
@@ -61,6 +62,7 @@ add_filter('woocommerce_product_single_add_to_cart_text',function(){return __('C
 require_once get_template_directory() . '/inc/storefront.php';
 require_once get_template_directory() . '/inc/catalog-search.php';
 require_once get_template_directory() . '/inc/site-quality.php';
+require_once get_template_directory() . '/inc/account.php';
 // Preserve WooCommerce validation and POST/redirect flow; flag only a successful addition.
 add_action('woocommerce_add_to_cart', function() {
     if (isset($_POST['add-to-cart']) && !wp_doing_ajax() && WC()->session) {

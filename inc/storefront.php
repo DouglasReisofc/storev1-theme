@@ -70,6 +70,13 @@ add_action('woocommerce_account_dashboard', function() {
     }
     echo '</div></section>';
 }, 20);
+
+add_filter('woocommerce_account_menu_items', function($items) {
+    $labels = ['dashboard'=>'Minha conta','orders'=>'Pedidos','downloads'=>'Downloads','edit-address'=>'Endereços','edit-account'=>'Dados da conta','customer-logout'=>'Sair'];
+    foreach ($labels as $key=>$label) if (isset($items[$key])) $items[$key] = $label;
+    return $items;
+}, 20);
+
 add_filter('woocommerce_add_to_cart_fragments', function($fragments) {
     ob_start(); storev1_cart_count(); $fragments['span.sv1-cart-count'] = ob_get_clean(); return $fragments;
 });
@@ -98,8 +105,9 @@ function storev1_mobile_banner() {
             $basename = basename($slide['url'], '.png');
             if (strpos($slide['url'], get_template_directory_uri().'/assets/banners/') === 0 && in_array($basename, ['storev1-gold-piggybank','storev1-gold-payment','storev1-gold-support'], true)) {
                 $base = get_template_directory_uri().'/assets/banners/'.$basename;
-                $attr['src'] = $base.'-960.webp';
-                $attr['srcset'] = $base.'-480.webp 480w, '.$base.'-960.webp 960w, '.$base.'-1440.webp 1440w';
+                $revision = '?ver='.rawurlencode(wp_get_theme()->get('Version'));
+                $attr['src'] = $base.'-960.webp'.$revision;
+                $attr['srcset'] = $base.'-480.webp'.$revision.' 480w, '.$base.'-960.webp'.$revision.' 960w, '.$base.'-1440.webp'.$revision.' 1440w';
                 $attr['width'] = 960;
                 $attr['height'] = $basename === 'storev1-gold-piggybank' ? 540 : 270;
                 echo '<img';

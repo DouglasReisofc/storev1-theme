@@ -22,6 +22,7 @@
   function render(data) {
     results.innerHTML = data.html;
     status.textContent = data.total ? (data.total > data.shown ? `Mostrando ${data.shown} de ${data.total} produtos. Refine a pesquisa.` : `${data.total} produto${data.total === 1 ? '' : 's'} encontrado${data.total === 1 ? '' : 's'}.`) : 'Nenhum produto encontrado. Tente outro nome.';
+    if (panel.getBoundingClientRect().bottom < 100) panel.scrollIntoView({block:'start',behavior:'instant'});
   }
   async function search() {
     const query = input.value.trim();
@@ -30,7 +31,6 @@
     const request = ++sequence;
     if (cache.has(query)) { render(cache.get(query)); results.removeAttribute('aria-busy'); return; }
     controller = new AbortController();
-    results.innerHTML = '';
     results.setAttribute('aria-busy','true');
     status.textContent = 'Buscando produtos…';
     try {
@@ -53,12 +53,29 @@
     toggle.hidden = open;
     toggle.setAttribute('aria-expanded', String(open));
     catalog.forEach(el => el.classList.toggle('sv1-search-hidden',open));
-    if (open) { if(banner) banner.hidden = true; input.focus({preventScroll:true}); search(); }
-    else { controller?.abort(); sequence++; input.value = ''; if(banner) banner.hidden = false; if(mobileViewport.matches) toggle.focus({preventScroll:true}); }
+    if (open) { if(banner) banner.hidden = true; search(); }
+    else { controller?.abort(); sequence++; input.blur(); input.value = ''; if(banner) banner.hidden = false; if(mobileViewport.matches) toggle.focus({preventScroll:true}); }
   }
   toggle.addEventListener('click',()=>setOpen(panel.hidden));
   panel.querySelector('[data-search-close]').addEventListener('click',()=>setOpen(false));
   panel.addEventListener('keydown',event=>{if(event.key==='Escape') setOpen(false);});
-  input.addEventListener('input',search);
+  input.addEventListener('input', () => {
+    // A shorter result set must not strand the input above the viewport.
+    if (panel.getBoundingClientRect().top < 0) panel.scrollIntoView({block:'start',behavior:'instant'});
+    search();
+  });
+  // Opening the canvas never summons the keyboard. Dismiss it only after an
+  // intentional gesture over results, not on resize caused by the keyboard itself.
+  const dismissKeyboard = () => { if (document.activeElement === input) input.blur(); };
+  let touchStartY = null;
+  document.addEventListener('touchstart', event => { touchStartY = !panel.hidden && !event.target.closest('.sv1-inline-search-head') ? event.touches[0]?.clientY ?? null : null; }, {passive:true});
+  document.addEventListener('touchmove', event => {
+    if (touchStartY !== null && Math.abs((event.touches[0]?.clientY ?? touchStartY) - touchStartY) > 10) {
+      dismissKeyboard(); touchStartY = null;
+    }
+  }, {passive:true});
+  document.addEventListener('touchend', () => { touchStartY = null; }, {passive:true});
+  document.addEventListener('wheel', () => { if (!panel.hidden) dismissKeyboard(); }, {passive:true});
+  input.addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); dismissKeyboard(); } });
   mobileViewport.addEventListener('change',event=>{if(!event.matches) setOpen(false);});
 })();
