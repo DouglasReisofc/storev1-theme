@@ -5,20 +5,22 @@
  */
 defined('ABSPATH') || exit;
 $register = storev1_account_view() === 'register';
+$registration_disabled = is_page_template('page-account-register.php') && !storev1_registration_enabled();
 $posted = function($key) { return isset($_POST[$key]) && is_string($_POST[$key]) ? esc_attr(wp_unslash($_POST[$key])) : ''; };
 do_action('woocommerce_before_customer_login_form');
 ?>
 <section class="sv1-auth" aria-label="<?php echo $register ? 'Criar conta' : 'Entrar'; ?>">
     <div class="sv1-auth-art" aria-hidden="true"><img src="<?php echo esc_url(get_template_directory_uri().'/assets/account-'.($register ? 'register' : 'login').'-illustration.webp'); ?>" alt="" width="900" height="600" decoding="async"></div>
     <div class="sv1-auth-content">
-        <nav class="sv1-auth-tabs" aria-label="Acesso à loja">
+        <?php if (!$registration_disabled) : ?><nav class="sv1-auth-tabs" aria-label="Acesso à loja">
             <a href="<?php echo esc_url(storev1_account_url()); ?>" <?php if (!$register) echo 'aria-current="page"'; ?>>Entrar</a>
             <?php if (storev1_registration_enabled()) : ?><a href="<?php echo esc_url(storev1_account_url('register')); ?>" <?php if ($register) echo 'aria-current="page"'; ?>>Criar conta</a><?php endif; ?>
-        </nav>
-        <h2><?php echo $register ? 'Crie sua conta' : 'Bem-vindo de volta'; ?></h2>
-        <p class="sv1-auth-lead"><?php echo $register ? 'Seus pedidos e produtos digitais em um só lugar.' : 'Entre para acompanhar seus pedidos e acessar seus produtos.'; ?></p>
-        <?php if (is_page_template('page-account-register.php') && !storev1_registration_enabled()) : ?><p class="sv1-registration-disabled" role="status">A criação de contas está desativada no momento. Você ainda pode entrar com sua conta.</p><?php endif; ?>
-        <?php if (!$register) : ?>
+        </nav><?php endif; ?>
+        <h2><?php echo $registration_disabled ? 'Cadastro indisponível' : ($register ? 'Crie sua conta' : 'Bem-vindo de volta'); ?></h2>
+        <p class="sv1-auth-lead"><?php echo $registration_disabled ? 'A criação de contas está desativada no momento.' : ($register ? 'Seus pedidos e produtos digitais em um só lugar.' : 'Entre para acompanhar seus pedidos e acessar seus produtos.'); ?></p>
+        <?php if ($registration_disabled) : ?>
+            <p class="sv1-registration-disabled" role="status">No momento, novas contas não podem ser criadas.</p>
+        <?php elseif (!$register) : ?>
         <form class="woocommerce-form woocommerce-form-login login" method="post" novalidate>
             <?php do_action('woocommerce_login_form_start'); ?>
             <p class="form-row form-row-wide"><label for="username">E-mail ou nome de usuário <span aria-hidden="true">*</span></label><input type="text" class="input-text" name="username" id="username" autocomplete="username" value="<?php echo $posted('username'); ?>" required aria-required="true"></p>
