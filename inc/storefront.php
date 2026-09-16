@@ -81,6 +81,16 @@ add_filter('woocommerce_add_to_cart_fragments', function($fragments) {
     ob_start(); storev1_cart_count(); $fragments['span.sv1-cart-count'] = ob_get_clean(); return $fragments;
 });
 
+// Keep the purchase controls independent from long product descriptions. The
+// full description remains in WooCommerce's tabs below the summary/actions.
+remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_excerpt', 20);
+add_action('woocommerce_single_product_summary', function() {
+    global $product;
+    if (!$product instanceof WC_Product) return;
+    $terms = wc_get_product_category_list($product->get_id(), ', ');
+    if ($terms) echo '<p class="sv1-product-category"><span>Categoria:</span> '.$terms.'</p>';
+}, 7);
+
 function storev1_mobile_banner() {
     if (!get_theme_mod('storev1_banner_enabled',true)) return;
     $images = [];
@@ -89,19 +99,20 @@ function storev1_mobile_banner() {
         $url = get_theme_mod('storev1_banner_'.$i, '');
         $video_id = absint(get_theme_mod('storev1_banner_'.$i.'_video',0));
         $video = in_array(get_post_mime_type($video_id),['video/mp4','video/webm'],true) ? wp_get_attachment_url($video_id) : '';
-        if ($url || $video) $images[] = ['url'=>$url,'video'=>$video,'cta'=>get_theme_mod('storev1_banner_'.$i.'_cta','Ver produtos'),'link'=>get_theme_mod('storev1_banner_'.$i.'_link','') ?: $shop,'alt'=>get_theme_mod('storev1_banner_'.$i.'_alt','') ?: 'Destaque '.$i];
+        $default_alt = [1=>'Contas premium com entrega imediata',2=>'Pagamentos automáticos para produtos digitais',3=>'Suporte rápido para clientes',4=>'Ofertas especiais da loja',5=>'Produtos digitais em destaque'][$i];
+        if ($url || $video) $images[] = ['url'=>$url,'video'=>$video,'cta'=>get_theme_mod('storev1_banner_'.$i.'_cta','Ver produtos'),'link'=>get_theme_mod('storev1_banner_'.$i.'_link','') ?: $shop,'alt'=>get_theme_mod('storev1_banner_'.$i.'_alt','') ?: $default_alt];
     }
     if (!$images) {
-        $images[]=['url'=>get_template_directory_uri().'/assets/banners/storev1-gold-piggybank.png','video'=>'','cta'=>'','link'=>$shop,'alt'=>'Cofrinho e moedas douradas com produtos digitais'];
-        $images[]=['url'=>get_template_directory_uri().'/assets/banners/storev1-gold-payment.png','video'=>'','cta'=>'','link'=>$shop,'alt'=>'Pagamentos automáticos e seguros'];
-        $images[]=['url'=>get_template_directory_uri().'/assets/banners/storev1-gold-support.png','video'=>'','cta'=>'','link'=>$shop,'alt'=>'Suporte quando precisar'];
+        $images[]=['url'=>get_template_directory_uri().'/assets/banners/storev1-gold-piggybank.png','video'=>'','cta'=>'','link'=>$shop,'alt'=>'Contas premium digitais com entrega imediata'];
+        $images[]=['url'=>get_template_directory_uri().'/assets/banners/storev1-gold-payment.png','video'=>'','cta'=>'','link'=>$shop,'alt'=>'Pagamento automático para contas premium'];
+        $images[]=['url'=>get_template_directory_uri().'/assets/banners/storev1-gold-support.png','video'=>'','cta'=>'','link'=>$shop,'alt'=>'Suporte para produtos e contas premium'];
     }
     echo '<section class="loja1-shell sv1-promo" data-promo-carousel aria-roledescription="carrossel" aria-label="Destaques da loja"><div class="sv1-promo-progress" aria-hidden="true"><span></span></div><div class="sv1-promo-track" tabindex="0" aria-label="Banners promocionais. Arraste para os lados ou use as teclas de seta para navegar.">';
     foreach ($images as $i=>$slide) {
-        echo '<a class="sv1-promo-slide'.(!empty($slide['headline'])?' sv1-gold-slide':'').'" draggable="false" href="'.esc_url($slide['link']).'"'.($i===0?'':' hidden').'>';
+        echo '<a class="sv1-promo-slide'.(!empty($slide['headline'])?' sv1-gold-slide':'').'" draggable="false" href="'.esc_url($slide['link']).'" title="'.esc_attr($slide['alt']).'" aria-label="'.esc_attr($slide['alt']).'"'.($i===0?'':' hidden').'>';
         if ($slide['video']) echo '<video muted loop playsinline preload="metadata"'.($i===0?' autoplay':'').' poster="'.esc_url($slide['url']).'" aria-label="'.esc_attr($slide['alt']).'"><source src="'.esc_url($slide['video']).'">Seu navegador não suporta este vídeo.</video>';
         else {
-            $attr = ['alt'=>$slide['alt'], 'draggable'=>'false', 'decoding'=>'async', 'loading'=>$i === 0 ? 'eager' : 'lazy', 'fetchpriority'=>$i === 0 ? 'high' : 'low', 'sizes'=>'(max-width: 767px) 96vw, 45vw'];
+            $attr = ['alt'=>$slide['alt'], 'title'=>$slide['alt'], 'draggable'=>'false', 'decoding'=>'async', 'loading'=>$i === 0 ? 'eager' : 'lazy', 'fetchpriority'=>$i === 0 ? 'high' : 'low', 'sizes'=>'(max-width: 767px) 96vw, 45vw'];
             $basename = basename($slide['url'], '.png');
             if (strpos($slide['url'], get_template_directory_uri().'/assets/banners/') === 0 && in_array($basename, ['storev1-gold-piggybank','storev1-gold-payment','storev1-gold-support'], true)) {
                 $base = get_template_directory_uri().'/assets/banners/'.$basename;

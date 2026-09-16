@@ -166,6 +166,9 @@ body.loja1-contasvip-theme .summary{text-align:center;min-width:0;align-self:cen
 body.loja1-contasvip-theme div.product .summary form.cart{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:14px}
 body.loja1-contasvip-theme div.product .summary form.cart .button{float:none!important;min-width:190px;justify-content:center}
 body.loja1-contasvip-theme .summary .product_meta{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 18px}
+body.loja1-contasvip-theme div.product .summary .product_meta .posted_in{display:none}
+body.loja1-contasvip-theme div.product .summary .sv1-product-category{margin:0 0 8px;color:var(--loja-muted,#71806a);font-size:13px;font-weight:600}
+body.loja1-contasvip-theme div.product .summary .sv1-product-category a{color:var(--loja-green);text-decoration:none}
 body.loja1-contasvip-theme .summary .variations{width:100%}.summary .woocommerce-variation-add-to-cart{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px}
 body.loja1-contasvip-theme .sv1-quantity{display:inline-flex!important;align-items:center;justify-content:center;gap:0;border:1px solid #dce4d6;border-radius:999px;overflow:hidden;background:white;float:none!important}
 body.loja1-contasvip-theme .sv1-quantity .qty{width:48px!important;min-height:44px;height:44px;border:0!important;border-radius:0!important;padding:0!important;text-align:center;appearance:textfield;margin:0!important}
