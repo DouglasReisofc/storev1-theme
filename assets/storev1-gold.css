@@ -48,3 +48,13 @@ body.loja1-contasvip-theme .sv1-gold-slide img{height:100%!important;object-fit:
  .sv1-banner-eyebrow{font-size:8px;margin-bottom:7px;letter-spacing:.06em}
  .sv1-banner-copy{top:43%;width:43%}
 }
+
+/* Keep the light footer readable after the gold skin loads. */
+body.loja1-contasvip-theme .loja1-footer { color: #626262 !important; background: #fff !important; border-top: 1px solid #ececec; }
+body.loja1-contasvip-theme .loja1-footer h2,
+body.loja1-contasvip-theme .loja1-footer .storezap-wordmark strong,
+body.loja1-contasvip-theme .loja1-footer .storezap-wordmark b { color: #333 !important; }
+body.loja1-contasvip-theme .loja1-footer .storezap-wordmark small { color: #777 !important; }
+body.loja1-contasvip-theme .loja1-footer a { color: #555 !important; }
+body.loja1-contasvip-theme .loja1-footer a:hover { color: #805500 !important; }
+body.loja1-contasvip-theme .loja1-footer-bottom { color: #777 !important; background: #fff !important; border-top: 1px solid #ececec; }
