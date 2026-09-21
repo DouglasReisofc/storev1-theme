@@ -24,6 +24,8 @@ function storev1_brand($extra = '') {
     $logo = absint(get_theme_mod('custom_logo'));
     if ($logo) {
         echo wp_get_attachment_image($logo, 'full', false, ['class'=>'sv1-brand-image','alt'=>$name]);
+    } elseif (file_exists(get_theme_file_path('assets/brand/turbo-contas-logo.png'))) {
+        echo '<img class="sv1-brand-image" src="' . esc_url(get_theme_file_uri('assets/brand/turbo-contas-logo.png')) . '" alt="' . esc_attr($name ?: 'Turbo Contas') . '" width="1181" height="480" loading="eager" decoding="async">';
     } else {
         preg_match('/^./us', $name, $initial);
         echo '<span class="storezap-mark" aria-hidden="true"><span>' . esc_html($initial[0] ?? 'S') . '</span><i>ϟ</i></span>';

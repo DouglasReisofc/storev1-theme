@@ -5,7 +5,12 @@ function storev1_setup() {
     load_theme_textdomain('storev1-theme', get_template_directory() . '/languages');
     add_theme_support('title-tag');
     add_theme_support('post-thumbnails');
-    add_theme_support('custom-logo');
+    add_theme_support('custom-logo', [
+        'height'      => 180,
+        'width'       => 600,
+        'flex-width'  => true,
+        'flex-height' => true,
+    ]);
     add_theme_support('html5', ['search-form','comment-form','comment-list','gallery','caption','style','script']);
     add_theme_support('responsive-embeds');
     add_theme_support('woocommerce');
@@ -13,6 +18,26 @@ function storev1_setup() {
     register_nav_menus(['primary'=>__('Menu principal','storev1-theme')]);
 }
 add_action('after_setup_theme','storev1_setup');
+
+/**
+ * Ship the Turbo Contas identity with the theme so a fresh installation has
+ * a complete favicon/app-icon set before the Customizer is configured.
+ */
+function storev1_brand_head() {
+    $uri = trailingslashit(get_template_directory_uri()) . 'assets/brand/';
+    echo '<link rel="icon" href="' . esc_url($uri . 'favicon.svg') . '" type="image/svg+xml">' . "\n";
+    echo '<link rel="icon" href="' . esc_url($uri . 'favicon.ico') . '" sizes="any">' . "\n";
+    echo '<link rel="icon" type="image/png" sizes="32x32" href="' . esc_url($uri . 'favicon-32.png') . '">' . "\n";
+    echo '<link rel="icon" type="image/png" sizes="16x16" href="' . esc_url($uri . 'favicon-16.png') . '">' . "\n";
+    echo '<link rel="apple-touch-icon" sizes="180x180" href="' . esc_url($uri . 'apple-touch-icon.png') . '">' . "\n";
+    echo '<link rel="manifest" href="' . esc_url($uri . 'site.webmanifest') . '">' . "\n";
+    echo '<meta name="application-name" content="Turbo Contas">' . "\n";
+    echo '<meta name="apple-mobile-web-app-title" content="Turbo Contas">' . "\n";
+    echo '<meta name="mobile-web-app-capable" content="yes">' . "\n";
+    echo '<meta name="apple-mobile-web-app-capable" content="yes">' . "\n";
+    echo '<meta name="theme-color" content="#102449">' . "\n";
+}
+add_action('wp_head', 'storev1_brand_head', 1);
 // Hide only the generic shop heading; retain category and search context.
 add_filter('woocommerce_show_page_title', function($show) {
     return is_shop() && !is_search() ? false : $show;
