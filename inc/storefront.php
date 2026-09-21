@@ -28,6 +28,9 @@ function storev1_brand($extra = '') {
             'alt' => $name,
             'sizes' => '(max-width: 767px) 185px, 230px',
             'decoding' => 'async',
+            // Keep the promotional banner as the first high-priority image;
+            // the brand mark is above the fold but is not the LCP candidate.
+            'fetchpriority' => 'low',
         ]);
     } elseif (file_exists(get_theme_file_path('assets/brand/turbo-contas-logo.png'))) {
         echo '<img class="sv1-brand-image" src="' . esc_url(get_theme_file_uri('assets/brand/turbo-contas-logo.png')) . '" alt="' . esc_attr($name ?: 'Turbo Contas') . '" width="1181" height="480" loading="eager" decoding="async">';
