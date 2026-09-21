@@ -52,7 +52,12 @@ function storev1_assets(){
     wp_enqueue_style('storev1-components',get_template_directory_uri() . '/assets/storev1-components.css',['storev1-storefront'],wp_get_theme()->get('Version'));
     wp_enqueue_style('storev1-gold',get_template_directory_uri() . '/assets/storev1-gold.css',['storev1-components'],wp_get_theme()->get('Version'));
     if (function_exists('is_account_page') && is_account_page()) wp_enqueue_style('storev1-account',get_template_directory_uri().'/assets/storev1-account.css',['storev1-gold'],wp_get_theme()->get('Version'));
-    if (class_exists('WooCommerce')) wp_enqueue_script('wc-cart-fragments');
+    // The public home/catalog pages render the cart count server-side. Avoid
+    // loading WooCommerce's polling fragment bundle there; keep it on pages
+    // where cart/account state can change without a full navigation.
+    if (class_exists('WooCommerce') && !is_front_page() && !is_shop() && !is_product_category() && !is_product_tag()) {
+        wp_enqueue_script('wc-cart-fragments');
+    }
     wp_enqueue_script('storev1-ui',get_template_directory_uri() . '/assets/storev1-ui.js',[],wp_get_theme()->get('Version'),true);
     wp_enqueue_script('storev1-shopping',get_template_directory_uri() . '/assets/storev1-shopping.js',[],wp_get_theme()->get('Version'),true);
     wp_enqueue_script('storev1-discovery',get_template_directory_uri() . '/assets/storev1-discovery.js',[],wp_get_theme()->get('Version'),true);
@@ -60,6 +65,16 @@ function storev1_assets(){
     if (is_singular() && comments_open() && get_option('thread_comments')) wp_enqueue_script('comment-reply');
 }
 add_action('wp_enqueue_scripts','storev1_assets');
+
+// Allow a host-level page cache to reuse anonymous storefront responses while
+// never caching logged-in or session-bound WooCommerce pages.
+add_action('send_headers', function() {
+    if (is_user_logged_in() || is_admin() || headers_sent() || !class_exists('WooCommerce')) return;
+    $public_storefront = is_front_page() || is_shop() || is_product_category() || is_product_tag();
+    if (!$public_storefront) return;
+    header('Cache-Control: public, max-age=0, s-maxage=300, stale-while-revalidate=30');
+    header('Vary: Accept-Encoding');
+}, 20);
 add_action('customize_register', function($wp_customize) {
     $wp_customize->add_section('storev1_catalog', ['title'=>__('Catálogo de produtos','storev1-theme'),'priority'=>30]);
     $wp_customize->add_setting('storev1_product_layout',['default'=>'grid','sanitize_callback'=>function($value){return in_array($value,['grid','cards'],true)?$value:'grid';}]);
