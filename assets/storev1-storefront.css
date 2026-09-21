@@ -204,6 +204,15 @@ body.loja1-contasvip-theme .entry-content { color: var(--loja-text); }
 }
 @media (max-width: 767px) {
     body.loja1-contasvip-theme { padding-bottom: 61px; }
+    /* Keep the compact mobile header clean and opaque.  Without an explicit
+       surface here, the page background can show through around the logo and
+       make the header look blue on smaller viewports. */
+    body.loja1-contasvip-theme .site-header.loja1-header,
+    body.loja1-contasvip-theme .loja1-header-main,
+    body.loja1-contasvip-theme .loja1-mobile-search,
+    body.loja1-contasvip-theme .loja1-primary-nav,
+    body.loja1-contasvip-theme .loja1-primary-nav.is-open { background: #fff; }
+    body.loja1-contasvip-theme .loja1-header-main { box-shadow: none; }
     .loja1-shell,
     body.loja1-contasvip-theme .col-full { width: min(calc(100% - 24px), var(--loja-width)); }
     .loja1-topbar { display: none; }
