@@ -91,6 +91,14 @@ add_filter('woocommerce_add_to_cart_fragments', function($fragments) {
     ob_start(); storev1_cart_count(); $fragments['span.sv1-cart-count'] = ob_get_clean(); return $fragments;
 });
 
+// Start loading the cart before the shopper clicks it. Cart and checkout are
+// never cached as public pages, so prefetching only removes the perceived
+// navigation delay without exposing session data to the storefront cache.
+add_action('wp_head', function() {
+    if (!function_exists('wc_get_cart_url') || (function_exists('is_cart') && (is_cart() || is_checkout()))) return;
+    echo '<link rel="prefetch" href="' . esc_url(wc_get_cart_url()) . '">\n';
+}, 3);
+
 // Keep the purchase controls independent from long product descriptions. The
 // full description remains in WooCommerce's tabs below the summary/actions.
 remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_excerpt', 20);

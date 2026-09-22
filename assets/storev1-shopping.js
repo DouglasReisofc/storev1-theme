@@ -44,6 +44,13 @@
     if (link.dataset.sv1Removing) return;
     link.dataset.sv1Removing = '1';
     link.setAttribute('aria-busy', 'true');
+    const item = link.closest('.cart_item, .mini_cart_item');
+    // Remove the visible row immediately. The request still confirms the
+    // change server-side; a failure falls back to the canonical cart URL.
+    if (item) {
+      item.classList.add('sv1-cart-removing');
+      requestAnimationFrame(() => item.remove());
+    }
     fetch(link.href, {credentials:'same-origin', headers:{'X-Requested-With':'XMLHttpRequest'}})
       .then(response => response.ok ? response.text() : Promise.reject(new Error('cart update failed')))
       .then(html => {
@@ -59,6 +66,23 @@
       })
       .catch(() => { window.location.assign(link.href); });
   }, true);
+
+  // Prime the cart document on intent, not only on click. This makes the
+  // header cart feel instantaneous on desktop and touch devices.
+  const cartLink = document.querySelector('.loja1-cart-link');
+  if (cartLink && cartLink.href) {
+    let prefetched = false;
+    const prefetchCart = () => {
+      if (prefetched) return;
+      prefetched = true;
+      const link = document.createElement('link');
+      link.rel = 'prefetch'; link.href = cartLink.href;
+      document.head.appendChild(link);
+    };
+    cartLink.addEventListener('pointerenter', prefetchCart, {once:true, passive:true});
+    cartLink.addEventListener('touchstart', prefetchCart, {once:true, passive:true});
+    cartLink.addEventListener('focus', prefetchCart, {once:true});
+  }
 
   document.querySelectorAll('.related.products').forEach(section => {
     const track = section.querySelector('ul.products'); if(!track) return;
