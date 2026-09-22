@@ -19,6 +19,21 @@ function storev1_setup() {
 }
 add_action('after_setup_theme','storev1_setup');
 
+// A fresh WooCommerce installation has no primary menu yet. Keep the
+// catalogue navigation visible by falling back to the non-empty product
+// categories until the administrator creates a custom menu.
+function storev1_category_menu_fallback() {
+    if (!taxonomy_exists('product_cat')) return;
+    $terms = get_terms(['taxonomy' => 'product_cat', 'hide_empty' => true, 'parent' => 0]);
+    if (is_wp_error($terms) || !$terms) return;
+    echo '<ul id="sv1-category-track" class="loja1-menu">';
+    foreach ($terms as $term) {
+        if (stripos($term->name, '60 dias') !== false) continue;
+        printf('<li><a href="%s">%s</a></li>', esc_url(get_term_link($term)), esc_html($term->name));
+    }
+    echo '</ul>';
+}
+
 /**
  * Ship the Turbo Contas identity with the theme so a fresh installation has
  * a complete favicon/app-icon set before the Customizer is configured.
