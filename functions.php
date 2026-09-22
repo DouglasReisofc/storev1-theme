@@ -104,6 +104,7 @@ require_once get_template_directory() . '/inc/storefront.php';
 require_once get_template_directory() . '/inc/catalog-search.php';
 require_once get_template_directory() . '/inc/site-quality.php';
 require_once get_template_directory() . '/inc/account.php';
+require_once get_template_directory() . '/inc/companion-installer.php';
 // Preserve WooCommerce validation and POST/redirect flow; flag only a successful addition.
 add_action('woocommerce_add_to_cart', function() {
     if (isset($_POST['add-to-cart']) && !wp_doing_ajax() && WC()->session) {

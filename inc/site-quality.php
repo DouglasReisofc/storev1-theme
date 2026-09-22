@@ -51,6 +51,31 @@ add_filter('woocommerce_loop_add_to_cart_args', function($args, $product) {
 // WordPress generates srcset; sizes must reflect the actual catalogue grid, not 100vw.
 add_filter('wp_get_attachment_image_attributes', function($attr, $attachment, $size) {
     if ($size === 'woocommerce_thumbnail') {
+        // Product banners are intentionally wide (16:9). Some WooCommerce
+        // installs generate a square `woocommerce_thumbnail`, which crops
+        // the logo and makes the catalogue look broken. Prefer the existing
+        // uncropped medium/full variants when they are available, while
+        // retaining responsive candidates for performance.
+        $medium = wp_get_attachment_image_src($attachment->ID, 'medium');
+        $square = isset($attr['width'], $attr['height']) && (int) $attr['width'] === (int) $attr['height'];
+        if ($medium && $square && (int) $medium[1] > (int) $medium[2]) {
+            $attr['src'] = $medium[0];
+            $attr['width'] = (int) $medium[1];
+            $attr['height'] = (int) $medium[2];
+            $uncropped = [];
+            $meta = wp_get_attachment_metadata($attachment->ID);
+            if (is_array($meta) && !empty($meta['sizes'])) {
+                $base = trailingslashit(dirname(wp_get_attachment_url($attachment->ID)));
+                foreach ($meta['sizes'] as $key => $candidate) {
+                    if (in_array($key, ['thumbnail', 'woocommerce_thumbnail', 'woocommerce_gallery_thumbnail'], true)) continue;
+                    if (empty($candidate['file']) || empty($candidate['width']) || empty($candidate['height']) || (int) $candidate['width'] <= (int) $candidate['height']) continue;
+                    $uncropped[] = esc_url($base . $candidate['file']) . ' ' . (int) $candidate['width'] . 'w';
+                }
+            }
+            $full = wp_get_attachment_image_src($attachment->ID, 'full');
+            if ($full) $uncropped[] = esc_url($full[0]) . ' ' . (int) $full[1] . 'w';
+            if ($uncropped) $attr['srcset'] = implode(', ', array_values(array_unique($uncropped)));
+        }
         $mobile = get_theme_mod('storev1_product_layout', 'grid') === 'grid' ? '46vw' : '92vw';
         $attr['sizes'] = '(max-width: 767px) ' . $mobile . ', (max-width: 1024px) 30vw, (min-width: 1800px) 18vw, 23vw';
     }
