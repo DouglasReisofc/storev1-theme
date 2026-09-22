@@ -56,25 +56,46 @@ add_filter('wp_get_attachment_image_attributes', function($attr, $attachment, $s
         // the logo and makes the catalogue look broken. Prefer the existing
         // uncropped medium/full variants when they are available, while
         // retaining responsive candidates for performance.
-        $medium = wp_get_attachment_image_src($attachment->ID, 'medium');
         $square = isset($attr['width'], $attr['height']) && (int) $attr['width'] === (int) $attr['height'];
-        if ($medium && $square && (int) $medium[1] > (int) $medium[2]) {
-            $attr['src'] = $medium[0];
-            $attr['width'] = (int) $medium[1];
-            $attr['height'] = (int) $medium[2];
+        $full = wp_get_attachment_image_src($attachment->ID, 'full');
+        if ($square && $full && (int) $full[1] > (int) $full[2]) {
+            $full_ratio = (int) $full[1] / max(1, (int) $full[2]);
             $uncropped = [];
+            $sources = [];
             $meta = wp_get_attachment_metadata($attachment->ID);
             if (is_array($meta) && !empty($meta['sizes'])) {
                 $base = trailingslashit(dirname(wp_get_attachment_url($attachment->ID)));
                 foreach ($meta['sizes'] as $key => $candidate) {
                     if (in_array($key, ['thumbnail', 'woocommerce_thumbnail', 'woocommerce_gallery_thumbnail'], true)) continue;
                     if (empty($candidate['file']) || empty($candidate['width']) || empty($candidate['height']) || (int) $candidate['width'] <= (int) $candidate['height']) continue;
-                    $uncropped[] = esc_url($base . $candidate['file']) . ' ' . (int) $candidate['width'] . 'w';
+                    $candidate_ratio = (int) $candidate['width'] / max(1, (int) $candidate['height']);
+                    if (abs($candidate_ratio - $full_ratio) / $full_ratio > 0.05) continue;
+                    $width = (int) $candidate['width'];
+                    $url = esc_url($base . $candidate['file']);
+                    $uncropped[$width] = $url . ' ' . $width . 'w';
+                    $sources[$width] = [$url, $width, (int) $candidate['height']];
                 }
             }
-            $full = wp_get_attachment_image_src($attachment->ID, 'full');
-            if ($full) $uncropped[] = esc_url($full[0]) . ' ' . (int) $full[1] . 'w';
-            if ($uncropped) $attr['srcset'] = implode(', ', array_values(array_unique($uncropped)));
+            $full_width = (int) $full[1];
+            $uncropped[$full_width] = esc_url($full[0]) . ' ' . $full_width . 'w';
+            $sources[$full_width] = [esc_url($full[0]), $full_width, (int) $full[2]];
+            ksort($uncropped, SORT_NUMERIC);
+            ksort($sources, SORT_NUMERIC);
+
+            // Do not depend on the WordPress `medium` preset: many stores
+            // configure it as a hard square crop too. Pick the first genuine
+            // landscape derivative that is large enough for a catalogue card.
+            $preferred = end($sources);
+            foreach ($sources as $source) {
+                if ($source[1] >= 300) {
+                    $preferred = $source;
+                    break;
+                }
+            }
+            $attr['src'] = $preferred[0];
+            $attr['width'] = $preferred[1];
+            $attr['height'] = $preferred[2];
+            $attr['srcset'] = implode(', ', array_values($uncropped));
         }
         $mobile = get_theme_mod('storev1_product_layout', 'grid') === 'grid' ? '46vw' : '92vw';
         $attr['sizes'] = '(max-width: 767px) ' . $mobile . ', (max-width: 1024px) 30vw, (min-width: 1800px) 18vw, 23vw';
