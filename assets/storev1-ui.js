@@ -1,4 +1,18 @@
 (() => {
+  // Remove only an isolated literal "\\n" text node left by older cached
+  // theme output. It must never be visible in the mobile viewport.
+  const removeStrayEscapedNewline = () => {
+    if (!document.createTreeWalker) return;
+    const showText = (typeof NodeFilter !== 'undefined' ? NodeFilter.SHOW_TEXT : 4);
+    const walker = document.createTreeWalker(document.body, showText);
+    const nodes = [];
+    let node;
+    while ((node = walker.nextNode())) {
+      if (/^\\n+$/.test((node.nodeValue || '').trim())) nodes.push(node);
+    }
+    nodes.forEach(item => item.remove());
+  };
+  removeStrayEscapedNewline();
   const drawer = document.getElementById('sv1-drawer');
   const triggers = document.querySelectorAll('[data-sv1-open]');
   let previousFocus;

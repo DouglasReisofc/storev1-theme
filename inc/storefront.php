@@ -96,7 +96,9 @@ add_filter('woocommerce_add_to_cart_fragments', function($fragments) {
 // navigation delay without exposing session data to the storefront cache.
 add_action('wp_head', function() {
     if (!function_exists('wc_get_cart_url') || (function_exists('is_cart') && (is_cart() || is_checkout()))) return;
-    echo '<link rel="prefetch" href="' . esc_url(wc_get_cart_url()) . '">\n';
+    // Keep the tag compact. Older cached theme builds could expose the escape
+    // sequence as visible text in the mobile viewport corner.
+    echo '<link rel="prefetch" href="' . esc_url(wc_get_cart_url()) . '">';
 }, 3);
 
 // Keep the purchase controls independent from long product descriptions. The

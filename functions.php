@@ -99,6 +99,13 @@ add_action('customize_register', function($wp_customize) {
     $wp_customize->add_control('storev1_banner_enabled',['label'=>'Exibir carrossel','section'=>'storev1_banner','type'=>'checkbox']);
     $wp_customize->add_setting('storev1_show_reviews',['default'=>false,'sanitize_callback'=>'rest_sanitize_boolean']);
     $wp_customize->add_control('storev1_show_reviews',['label'=>'Mostrar avaliações nos produtos','section'=>'storev1_banner','type'=>'checkbox']);
+    $wp_customize->add_section('storev1_support', ['title'=>__('Suporte via WhatsApp','storev1-theme'),'description'=>'Ative, altere ou remova o botão flutuante exibido na loja.','priority'=>40]);
+    $wp_customize->add_setting('storev1_whatsapp_enabled',['default'=>true,'sanitize_callback'=>'rest_sanitize_boolean']);
+    $wp_customize->add_control('storev1_whatsapp_enabled',['label'=>'Exibir botão flutuante do WhatsApp','section'=>'storev1_support','type'=>'checkbox']);
+    $wp_customize->add_setting('storev1_whatsapp_phone',['default'=>'5511971294939','sanitize_callback'=>function($value){return preg_replace('/[^0-9]/','',(string)$value);}]);
+    $wp_customize->add_control('storev1_whatsapp_phone',['label'=>'Número do WhatsApp (com DDI)','description'=>'Somente números. Exemplo: 5511999999999.','section'=>'storev1_support','type'=>'text']);
+    $wp_customize->add_setting('storev1_whatsapp_message',['default'=>'Olá, Estou em seu site e gostaria de informações a respeito de seus produtos','sanitize_callback'=>'sanitize_textarea_field']);
+    $wp_customize->add_control('storev1_whatsapp_message',['label'=>'Mensagem inicial','section'=>'storev1_support','type'=>'textarea']);
     for ($i=1; $i<=5; $i++) {
         $setting = 'storev1_banner_' . $i;
         $wp_customize->add_setting($setting, ['default'=>'','sanitize_callback'=>'esc_url_raw']);
@@ -133,5 +140,14 @@ add_action('wp_footer', function() {
     WC()->session->__unset('storev1_open_cart');
     if (time() - (int)$added < 120) echo '<span hidden data-sv1-cart-added></span>';
 }, 1);
+add_action('wp_footer', function() {
+    if (!get_theme_mod('storev1_whatsapp_enabled', true)) return;
+    $phone = preg_replace('/[^0-9]/', '', (string)get_theme_mod('storev1_whatsapp_phone', '5511971294939'));
+    $message = trim((string)get_theme_mod('storev1_whatsapp_message', 'Olá, Estou em seu site e gostaria de informações a respeito de seus produtos'));
+    if ($phone === '') return;
+    $url = 'https://api.whatsapp.com/send/?phone=' . rawurlencode($phone) . '&text=' . rawurlencode($message) . '&type=phone_number&app_absent=0';
+    echo '<a class="sv1-floating-whatsapp" href="' . esc_url($url) . '" target="_blank" rel="noopener noreferrer" aria-label="Falar com o suporte pelo WhatsApp">';
+    echo '<svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path d="M20.5 3.5A11.8 11.8 0 0 0 12.1 0C5.6 0 .3 5.3.3 11.8c0 2.1.6 4.1 1.6 5.9L.2 24l6.5-1.7a11.8 11.8 0 0 0 5.4 1.3h.1c6.5 0 11.8-5.3 11.8-11.8 0-3.2-1.3-6.1-3.5-8.3Zm-8.4 18.1h-.1a9.8 9.8 0 0 1-5-1.4l-.4-.2-3.8 1 1-3.7-.2-.4a9.8 9.8 0 0 1-1.5-5.2c0-5.4 4.4-9.8 9.9-9.8 2.6 0 5.1 1 6.9 2.9a9.8 9.8 0 0 1 2.9 7c0 5.4-4.4 9.8-9.8 9.8Zm5.4-7.3c-.3-.1-1.8-.9-2.1-1-.3-.1-.5-.1-.7.2-.2.3-.8 1-1 1.2-.2.2-.4.2-.7.1-1.8-.9-3-1.6-4.2-3.6-.3-.5.3-.5.8-1.6.1-.2.1-.4 0-.6-.1-.2-.7-1.7-.9-2.3-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1.1-1.1 2.7s1.1 3.1 1.3 3.3c.2.2 2.1 3.3 5.2 4.6 1.9.8 2.7.9 3.7.8.6-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4-.1-.2-.3-.3-.5-.4Z"/></svg><span>WhatsApp</span></a>';
+}, 4);
 add_filter('woocommerce_product_tabs',function($tabs){if(!get_theme_mod('storev1_show_reviews',false)) unset($tabs['reviews']);return $tabs;},99);
 add_filter('woocommerce_output_related_products_args',function($args){$args['posts_per_page']=8;return $args;});
