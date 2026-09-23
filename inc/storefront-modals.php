@@ -23,6 +23,7 @@ function storev1_modal_setting($key, $default = '') {
  */
 function storev1_redirect_cart_route_to_modal() {
     if (is_admin() || wp_doing_ajax() || !function_exists('is_cart') || !is_cart()) return;
+    if (!class_exists('StoreZap_Settings') || !StoreZap_Settings::enabled('cart_modal_enabled')) return;
     if (isset($_GET['storev1_cart_fragment']) && '1' === (string) $_GET['storev1_cart_fragment']) return;
 
     $destination = function_exists('wc_get_page_permalink') ? wc_get_page_permalink('shop') : home_url('/');
