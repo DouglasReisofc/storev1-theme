@@ -66,6 +66,8 @@ body.loja1-contasvip-theme .loja1-footer-bottom { color: #777 !important; backgr
 .woocommerce-page ul.products li.product a.button,
 .woocommerce ul.products li.product .button,
 .woocommerce-page ul.products li.product .button,
+.wc-block-grid__product-add-to-cart .wp-block-button__link,
+.wp-block-woocommerce-empty-cart-block .wc-block-grid__product-add-to-cart .wp-block-button__link,
 .woocommerce-cart .cart-empty ~ .button,
 .woocommerce-cart .cart-empty ~ a.button {
     display: inline-flex !important;
@@ -81,7 +83,20 @@ body.loja1-contasvip-theme .loja1-footer-bottom { color: #777 !important; backgr
 .woocommerce ul.products li.product a.button:hover,
 .woocommerce-page ul.products li.product a.button:hover,
 .woocommerce ul.products li.product .button:hover,
-.woocommerce-page ul.products li.product .button:hover {
+.woocommerce-page ul.products li.product .button:hover,
+.wc-block-grid__product-add-to-cart .wp-block-button__link:hover,
+.wp-block-woocommerce-empty-cart-block .wc-block-grid__product-add-to-cart .wp-block-button__link:hover {
     background: linear-gradient(135deg,#ffdc82,#edb53a) !important;
     color: #251b08 !important;
+}
+.wc-block-grid__product-add-to-cart .wp-block-button__link {
+    min-width: 140px;
+    min-height: 44px;
+    padding: 0 21px !important;
+    border-radius: 999px !important;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .03em;
+    line-height: 1.2;
+    text-transform: uppercase;
 }
