@@ -1,0 +1,38 @@
+/* StoreV1 owns the modal surface. Store Connect supplies WooCommerce data and behavior. */
+.sv1-storefront-modal{padding:0;border:0;background:#fff;box-shadow:0 28px 100px rgba(8,20,36,.4);color:#18362b}
+.sv1-storefront-modal::backdrop{background:rgba(10,22,32,.62);backdrop-filter:blur(3px)}
+.sv1-modal-eyebrow{display:block;color:#148157;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.storezap-cart-dialog{width:min(94vw,760px);max-height:90vh;border-radius:18px;overflow:hidden}
+.storezap-cart-dialog__head{position:relative;display:flex;align-items:center;justify-content:space-between;padding:15px 54px 13px 20px;border-bottom:1px solid #e2ece7;background:#fff}
+.storezap-cart-dialog__head h2{margin:3px 0 0;color:#163d2d;font-size:19px;line-height:1.2}
+.storezap-cart-dialog__close,.storezap-checkout-dialog__close{display:grid;place-items:center;width:36px;height:36px;margin:0;padding:0;border:0;border-radius:50%;color:#466257;background:transparent;font-size:27px;font-weight:400;line-height:1;cursor:pointer}
+.storezap-cart-dialog__close{position:absolute;top:9px;right:12px}
+.storezap-cart-dialog__close:hover,.storezap-checkout-dialog__close:hover{background:#edf7f1}
+.storezap-cart-dialog__body{max-height:calc(90vh - 132px);overflow:auto;padding:16px}
+.storezap-cart-dialog__body .woocommerce-cart-form{width:min(100%,620px);margin:0 auto}
+.storezap-cart-dialog__body .cart_totals{float:none!important;width:min(100%,620px)!important;margin:18px auto 0!important}
+.storezap-cart-dialog__body .cart_totals h2{text-align:center}
+.storezap-cart-dialog__body .wc-proceed-to-checkout{display:flex!important;justify-content:center!important;margin:16px auto 4px!important;padding:0!important;text-align:center!important}
+.storezap-cart-dialog__body .wc-proceed-to-checkout a.checkout-button,.storezap-cart-dialog__body a.checkout-button{display:flex!important;align-items:center;justify-content:center;width:min(100%,340px)!important;min-height:48px;margin:0 auto!important;border-radius:999px!important;background:var(--storezap-accent,#087c4d)!important;color:#fff!important;font-weight:850;text-align:center}
+.storezap-cart-dialog__foot{display:flex;align-items:center;justify-content:flex-end;gap:14px;padding:12px 18px;border-top:1px solid #dfe9e3;background:#fff;box-shadow:0 -8px 18px rgba(7,29,18,.08)}
+.storezap-cart-dialog__foot .cart_totals{width:100%!important;float:none!important;display:flex!important;justify-content:flex-end!important;margin:0!important}
+.storezap-cart-dialog__foot .cart_totals h2,.storezap-cart-dialog__foot .cart_totals .shop_table{display:none!important}
+.storezap-cart-dialog__foot .cart_totals .order-total{display:flex!important;align-items:center;gap:8px;margin:0!important;border:0!important}
+.storezap-cart-dialog__foot .cart_totals .order-total th{padding:0!important;border:0!important;color:#587064!important;font-size:12px!important}
+.storezap-cart-dialog__foot .cart_totals .order-total td{padding:0!important;border:0!important;color:#0b3928!important;font-size:18px!important}
+.storezap-cart-dialog__foot .wc-proceed-to-checkout{margin:0 0 0 auto!important;padding:0!important}
+.storezap-cart-dialog .button,.storezap-cart-dialog button:not(.storezap-cart-dialog__close):not(.storezap-coupon-trigger){min-height:40px!important;padding:9px 13px!important;border-radius:10px!important;font-size:13px!important}
+.storezap-cart-dialog [name="update_cart"]{display:none!important}.storezap-cart-dialog.is-updating input.qty{opacity:.62}
+.storezap-coupon-trigger{display:inline-flex;align-items:center;justify-content:center;min-height:36px;margin:4px 0 12px;padding:8px 13px;border:1px solid #b9d8c8;border-radius:9px;color:#087c4d;background:#f1fbf6;font-size:12px;font-weight:800;cursor:pointer}
+.storezap-coupon-trigger:hover{background:#e4f7ed}.storezap-cart-dialog .coupon{display:none!important}
+.storezap-coupon-dialog{width:min(calc(100vw - 32px),390px);padding:0;border:0;border-radius:16px;box-shadow:0 24px 70px rgba(8,20,36,.35)}
+.storezap-coupon-dialog::backdrop{background:rgba(10,22,32,.55)}.storezap-coupon-dialog__inner{padding:18px}.storezap-coupon-dialog h3{margin:0;color:#1d2b25;font-size:17px}.storezap-coupon-dialog p{margin:6px 0 14px;color:#5c6d65;font-size:12px}.storezap-coupon-dialog input{width:100%;min-height:44px;padding:0 12px;border:1px solid #c7d8cf;border-radius:9px;font-size:14px}.storezap-coupon-dialog__actions{display:flex;justify-content:flex-end;gap:8px;margin-top:13px}.storezap-coupon-dialog__actions button{min-height:38px;padding:8px 13px;border:1px solid #cbd8d1;border-radius:9px;background:#fff;cursor:pointer;font-weight:750}.storezap-coupon-dialog__actions .apply{border-color:#087c4d;color:#fff;background:#087c4d}
+.storezap-checkout-dialog{width:min(96vw,1120px);height:min(94vh,900px);max-width:none;max-height:none;border-radius:20px;overflow:hidden}
+.storezap-checkout-dialog__head{height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 18px 0 22px;border-bottom:1px solid #e3ece7;background:#fff}
+.storezap-checkout-dialog__head strong{display:block;margin-top:3px;color:#163d2d;font-size:17px;line-height:1.2}.storezap-checkout-dialog__head span:last-child{display:block;margin-top:2px;color:#698077;font-size:11px}
+.storezap-checkout-dialog__close{flex:0 0 36px}.storezap-checkout-dialog__frame{display:block;width:100%;height:calc(100% - 58px);border:0;background:#fff}.storezap-checkout-dialog.is-loading .storezap-checkout-dialog__frame{opacity:.1}
+.storezap-checkout-dialog__loading{position:absolute;inset:58px 0 0;display:grid;place-items:center;color:#587267;background:rgba(255,255,255,.84);font-size:13px;font-weight:700;pointer-events:none}.storezap-checkout-dialog:not(.is-loading) .storezap-checkout-dialog__loading{display:none}
+@media(max-width:700px){
+  .storezap-cart-dialog{width:calc(100vw - 16px);max-height:92vh;border-radius:14px}.storezap-cart-dialog__body{padding:13px}.storezap-cart-dialog__foot{align-items:stretch;flex-direction:column;gap:8px}.storezap-cart-dialog__foot .cart_totals{margin:0!important}.storezap-cart-dialog__foot .order-total{justify-content:space-between}.storezap-cart-dialog__foot .wc-proceed-to-checkout{margin:0!important}.storezap-cart-dialog__foot .wc-proceed-to-checkout a.checkout-button{width:100%!important;white-space:normal!important}
+  .storezap-checkout-dialog{width:calc(100vw - 12px);height:calc(100dvh - 16px);border-radius:15px}.storezap-checkout-dialog__head{height:51px;padding:0 11px 0 15px}.storezap-checkout-dialog__head strong{font-size:15px}.storezap-checkout-dialog__head span:last-child{font-size:10px}.storezap-checkout-dialog__frame{height:calc(100% - 51px)}.storezap-checkout-dialog__loading{inset:51px 0 0}
+}

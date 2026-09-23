@@ -15,6 +15,7 @@ function storev1_setup() {
     add_theme_support('responsive-embeds');
     add_theme_support('woocommerce');
     add_theme_support('wc-product-gallery-slider');
+    add_theme_support('storev1-storefront-modals');
     register_nav_menus(['primary'=>__('Menu principal','storev1-theme')]);
 }
 add_action('after_setup_theme','storev1_setup');
@@ -66,6 +67,7 @@ function storev1_assets(){
     wp_enqueue_style('storev1-storefront',get_template_directory_uri() . '/assets/storev1-storefront.css',[],wp_get_theme()->get('Version'));
     wp_enqueue_style('storev1-components',get_template_directory_uri() . '/assets/storev1-components.css',['storev1-storefront'],wp_get_theme()->get('Version'));
     wp_enqueue_style('storev1-gold',get_template_directory_uri() . '/assets/storev1-gold.css',['storev1-components'],wp_get_theme()->get('Version'));
+    wp_enqueue_style('storev1-modals',get_template_directory_uri() . '/assets/storev1-modals.css',['storev1-gold'],wp_get_theme()->get('Version'));
     if (function_exists('is_account_page') && is_account_page()) wp_enqueue_style('storev1-account',get_template_directory_uri().'/assets/storev1-account.css',['storev1-gold'],wp_get_theme()->get('Version'));
     // The public home/catalog pages render the cart count server-side. Avoid
     // loading WooCommerce's polling fragment bundle there; keep it on pages
@@ -123,6 +125,7 @@ add_action('customize_register', function($wp_customize) {
 add_filter('woocommerce_product_add_to_cart_text',function($text,$product){return $product->is_type('simple') && $product->is_purchasable() && $product->is_in_stock() ? __('Comprar','storev1-theme') : $text;},10,2);
 add_filter('woocommerce_product_single_add_to_cart_text',function(){return __('Comprar agora','storev1-theme');});
 require_once get_template_directory() . '/inc/storefront.php';
+require_once get_template_directory() . '/inc/storefront-modals.php';
 require_once get_template_directory() . '/inc/catalog-search.php';
 require_once get_template_directory() . '/inc/site-quality.php';
 require_once get_template_directory() . '/inc/social-metadata.php';
