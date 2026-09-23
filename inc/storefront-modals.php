@@ -36,7 +36,7 @@ function storev1_render_storefront_modals() {
     echo '<div class="storezap-cart-dialog__body">' . do_shortcode('[woocommerce_cart]') . '</div></dialog>';
 
     echo '<dialog class="storezap-checkout-dialog sv1-storefront-modal" data-storezap-checkout-dialog data-storev1-modal="checkout" data-checkout-url="' . esc_url($checkout_url) . '">';
-    echo '<header class="storezap-checkout-dialog__head"><div><span class="sv1-modal-eyebrow">Pagamento seguro</span><strong>Finalizar compra</strong><span>Preencha seus dados para concluir o pedido.</span></div><button type="button" class="storezap-checkout-dialog__close" data-storezap-checkout-close aria-label="Fechar">&times;</button></header>';
+    echo '<header class="storezap-checkout-dialog__head"><strong>Finalizar compra</strong><button type="button" class="storezap-checkout-dialog__close" data-storezap-checkout-close aria-label="Fechar">&times;</button></header>';
     echo '<iframe class="storezap-checkout-dialog__frame" data-storezap-checkout-frame title="Finalizar compra" loading="lazy"></iframe><div class="storezap-checkout-dialog__loading" data-storezap-checkout-loading>Carregando checkout…</div></dialog>';
 }
 add_action('wp_footer', 'storev1_render_storefront_modals', 8);
