@@ -125,6 +125,7 @@ add_filter('woocommerce_product_single_add_to_cart_text',function(){return __('C
 require_once get_template_directory() . '/inc/storefront.php';
 require_once get_template_directory() . '/inc/catalog-search.php';
 require_once get_template_directory() . '/inc/site-quality.php';
+require_once get_template_directory() . '/inc/social-metadata.php';
 require_once get_template_directory() . '/inc/account.php';
 require_once get_template_directory() . '/inc/companion-installer.php';
 // Preserve WooCommerce validation and POST/redirect flow; flag only a successful addition.

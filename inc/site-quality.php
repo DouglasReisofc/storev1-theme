@@ -24,7 +24,7 @@ add_action('wp_head', function() {
     elseif (is_tax() || is_category() || is_tag()) $description = term_description();
     elseif (is_singular() && !post_password_required()) {
         $post = get_queried_object();
-        $description = $post->post_excerpt ?: $post->post_content;
+        $description = storev1_share_description($post);
     }
     if (!$description) $description = wp_get_document_title() . '. ' . get_bloginfo('description');
     $description = preg_replace('/\s+/u', ' ', wp_strip_all_tags(strip_shortcodes($description)));
