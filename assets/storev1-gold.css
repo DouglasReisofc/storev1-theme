@@ -58,3 +58,30 @@ body.loja1-contasvip-theme .loja1-footer .storezap-wordmark small { color: #777 
 body.loja1-contasvip-theme .loja1-footer a { color: #555 !important; }
 body.loja1-contasvip-theme .loja1-footer a:hover { color: #805500 !important; }
 body.loja1-contasvip-theme .loja1-footer-bottom { color: #777 !important; background: #fff !important; border-top: 1px solid #ececec; }
+
+/* WooCommerce renders the related products below an empty cart as a normal
+ * product loop. Keep those purchase controls gold even when a host/plugin
+ * omits the optional body skin class or adds a disabled-looking default. */
+.woocommerce ul.products li.product a.button,
+.woocommerce-page ul.products li.product a.button,
+.woocommerce ul.products li.product .button,
+.woocommerce-page ul.products li.product .button,
+.woocommerce-cart .cart-empty ~ .button,
+.woocommerce-cart .cart-empty ~ a.button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: linear-gradient(135deg,#f5cc65,#dfa52a) !important;
+    color: #251b08 !important;
+    border: 1px solid #c59123 !important;
+    box-shadow: 0 3px 10px #a972091c !important;
+    opacity: 1 !important;
+    text-shadow: none !important;
+}
+.woocommerce ul.products li.product a.button:hover,
+.woocommerce-page ul.products li.product a.button:hover,
+.woocommerce ul.products li.product .button:hover,
+.woocommerce-page ul.products li.product .button:hover {
+    background: linear-gradient(135deg,#ffdc82,#edb53a) !important;
+    color: #251b08 !important;
+}

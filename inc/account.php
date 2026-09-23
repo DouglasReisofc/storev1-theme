@@ -5,6 +5,17 @@ function storev1_registration_enabled() {
     return 'yes' === get_option('woocommerce_enable_myaccount_registration');
 }
 
+/**
+ * The account links must follow the WooCommerce page setting.  A missing,
+ * trashed or unpublished My account page means the feature is disabled; the
+ * registration option alone only controls whether new customers may sign up.
+ */
+function storev1_account_enabled() {
+    if (!class_exists('WooCommerce') || !function_exists('wc_get_page_id')) return false;
+    $page_id = absint(wc_get_page_id('myaccount'));
+    return $page_id > 0 && 'publish' === get_post_status($page_id);
+}
+
 function storev1_is_auth_page() {
     return is_page_template(['page-account-login.php', 'page-account-register.php']);
 }
@@ -15,10 +26,22 @@ function storev1_account_view() {
 }
 
 function storev1_account_url($view = 'login') {
+    if (!storev1_account_enabled()) return home_url('/');
     $template = $view === 'register' ? 'page-account-register.php' : 'page-account-login.php';
     $pages = get_posts(['post_type'=>'page', 'post_status'=>'publish', 'numberposts'=>1, 'meta_key'=>'_wp_page_template', 'meta_value'=>$template]);
     return $pages ? get_permalink($pages[0]) : add_query_arg('account-view', $view, wc_get_page_permalink('myaccount'));
 }
+
+// Keep the WooCommerce dashboard useful and intentionally small: customers
+// land on their purchase history instead of seeing unrelated endpoints.
+add_action('template_redirect', function() {
+    if (!storev1_account_enabled() || !is_user_logged_in() || !function_exists('is_account_page') || !is_account_page()) return;
+    if (function_exists('is_wc_endpoint_url') && is_wc_endpoint_url()) return;
+    if (function_exists('wc_get_account_endpoint_url')) {
+        wp_safe_redirect(wc_get_account_endpoint_url('orders'));
+        exit;
+    }
+}, 15);
 
 // WC's form handler accepts nonce-valid registration POSTs even from a stale
 // browser tab. Gate that handler, not checkout/admin/REST customer creation.

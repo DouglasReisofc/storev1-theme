@@ -65,27 +65,15 @@ function storev1_cart_count() {
     echo '<span class="sv1-cart-count" aria-label="' . esc_attr(sprintf(__('%d itens no carrinho','storev1-theme'),$count)) . '">' . esc_html($count) . '</span>';
 }
 
-/* Account dashboard cards follow the endpoints enabled by WooCommerce. */
-add_action('woocommerce_account_dashboard', function() {
-    if (!function_exists('wc_get_account_menu_items')) return;
-    $items = wc_get_account_menu_items();
-    if (!$items) return;
-    $icons = ['dashboard'=>'⌂','orders'=>'↗','downloads'=>'↓','edit-address'=>'⌖','edit-account'=>'●','customer-logout'=>'→'];
-    echo '<section class="sv1-account-cards" aria-labelledby="sv1-account-title"><h2 id="sv1-account-title">Acesso rápido</h2><div class="sv1-account-card-grid">';
-    foreach ($items as $endpoint=>$label) {
-        if ($endpoint === 'customer-logout') continue;
-        $url = $endpoint === 'dashboard' ? wc_get_page_permalink('myaccount') : wc_get_account_endpoint_url($endpoint);
-        echo '<a class="sv1-account-card" href="'.esc_url($url).'" aria-label="'.esc_attr($label).'">';
-        echo '<span class="sv1-account-card-icon" aria-hidden="true">'.esc_html($icons[$endpoint] ?? '•').'</span><span><strong>'.esc_html($label).'</strong><small>Ver detalhes</small></span><b aria-hidden="true">›</b></a>';
-    }
-    echo '</div></section>';
-}, 20);
-
 add_filter('woocommerce_account_menu_items', function($items) {
-    $labels = ['dashboard'=>'Minha conta','orders'=>'Pedidos','downloads'=>'Downloads','edit-address'=>'Endereços','edit-account'=>'Dados da conta','customer-logout'=>'Sair'];
-    foreach ($labels as $key=>$label) if (isset($items[$key])) $items[$key] = $label;
-    return $items;
-}, 20);
+// A compact account area: only purchase history and an explicit sign-out
+// action remain. WooCommerce still owns the order/payment details and links.
+add_filter('woocommerce_account_menu_items', function($items) {
+    $compact = [];
+    if (isset($items['orders'])) $compact['orders'] = 'Histórico de compras';
+    if (isset($items['customer-logout'])) $compact['customer-logout'] = 'Sair';
+    return $compact;
+}, 30);
 
 add_filter('woocommerce_add_to_cart_fragments', function($fragments) {
     ob_start(); storev1_cart_count(); $fragments['span.sv1-cart-count'] = ob_get_clean(); return $fragments;

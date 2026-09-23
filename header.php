@@ -8,8 +8,9 @@
 <button type="button" class="loja1-menu-toggle" data-sv1-open aria-controls="sv1-drawer" aria-expanded="false" aria-label="Abrir menu"><span></span><span></span><span></span><b>Menu</b></button>
 <?php storev1_brand(); ?>
 <div class="loja1-search"><?php storev1_search(); ?></div>
-<div class="loja1-header-actions"><?php if (class_exists('WooCommerce')) : ?>
+<div class="loja1-header-actions"><?php if (class_exists('WooCommerce') && storev1_account_enabled()) : ?>
 <a class="loja1-account" href="<?php echo esc_url(wc_get_page_permalink('myaccount')); ?>"><?php storev1_icon('user'); ?><span><strong>Minha conta</strong><small>Acessar minha conta</small></span></a>
+<?php endif; ?><?php if (class_exists('WooCommerce')) : ?>
 <a class="loja1-cart-link" href="<?php echo esc_url(wc_get_cart_url()); ?>"><?php storev1_icon('cart'); ?><span class="loja1-cart-copy"><strong>Carrinho</strong><small>Ver meus produtos</small></span><span class="screen-reader-text">Abrir carrinho</span><?php storev1_cart_count(); ?></a>
 <?php endif; ?></div>
 </div>
@@ -33,6 +34,6 @@ $storev1_promo = ob_get_clean();
 <dialog id="sv1-drawer" class="sv1-drawer" aria-labelledby="sv1-drawer-title">
 <div class="sv1-drawer-head"><strong id="sv1-drawer-title">Menu da loja</strong><button type="button" data-sv1-close aria-label="Fechar menu"><?php storev1_icon('close'); ?></button></div>
 <div class="sv1-drawer-scroll"><?php storev1_search(); ?><?php if(class_exists('WooCommerce')) wc_get_template('loop/orderby.php',['sv1_drawer'=>true]); else storev1_categories(); ?>
-<?php if (class_exists('WooCommerce')) : ?><a class="sv1-drawer-account" href="<?php echo esc_url(wc_get_page_permalink('myaccount')); ?>">Minha conta</a><?php endif; ?>
+<?php if (class_exists('WooCommerce') && storev1_account_enabled()) : ?><a class="sv1-drawer-account" href="<?php echo esc_url(wc_get_page_permalink('myaccount')); ?>">Minha conta</a><?php endif; ?>
 </div></dialog>
 <main id="main-content" class="site-content loja1-shell">
