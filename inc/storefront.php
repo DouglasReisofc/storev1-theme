@@ -65,7 +65,6 @@ function storev1_cart_count() {
     echo '<span class="sv1-cart-count" aria-label="' . esc_attr(sprintf(__('%d itens no carrinho','storev1-theme'),$count)) . '">' . esc_html($count) . '</span>';
 }
 
-add_filter('woocommerce_account_menu_items', function($items) {
 // A compact account area: only purchase history and an explicit sign-out
 // action remain. WooCommerce still owns the order/payment details and links.
 add_filter('woocommerce_account_menu_items', function($items) {
