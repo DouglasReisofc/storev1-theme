@@ -2,7 +2,7 @@
 defined('ABSPATH') || exit;
 
 add_filter('body_class', function($classes) { $classes[] = 'loja1-contasvip-theme'; return $classes; });
-add_filter('woocommerce_attribute_label', function($label, $name) { return $name === 'pa_validade' ? 'Escolha sua oferta' : $label; }, 10, 2);
+add_filter('woocommerce_attribute_label', function($label, $name) { return in_array($name, ['pa_oferta', 'pa_validade'], true) ? 'Escolha sua oferta' : $label; }, 10, 2);
 
 function storev1_icon($name) {
     $paths = [
