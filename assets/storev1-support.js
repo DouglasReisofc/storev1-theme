@@ -7,7 +7,7 @@
     const emailButtons = document.querySelectorAll('[data-sv1-email-support]');
     const closeButtons = document.querySelectorAll('[data-sv1-support-close], [data-sv1-support-form-close]');
     const show = (el) => { el.hidden = false; document.documentElement.classList.add('sv1-support-open'); };
-    const hide = (el) => { el.hidden = true; if (drawer.hidden && modal.hidden) document.documentElement.classList.remove('sv1-support-open'); };
+    const hide = (el) => { el.hidden = true; if (drawer.hidden && modal.hidden) { document.documentElement.classList.remove('sv1-support-open'); open.setAttribute('aria-expanded', 'false'); } };
     open.addEventListener('click', () => { open.setAttribute('aria-expanded', 'true'); show(drawer); });
     drawer.addEventListener('click', event => { if (event.target === drawer) hide(drawer); });
     emailButtons.forEach(button => button.addEventListener('click', () => { hide(drawer); show(modal); modal.querySelector('input,select,textarea')?.focus(); }));
