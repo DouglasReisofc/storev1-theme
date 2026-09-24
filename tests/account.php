@@ -21,8 +21,11 @@ check(storev1_account_view() === 'register', 'enabled registration renders regis
 check(!$guard(new WP_Error())->errors, 'enabled registration reaches native validation');
 $_GET = []; $page_template = 'page-account-login.php';
 check(storev1_account_view() === 'login', 'login remains available with registration enabled');
+check(storev1_account_enabled(), 'account entry is visible when registration is enabled');
 $_GET['account-view'] = ['register'];
 check(storev1_account_view() === 'login', 'malformed view cannot change the form');
+$registration = 'no';
+check(!storev1_account_enabled(), 'account entry is hidden when registration is disabled');
 $robots = $callbacks['wp_robots'];
 check(isset($robots(['index'=>true])['noindex']), 'auth pages remain noindex');
 $page_template = '';

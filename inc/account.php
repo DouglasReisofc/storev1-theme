@@ -6,14 +6,15 @@ function storev1_registration_enabled() {
 }
 
 /**
- * The account links must follow the WooCommerce page setting.  A missing,
- * trashed or unpublished My account page means the feature is disabled; the
- * registration option alone only controls whether new customers may sign up.
+ * The storefront account entry follows both WooCommerce settings: the page
+ * must exist and account registration must be enabled.  This keeps the
+ * account entry, drawer and footer consistent when the store owner disables
+ * customer registration in WooCommerce.
  */
 function storev1_account_enabled() {
     if (!class_exists('WooCommerce') || !function_exists('wc_get_page_id')) return false;
     $page_id = absint(wc_get_page_id('myaccount'));
-    return $page_id > 0 && 'publish' === get_post_status($page_id);
+    return storev1_registration_enabled() && $page_id > 0 && 'publish' === get_post_status($page_id);
 }
 
 function storev1_is_auth_page() {
