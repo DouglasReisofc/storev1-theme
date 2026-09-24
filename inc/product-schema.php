@@ -63,5 +63,5 @@ add_action('wp_head', function() {
         'variesBy' => ['https://schema.org/name'],
         'hasVariant' => $variants,
     ];
-    echo '<script type="application/ld+json">' . wp_json_encode($graph, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>\n';
+    echo '<script type="application/ld+json">' . wp_json_encode($graph, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "</script>\n";
 }, 16);
