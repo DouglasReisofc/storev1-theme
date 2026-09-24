@@ -18,7 +18,7 @@ $search_id = wp_unique_id('sv1-category-search-');
                 $url = get_term_link($term);
                 if (is_wp_error($url)) continue;
             ?>
-            <li data-category-option><a href="<?php echo esc_url($url); ?>" <?php if ($current === $term->term_id) echo 'aria-current="page"'; ?>><?php echo esc_html($term->name); ?><small><?php echo absint($term->count); ?></small></a></li>
+            <li data-category-option><a href="<?php echo esc_url($url); ?>" <?php if ($current === $term->term_id) echo 'aria-current="page"'; ?> aria-label="<?php echo esc_attr($term->name); ?>"><span class="sv1-category-option-main"><?php $image = storev1_category_image_url($term); if ($image) : ?><img src="<?php echo esc_url($image); ?>" alt="" loading="lazy" decoding="async" width="72" height="44"><?php endif; ?><span><strong><?php echo esc_html($term->name); ?></strong><em><?php echo esc_html(storev1_category_description($term)); ?></em></span></span><small><?php echo absint($term->count); ?></small></a></li>
             <?php endforeach; endif; ?>
             <?php
             $sv1_products = get_posts(['post_type'=>'product','post_status'=>'publish','posts_per_page'=>40,'orderby'=>'title','order'=>'ASC']);

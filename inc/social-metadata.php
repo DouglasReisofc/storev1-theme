@@ -77,11 +77,16 @@ add_action('wp_head', function() {
         $term = get_queried_object();
         $url = get_term_link($term);
         $description = wp_html_excerpt(storev1_plain_summary(term_description()), 180, '…');
+        if (!$description && function_exists('storev1_category_description')) $description = storev1_category_description($term);
         $image_id = absint(get_term_meta($term->term_id, 'thumbnail_id', true));
     }
     if (!$url || is_wp_error($url)) return;
     if (!is_singular() && get_query_var('paged') > 1) $url = get_pagenum_link(get_query_var('paged'), false);
     $image = $image_id ? storev1_social_image($image_id) : [];
+    if (!$image && isset($term) && function_exists('storev1_category_image_url')) {
+        $category_image = storev1_category_image_url($term);
+        if ($category_image) $image = ['url' => $category_image, 'width' => 1438, 'height' => 905, 'type' => 'image/png'];
+    }
     if (!$image && !$product) {
         $logo = absint(get_theme_mod('custom_logo'));
         if ($logo) $image = storev1_social_image($logo);

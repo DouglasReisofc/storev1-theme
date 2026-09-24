@@ -1,6 +1,7 @@
 <?php
 if (! defined('ABSPATH')) exit;
 require_once get_template_directory() . '/inc/class-storev1-updater.php';
+require_once get_template_directory() . '/inc/category-media.php';
 function storev1_setup() {
     load_theme_textdomain('storev1-theme', get_template_directory() . '/languages');
     add_theme_support('title-tag');

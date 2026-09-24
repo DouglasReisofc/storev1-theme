@@ -21,7 +21,10 @@ add_action('wp_head', function() {
     if (function_exists('is_account_page') && (is_account_page() || is_cart() || is_checkout())) return;
     $description = '';
     if (is_front_page()) $description = get_bloginfo('description');
-    elseif (is_tax() || is_category() || is_tag()) $description = term_description();
+    elseif (is_tax() || is_category() || is_tag()) {
+        $description = term_description();
+        if (!$description && function_exists('storev1_category_description')) $description = storev1_category_description(get_queried_object());
+    }
     elseif (is_singular() && !post_password_required()) {
         $post = get_queried_object();
         $description = storev1_share_description($post);
