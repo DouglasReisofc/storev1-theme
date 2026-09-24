@@ -33,7 +33,7 @@ function storev1_category_description($term) {
 // real WooCommerce category thumbnail instead of relying only on the theme
 // fallback. This is idempotent and retries until all four files are available.
 add_action('admin_init', function() {
-    if (get_option('storev1_category_assets_seeded') === '1' || !taxonomy_exists('product_cat')) return;
+    if (get_option('storev1_category_assets_seeded') === '2' || !taxonomy_exists('product_cat')) return;
     $map = [
         'contas-30-dias' => 'contas-30-dias',
         'contas-90-dias' => 'contas-90-dias',
@@ -46,6 +46,12 @@ add_action('admin_init', function() {
         $attachment = get_page_by_path($attachment_slug, OBJECT, 'attachment');
         if (!$term || !$attachment) { $complete = false; continue; }
         update_term_meta($term->term_id, 'thumbnail_id', (int) $attachment->ID);
+        if (!trim((string) $term->description)) {
+            wp_update_term($term->term_id, 'product_cat', ['description' => storev1_category_description($term)]);
+        }
+        $title = $term->name;
+        wp_update_post(['ID' => $attachment->ID, 'post_title' => $title, 'post_excerpt' => storev1_category_description($term), 'post_content' => storev1_category_description($term)]);
+        update_post_meta($attachment->ID, '_wp_attachment_image_alt', $title . ' — Turbo Contas');
     }
-    if ($complete) update_option('storev1_category_assets_seeded', '1', false);
+    if ($complete) update_option('storev1_category_assets_seeded', '2', false);
 });
