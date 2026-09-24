@@ -76,7 +76,18 @@
         imageSlot.replaceChildren();
         price.replaceChildren();
         if (!selected) { title.textContent = 'Ver opções disponíveis'; return; }
-        title.textContent = selected.option.textContent.trim();
+        const offerTitle = selected.option.textContent.trim();
+        title.textContent = offerTitle;
+        // Keep the visible product heading and the browser title aligned with
+        // the offer selected in the modal. This is intentionally client-side:
+        // WooCommerce still owns the parent product URL and variation POST.
+        const productHeading = document.querySelector('.summary .product_title, .summary h1.product_title, h1.product_title');
+        if (productHeading) productHeading.textContent = offerTitle;
+        if (document.title && offerTitle) {
+          const separator = ' - ';
+          const siteName = document.title.split(separator).slice(-1)[0];
+          document.title = offerTitle + separator + siteName;
+        }
         const imageUrl = selected.variation.image?.src || '';
         if (imageUrl) {
           const image = document.createElement('img');

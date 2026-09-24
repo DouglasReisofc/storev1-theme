@@ -4,6 +4,44 @@ defined('ABSPATH') || exit;
 add_filter('body_class', function($classes) { $classes[] = 'loja1-contasvip-theme'; return $classes; });
 add_filter('woocommerce_attribute_label', function($label, $name) { return in_array($name, ['pa_oferta', 'pa_validade'], true) ? 'Escolha sua oferta' : $label; }, 10, 2);
 
+/**
+ * A variable product is a family of offers, but each offer has its own
+ * commercial title (for example, “Conta Premium 1fichier – 30 Dias”). Use
+ * the first available variation wherever WooCommerce renders a catalogue
+ * card or document title, instead of exposing a generic parent name.
+ */
+function storev1_offer_display_name($product) {
+    if (!$product instanceof WC_Product || !$product->is_type('variable')) return $product instanceof WC_Product ? $product->get_name() : '';
+    foreach ($product->get_children() as $variation_id) {
+        $variation = wc_get_product($variation_id);
+        if ($variation instanceof WC_Product_Variation && $variation->exists() && $variation->is_in_stock()) {
+            $name = trim($variation->get_name());
+            if ($name !== '') return $name;
+        }
+    }
+    return $product->get_name();
+}
+
+// Catalogue cards and related-product cards should expose the offer title.
+remove_action('woocommerce_shop_loop_item_title', 'woocommerce_template_loop_product_title', 10);
+add_action('woocommerce_shop_loop_item_title', function() {
+    global $product;
+    if (!$product instanceof WC_Product) return;
+    echo '<h2 class="woocommerce-loop-product__title">' . esc_html(storev1_offer_display_name($product)) . '</h2>';
+}, 10);
+
+// Give crawlers the same useful default offer title as the visible catalogue.
+add_filter('pre_get_document_title', function($title) {
+    if (function_exists('is_product') && is_product()) {
+        global $product;
+        if ($product instanceof WC_Product && $product->is_type('variable')) {
+            $offer = storev1_offer_display_name($product);
+            if ($offer !== '') return $offer . ' - ' . get_bloginfo('name');
+        }
+    }
+    return $title;
+}, 20);
+
 function storev1_icon($name) {
     $paths = [
         'cart'=>'<circle cx="9" cy="20" r="1"/><circle cx="19" cy="20" r="1"/><path d="M2 3h3l3 13h12l2-9H6"/>',
