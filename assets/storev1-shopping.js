@@ -1,4 +1,17 @@
 (() => {
+  // Keep cart actions quiet. The cart count/modal is the confirmation; Woo's
+  // legacy success notices otherwise remain in the document after AJAX
+  // fragments are replaced. Errors and validation notices are untouched.
+  const silenceCartSuccess = (root = document) => {
+    const normalize = value => (value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    root.querySelectorAll?.('.woocommerce-message').forEach(notice => {
+      const text = normalize(notice.textContent);
+      if (/carrinho|produto|item/.test(text) && /adicionad|incluid|removid|excluid|retirad/.test(text)) notice.remove();
+    });
+  };
+  silenceCartSuccess();
+  new MutationObserver(() => silenceCartSuccess()).observe(document.body, {childList:true, subtree:true});
+
   document.addEventListener('DOMContentLoaded', () => {
     const cartLink = document.querySelector('.loja1-cart-link');
     if (document.querySelector('[data-sv1-cart-added]') || new URLSearchParams(window.location.search).get('storev1_cart') === 'open') {
