@@ -30,7 +30,7 @@
 .storezap-checkout-dialog{width:min(96vw,1120px);height:min(94vh,900px);max-width:none;max-height:none;border-radius:20px;overflow:hidden}
 .storezap-checkout-dialog__head{position:relative;height:58px;display:flex;align-items:center;justify-content:center;padding:0 58px;border-bottom:1px solid #e3ece7;background:#fff;text-align:center}
 .storezap-checkout-dialog__head strong{display:block;color:#163d2d;font-size:17px;line-height:1.2}.storezap-checkout-dialog__head span:last-child{display:none!important}
-.storezap-checkout-dialog__head .sv1-checkout-lottie{display:none!important}
+.storezap-checkout-dialog__head strong .sv1-checkout-lottie{display:inline-block!important;width:24px;height:24px;flex:0 0 24px;margin-left:3px;vertical-align:middle}.storezap-checkout-dialog__head strong .sv1-checkout-lottie svg{display:block;width:100%;height:100%}
 .storezap-checkout-dialog__close{position:absolute;right:14px;top:11px;flex:0 0 36px}.storezap-checkout-dialog__frame{display:block;width:100%;height:calc(100% - 58px);border:0;background:#fff}.storezap-checkout-dialog.is-loading .storezap-checkout-dialog__frame{opacity:.1}
 .storezap-checkout-dialog__loading{position:absolute;inset:58px 0 0;display:grid;place-items:center;color:#587267;background:rgba(255,255,255,.84);font-size:13px;font-weight:700;pointer-events:none}.storezap-checkout-dialog:not(.is-loading) .storezap-checkout-dialog__loading{display:none}
 /* The checkout is rendered same-origin in the theme-owned dialog. Keep the
@@ -88,7 +88,7 @@ body.storev1-embedded-checkout .woocommerce-message{margin:12px 0!important;bord
   body.storev1-embedded-checkout .wc-block-components-checkout-step{padding:14px 0!important}
   body.storev1-embedded-checkout .wc-block-components-checkout-step__heading{font-size:16px!important}
 }
-@media(max-width:700px){.storezap-checkout-dialog__head strong{display:inline-flex;align-items:center;justify-content:center;gap:5px}.storezap-checkout-dialog__head .sv1-checkout-lottie{display:inline-block!important;width:25px;height:25px;flex:0 0 25px;vertical-align:middle}.storezap-checkout-dialog__head .sv1-checkout-lottie svg{display:block;width:100%;height:100%}}
+@media(max-width:700px){.storezap-checkout-dialog__head strong{display:inline-flex;align-items:center;justify-content:center;gap:5px}.storezap-checkout-dialog__head strong .sv1-checkout-lottie{width:25px;height:25px;flex-basis:25px}}
 @media(max-width:700px){
   .storezap-cart-dialog{width:calc(100vw - 16px);max-height:92vh;border-radius:14px}.storezap-cart-dialog__body{padding:13px}.storezap-cart-dialog__foot{align-items:stretch;flex-direction:column;gap:8px}.storezap-cart-dialog__foot .cart_totals{margin:0!important}.storezap-cart-dialog__foot .order-total{justify-content:space-between}.storezap-cart-dialog__foot .wc-proceed-to-checkout{margin:0!important}.storezap-cart-dialog__foot .wc-proceed-to-checkout a.checkout-button{width:100%!important;white-space:normal!important}
   .storezap-checkout-dialog{width:calc(100vw - 12px);height:calc(100dvh - 16px);border-radius:15px}.storezap-checkout-dialog__head{height:51px;padding:0 52px}.storezap-checkout-dialog__head strong{font-size:15px}.storezap-checkout-dialog__close{right:8px;top:8px}.storezap-checkout-dialog__frame{height:calc(100% - 51px)}.storezap-checkout-dialog__loading{inset:51px 0 0}
