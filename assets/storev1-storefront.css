@@ -260,6 +260,9 @@ body.loja1-contasvip-theme .entry-content { color: var(--loja-text); }
     body.loja1-contasvip-theme .related { grid-column: auto; }
     .loja1-footer-grid { grid-template-columns: 1fr; gap: 26px; padding-top: 38px; padding-bottom: 35px; }
     .loja1-mobile-toolbar { height: 61px; position: fixed; right: 0; bottom: 0; left: 0; z-index: 1000; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--loja-line); background: #fff; box-shadow: 0 -4px 18px rgba(0,0,0,.09); }
+    /* Account registration off: the toolbar has exactly three live actions.
+       Do not leave a phantom fourth grid column where Minha conta was. */
+    .loja1-mobile-toolbar.loja1-mobile-toolbar--without-account { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .loja1-mobile-toolbar a { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 2px; color: var(--loja-title); font-size: 19px; }
     .loja1-mobile-toolbar small { font-size: 9px; font-weight: 700; text-transform: uppercase; }
 }
