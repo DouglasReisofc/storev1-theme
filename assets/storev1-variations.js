@@ -24,6 +24,16 @@
       form.classList.add('sv1-has-offer-modal');
       select.classList.add('sv1-native-variation-select');
       if (sourceRow) sourceRow.classList.add('sv1-variation-source');
+      // Give the shopper a usable state immediately. WooCommerce still owns
+      // the select and receives the normal change event, so stock/price/add
+      // to cart validation remain native.
+      if (!select.value) {
+        const firstAvailable = optionData.find(item => item.variation.is_in_stock !== false);
+        if (firstAvailable) {
+          select.value = firstAvailable.option.value;
+          select.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      }
 
       const trigger = document.createElement('button');
       trigger.type = 'button';

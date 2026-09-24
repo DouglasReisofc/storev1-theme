@@ -130,6 +130,21 @@ add_action('customize_register', function($wp_customize) {
 });
 add_filter('woocommerce_product_add_to_cart_text',function($text,$product){return $product->is_type('simple') && $product->is_purchasable() && $product->is_in_stock() ? __('Comprar','storev1-theme') : $text;},10,2);
 add_filter('woocommerce_product_single_add_to_cart_text',function(){return __('Comprar agora','storev1-theme');});
+// Add concise, semantic product facts to WooCommerce's native additional
+// information tab. This gives crawlers useful context without keyword stuffing
+// or replacing the product's original description.
+add_action('woocommerce_product_additional_information', function($product) {
+    if (!$product instanceof WC_Product) return;
+    $categories = wp_strip_all_tags($product->get_categories(', '));
+    $delivery = $product->is_virtual() ? 'Entrega digital após a confirmação do pagamento' : 'Entrega conforme as condições do produto';
+    echo '<section class="sv1-product-technical" aria-labelledby="sv1-product-technical-title">';
+    echo '<h3 id="sv1-product-technical-title">Informações técnicas do produto</h3><dl>';
+    echo '<div><dt>Tipo de produto</dt><dd>' . esc_html($product->is_type('variable') ? 'Produto variável com ofertas selecionáveis' : 'Produto digital') . '</dd></div>';
+    if ($categories) echo '<div><dt>Categoria</dt><dd>' . esc_html($categories) . '</dd></div>';
+    echo '<div><dt>Disponibilidade</dt><dd>' . esc_html($product->is_in_stock() ? 'Disponível para compra' : 'Indisponível no momento') . '</dd></div>';
+    echo '<div><dt>Entrega</dt><dd>' . esc_html($delivery) . '</dd></div>';
+    echo '</dl></section>';
+}, 20);
 require_once get_template_directory() . '/inc/storefront.php';
 require_once get_template_directory() . '/inc/storefront-modals.php';
 require_once get_template_directory() . '/inc/catalog-search.php';
