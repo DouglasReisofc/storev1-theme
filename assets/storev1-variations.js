@@ -46,7 +46,7 @@
       trigger.setAttribute('aria-haspopup', 'dialog');
       trigger.setAttribute('aria-expanded', 'false');
       trigger.setAttribute('aria-controls', dialogId);
-      trigger.innerHTML = '<span class="sv1-offer-trigger__image" aria-hidden="true"></span><span class="sv1-offer-trigger__copy"><small>SELECIONE A OPÇÃO</small><strong>Escolha sua oferta</strong></span><span class="sv1-offer-trigger__price"></span><span class="sv1-offer-trigger__chevron" aria-hidden="true">⌄</span>';
+      trigger.innerHTML = '<span class="sv1-offer-trigger__image" aria-hidden="true"></span><span class="sv1-offer-trigger__copy"><small>ESCOLHA SUA OFERTA</small><strong>Ver opções disponíveis</strong></span><span class="sv1-offer-trigger__price"></span><span class="sv1-offer-trigger__chevron" aria-hidden="true">⌄</span>';
 
       const dialog = document.createElement('dialog');
       dialog.id = dialogId;
@@ -80,7 +80,7 @@
         const price = trigger.querySelector('.sv1-offer-trigger__price');
         imageSlot.replaceChildren();
         price.replaceChildren();
-        if (!selected) { title.textContent = 'Escolha sua oferta'; return; }
+        if (!selected) { title.textContent = 'Ver opções disponíveis'; return; }
         const offerTitle = selected.option.textContent.trim();
         title.textContent = offerTitle;
         // Keep the visible product heading and the browser title aligned with
