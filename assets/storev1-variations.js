@@ -22,6 +22,11 @@
       const dialogId = `sv1-offer-dialog-${formIndex + 1}`;
       form.dataset.sv1OfferModal = 'ready';
       form.classList.add('sv1-has-offer-modal');
+      // The parent variable product price is only an aggregate range. Keep
+      // the native variation price below the selector, but remove that range
+      // from the shopper-facing summary so the chosen offer is unambiguous.
+      const summary = form.closest('.summary');
+      if (summary) summary.classList.add('sv1-has-offer-summary');
       select.classList.add('sv1-native-variation-select');
       if (sourceRow) sourceRow.classList.add('sv1-variation-source');
       // Give the shopper a usable state immediately. WooCommerce still owns
@@ -41,7 +46,7 @@
       trigger.setAttribute('aria-haspopup', 'dialog');
       trigger.setAttribute('aria-expanded', 'false');
       trigger.setAttribute('aria-controls', dialogId);
-      trigger.innerHTML = '<span class="sv1-offer-trigger__image" aria-hidden="true"></span><span class="sv1-offer-trigger__copy"><small>Escolha sua oferta</small><strong>Ver opções disponíveis</strong></span><span class="sv1-offer-trigger__price"></span><span class="sv1-offer-trigger__chevron" aria-hidden="true">⌄</span>';
+      trigger.innerHTML = '<span class="sv1-offer-trigger__image" aria-hidden="true"></span><span class="sv1-offer-trigger__copy"><small>SELECIONE A OPÇÃO</small><strong>Escolha sua oferta</strong></span><span class="sv1-offer-trigger__price"></span><span class="sv1-offer-trigger__chevron" aria-hidden="true">⌄</span>';
 
       const dialog = document.createElement('dialog');
       dialog.id = dialogId;
@@ -75,7 +80,7 @@
         const price = trigger.querySelector('.sv1-offer-trigger__price');
         imageSlot.replaceChildren();
         price.replaceChildren();
-        if (!selected) { title.textContent = 'Ver opções disponíveis'; return; }
+        if (!selected) { title.textContent = 'Escolha sua oferta'; return; }
         const offerTitle = selected.option.textContent.trim();
         title.textContent = offerTitle;
         // Keep the visible product heading and the browser title aligned with

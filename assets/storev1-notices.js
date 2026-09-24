@@ -53,13 +53,20 @@
     const text = (notice.textContent || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
     return /removid|removed|excluid|exclu[ií]do/.test(text) && /carrinho|produto|item/.test(text);
   }
+  function isCartSuccessNotice(notice) {
+    const text = (notice.textContent || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    const cartTerm = /carrinho|produto|item/.test(text);
+    return cartTerm && /adicionad|incluid|removid|excluid|retirad/.test(text);
+  }
   function sync() {
     // Keep AJAX notice containers in place; move only the individual messages.
     const dialogs = [...document.querySelectorAll('dialog[open]')];
     const host = dialogs[dialogs.length - 1] || document.body;
     if (portal.parentElement !== host) host.appendChild(portal);
     document.querySelectorAll(selector).forEach(notice => {
-      if (isCartRemovalNotice(notice)) { notice.remove(); return; }
+      // Product add/remove feedback is deliberately silent: the modal and
+      // cart count are the visible confirmation, while errors remain visible.
+      if (isCartRemovalNotice(notice) || (notice.matches('.woocommerce-message') && isCartSuccessNotice(notice))) { notice.remove(); return; }
       decorate(notice);
       if (!portal.contains(notice)) portal.appendChild(notice);
     });
