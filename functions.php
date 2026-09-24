@@ -78,6 +78,7 @@ function storev1_assets(){
     }
     wp_enqueue_script('storev1-ui',get_template_directory_uri() . '/assets/storev1-ui.js',[],wp_get_theme()->get('Version'),true);
     wp_enqueue_script('storev1-shopping',get_template_directory_uri() . '/assets/storev1-shopping.js',[],wp_get_theme()->get('Version'),true);
+    if (function_exists('is_product') && is_product()) wp_enqueue_script('storev1-variations',get_template_directory_uri() . '/assets/storev1-variations.js',['jquery','wc-add-to-cart-variation'],wp_get_theme()->get('Version'),true);
     if (class_exists('WooCommerce')) {
         wp_enqueue_script('storev1-lottie','https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js',[],'5.12.2',true);
         wp_enqueue_script('storev1-checkout-lottie',get_template_directory_uri() . '/assets/storev1-checkout-lottie.js',['storev1-lottie'],wp_get_theme()->get('Version'),true);
