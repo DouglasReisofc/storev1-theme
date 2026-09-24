@@ -154,6 +154,7 @@ require_once get_template_directory() . '/inc/storefront-modals.php';
 require_once get_template_directory() . '/inc/catalog-search.php';
 require_once get_template_directory() . '/inc/site-quality.php';
 require_once get_template_directory() . '/inc/social-metadata.php';
+require_once get_template_directory() . '/inc/product-schema.php';
 require_once get_template_directory() . '/inc/account.php';
 require_once get_template_directory() . '/inc/companion-installer.php';
 require_once get_template_directory() . '/inc/support.php';
