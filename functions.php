@@ -85,6 +85,8 @@ function storev1_assets(){
     }
     wp_enqueue_script('storev1-discovery',get_template_directory_uri() . '/assets/storev1-discovery.js',[],wp_get_theme()->get('Version'),true);
     wp_enqueue_script('storev1-search',get_template_directory_uri() . '/assets/storev1-search.js',[],wp_get_theme()->get('Version'),true);
+    wp_enqueue_script('storev1-support',get_template_directory_uri() . '/assets/storev1-support.js',[],wp_get_theme()->get('Version'),true);
+    wp_add_inline_script('storev1-support', 'window.ajaxurl = ' . wp_json_encode(admin_url('admin-ajax.php')) . ';', 'before');
     if (is_singular() && comments_open() && get_option('thread_comments')) wp_enqueue_script('comment-reply');
 }
 add_action('wp_enqueue_scripts','storev1_assets');
@@ -114,6 +116,8 @@ add_action('customize_register', function($wp_customize) {
     $wp_customize->add_control('storev1_whatsapp_phone',['label'=>'Número do WhatsApp (com DDI)','description'=>'Somente números. Exemplo: 5511999999999.','section'=>'storev1_support','type'=>'text']);
     $wp_customize->add_setting('storev1_whatsapp_message',['default'=>'Olá, Estou em seu site e gostaria de informações a respeito de seus produtos','sanitize_callback'=>'sanitize_textarea_field']);
     $wp_customize->add_control('storev1_whatsapp_message',['label'=>'Mensagem inicial','section'=>'storev1_support','type'=>'textarea']);
+    $wp_customize->add_setting('storev1_support_email',['default'=>get_option('admin_email'),'sanitize_callback'=>'sanitize_email']);
+    $wp_customize->add_control('storev1_support_email',['label'=>'E-mail de suporte (fallback)','description'=>'Se o Store Connect estiver ativo, o e-mail configurado nele tem prioridade.','section'=>'storev1_support','type'=>'email']);
     for ($i=1; $i<=5; $i++) {
         $setting = 'storev1_banner_' . $i;
         $wp_customize->add_setting($setting, ['default'=>'','sanitize_callback'=>'esc_url_raw']);
@@ -152,6 +156,7 @@ require_once get_template_directory() . '/inc/site-quality.php';
 require_once get_template_directory() . '/inc/social-metadata.php';
 require_once get_template_directory() . '/inc/account.php';
 require_once get_template_directory() . '/inc/companion-installer.php';
+require_once get_template_directory() . '/inc/support.php';
 // Preserve WooCommerce validation and POST/redirect flow; flag only a successful addition.
 add_action('woocommerce_add_to_cart', function() {
     if (isset($_POST['add-to-cart']) && !wp_doing_ajax() && WC()->session) {
@@ -171,8 +176,13 @@ add_action('wp_footer', function() {
     $message = trim((string)get_theme_mod('storev1_whatsapp_message', 'Olá, Estou em seu site e gostaria de informações a respeito de seus produtos'));
     if ($phone === '') return;
     $url = 'https://api.whatsapp.com/send/?phone=' . rawurlencode($phone) . '&text=' . rawurlencode($message) . '&type=phone_number&app_absent=0';
-    echo '<a class="sv1-floating-whatsapp" href="' . esc_url($url) . '" target="_blank" rel="noopener noreferrer" aria-label="Falar com o suporte pelo WhatsApp">';
-    echo '<svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path d="M20.5 3.5A11.8 11.8 0 0 0 12.1 0C5.6 0 .3 5.3.3 11.8c0 2.1.6 4.1 1.6 5.9L.2 24l6.5-1.7a11.8 11.8 0 0 0 5.4 1.3h.1c6.5 0 11.8-5.3 11.8-11.8 0-3.2-1.3-6.1-3.5-8.3Zm-8.4 18.1h-.1a9.8 9.8 0 0 1-5-1.4l-.4-.2-3.8 1 1-3.7-.2-.4a9.8 9.8 0 0 1-1.5-5.2c0-5.4 4.4-9.8 9.9-9.8 2.6 0 5.1 1 6.9 2.9a9.8 9.8 0 0 1 2.9 7c0 5.4-4.4 9.8-9.8 9.8Zm5.4-7.3c-.3-.1-1.8-.9-2.1-1-.3-.1-.5-.1-.7.2-.2.3-.8 1-1 1.2-.2.2-.4.2-.7.1-1.8-.9-3-1.6-4.2-3.6-.3-.5.3-.5.8-1.6.1-.2.1-.4 0-.6-.1-.2-.7-1.7-.9-2.3-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1.1-1.1 2.7s1.1 3.1 1.3 3.3c.2.2 2.1 3.3 5.2 4.6 1.9.8 2.7.9 3.7.8.6-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4-.1-.2-.3-.3-.5-.4Z"/></svg><span>WhatsApp</span></a>';
+    echo '<button type="button" class="sv1-floating-support" data-sv1-support-open aria-controls="sv1-support-drawer" aria-expanded="false" aria-label="Abrir suporte">';
+    echo '<svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path d="M20 11.5a8 8 0 0 1-8 8H8l-4 2 .8-3.6A8 8 0 1 1 20 11.5Z"/><path d="M8 11h.01M12 11h.01M16 11h.01"/></svg><span>Suporte</span></button>';
+    echo '<div class="sv1-support-drawer" id="sv1-support-drawer" hidden role="dialog" aria-modal="true" aria-labelledby="sv1-support-title"><div class="sv1-support-drawer__panel"><header><div><small>ATENDIMENTO</small><h2 id="sv1-support-title">Como podemos ajudar?</h2></div><button type="button" data-sv1-support-close aria-label="Fechar suporte">×</button></header><div class="sv1-support-drawer__choices"><a class="sv1-support-choice sv1-support-choice--whatsapp" href="' . esc_url($url) . '" target="_blank" rel="noopener noreferrer"><strong>WhatsApp</strong><span>Fale com a equipe agora</span></a><button type="button" class="sv1-support-choice" data-sv1-email-support><strong>E-mail</strong><span>Envie detalhes e anexos</span></button></div></div></div>';
+    $orders = function_exists('storev1_support_orders') ? storev1_support_orders() : [];
+    echo '<div class="sv1-support-modal" id="sv1-support-modal" hidden role="dialog" aria-modal="true" aria-labelledby="sv1-support-form-title"><div class="sv1-support-modal__panel"><header><div><small>SUPORTE POR E-MAIL</small><h2 id="sv1-support-form-title">Pedir suporte</h2><p>Descreva o problema e nossa equipe responderá pelo e-mail.</p></div><button type="button" data-sv1-support-form-close aria-label="Fechar formulário">×</button></header><form data-sv1-support-form enctype="multipart/form-data"><div class="sv1-support-form-grid"><label>Nome<input name="name" required value="' . esc_attr(is_user_logged_in() ? wp_get_current_user()->display_name : '') . '"></label><label>E-mail<input name="email" type="email" required value="' . esc_attr(is_user_logged_in() ? wp_get_current_user()->user_email : '') . '"></label></div><label>Motivo<select name="reason" required><option value="">Selecione</option><option>Problema com minha compra</option><option>Não recebi o acesso</option><option>Dúvida sobre o produto</option><option>Pagamento</option><option>Outro assunto</option></select></label>';
+    if ($orders) { echo '<label>Compra relacionada (opcional)<select name="order_id"><option value="">Não selecionar</option>'; foreach ($orders as $order) echo '<option value="' . absint($order->get_id()) . '">Pedido #' . esc_html($order->get_order_number()) . ' · ' . esc_html(wp_date('d/m/Y', $order->get_date_created()->getTimestamp())) . ' · ' . esc_html(wp_strip_all_tags($order->get_formatted_order_total())) . '</option>'; echo '</select></label>'; }
+    echo '<label>Mensagem<textarea name="message" rows="5" minlength="10" required placeholder="Explique o que aconteceu..."></textarea></label><label class="sv1-support-file">Anexo (opcional)<input type="file" name="attachment" accept="image/jpeg,image/png,image/webp,application/pdf"><small>JPG, PNG, WebP ou PDF até 5 MB.</small></label><input type="hidden" name="action" value="storev1_support"><input type="hidden" name="nonce" value="' . esc_attr(wp_create_nonce('storev1_support')) . '"><div class="sv1-support-form-feedback" data-sv1-support-feedback role="status"></div><button class="sv1-support-submit" type="submit">Enviar solicitação</button></form></div></div>';
 }, 4);
 add_filter('woocommerce_product_tabs',function($tabs){if(!get_theme_mod('storev1_show_reviews',false)) unset($tabs['reviews']);return $tabs;},99);
 add_filter('woocommerce_output_related_products_args',function($args){$args['posts_per_page']=8;return $args;});
