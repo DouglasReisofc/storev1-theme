@@ -7,6 +7,7 @@ function get_option($name) { return $GLOBALS['registration']; }
 function is_page_template($templates) { return in_array($GLOBALS['page_template'], (array)$templates, true); }
 function sanitize_key($key) { return preg_replace('/[^a-z0-9_-]/', '', strtolower($key)); }
 function wp_unslash($text) { return stripslashes($text); }
+function absint($value) { return abs((int)$value); }
 class WooCommerce {}
 function wc_get_page_id($page) { return 'myaccount' === $page ? 42 : 0; }
 function get_post_status($id) { return 42 === (int)$id ? 'publish' : false; }
