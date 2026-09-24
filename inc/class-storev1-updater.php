@@ -38,7 +38,7 @@ final class StoreV1_Updater {
         foreach (isset($release['assets']) && is_array($release['assets']) ? $release['assets'] : [] as $asset) {
             if (!empty($asset['name']) && $asset_name === $asset['name']) {
                 return [
-                    'theme'=>self::SLUG, 'version'=>$version,
+                    'theme'=>self::stylesheet(), 'version'=>$version,
                     'new_version'=>$version, 'url'=>self::REPO . '/releases/tag/v' . $version,
                     'package'=>self::REPO . '/releases/download/v' . $version . '/' . $asset_name,
                     'requires'=>'6.1', 'requires_php'=>'7.4',
@@ -50,17 +50,24 @@ final class StoreV1_Updater {
 
     public static function inject($transient) {
         if (!is_object($transient)) return $transient;
-        $current = wp_get_theme(self::SLUG)->get('Version');
+        $stylesheet = self::stylesheet();
+        $current = wp_get_theme($stylesheet)->get('Version');
         $update = self::update_data();
         if ($update && version_compare($current, $update['version'], '<')) {
             if (!isset($transient->response) || !is_array($transient->response)) $transient->response = [];
-            $transient->response[self::SLUG] = $update;
+            $update['theme'] = $stylesheet;
+            $transient->response[$stylesheet] = $update;
         }
         return $transient;
     }
 
+    private static function stylesheet() {
+        $stylesheet = function_exists('get_stylesheet') ? get_stylesheet() : '';
+        return $stylesheet ?: self::SLUG;
+    }
+
     public static function check($update, $theme_data, $stylesheet, $locales) {
-        if (self::SLUG !== $stylesheet) return $update;
+        if (self::stylesheet() !== $stylesheet && self::SLUG !== $stylesheet) return $update;
         $release = get_transient(self::RELEASE_CACHE);
         $force = is_admin() && current_user_can('update_themes') && isset($_GET['force-check']);
         if (false === $release || $force) {
@@ -75,7 +82,7 @@ final class StoreV1_Updater {
                 'storev1-theme-' . $version . '.zip' === $asset['name'] &&
                 $expected === $asset['browser_download_url']) {
                 return [
-                    'id'=>self::REPO, 'theme'=>self::SLUG, 'version'=>$version,
+                    'id'=>self::REPO, 'theme'=>$stylesheet, 'version'=>$version,
                     'url'=>self::REPO . '/releases/tag/v' . $version,
                     'package'=>$expected, 'requires'=>'6.1', 'requires_php'=>'7.4',
                 ];
