@@ -5,24 +5,15 @@ add_filter('body_class', function($classes) { $classes[] = 'loja1-contasvip-them
 add_filter('woocommerce_attribute_label', function($label, $name) { return in_array($name, ['pa_oferta', 'pa_validade'], true) ? 'Escolha sua oferta' : $label; }, 10, 2);
 
 /**
- * A variable product is a family of offers, but each offer has its own
- * commercial title (for example, “Conta Premium 1fichier – 30 Dias”). Use
- * the first available variation wherever WooCommerce renders a catalogue
- * card or document title, instead of exposing a generic parent name.
+ * Keep the parent product as the canonical catalogue identity. Variations
+ * are offers inside the product detail selector and are updated there by
+ * the variation UI, so cards do not change order or title based on stock.
  */
 function storev1_offer_display_name($product) {
-    if (!$product instanceof WC_Product || !$product->is_type('variable')) return $product instanceof WC_Product ? $product->get_name() : '';
-    foreach ($product->get_children() as $variation_id) {
-        $variation = wc_get_product($variation_id);
-        if ($variation instanceof WC_Product_Variation && $variation->exists() && $variation->is_in_stock()) {
-            $name = trim($variation->get_name());
-            if ($name !== '') return $name;
-        }
-    }
-    return $product->get_name();
+    return $product instanceof WC_Product ? $product->get_name() : '';
 }
 
-// Catalogue cards and related-product cards should expose the offer title.
+// Catalogue and related-product cards always expose the parent product name.
 remove_action('woocommerce_shop_loop_item_title', 'woocommerce_template_loop_product_title', 10);
 add_action('woocommerce_shop_loop_item_title', function() {
     global $product;
@@ -30,13 +21,15 @@ add_action('woocommerce_shop_loop_item_title', function() {
     echo '<h2 class="woocommerce-loop-product__title">' . esc_html(storev1_offer_display_name($product)) . '</h2>';
 }, 10);
 
-// Give crawlers the same useful default offer title as the visible catalogue.
+// Keep the canonical product title in the initial document. The detail-page
+// selector then updates the visible H1 and browser title when an offer is
+// selected, without changing the parent URL or catalogue identity.
 add_filter('pre_get_document_title', function($title) {
     if (function_exists('is_product') && is_product()) {
         global $product;
         if ($product instanceof WC_Product && $product->is_type('variable')) {
-            $offer = storev1_offer_display_name($product);
-            if ($offer !== '') return $offer . ' - ' . get_bloginfo('name');
+            $name = trim($product->get_name());
+            if ($name !== '') return $name . ' - ' . get_bloginfo('name');
         }
     }
     return $title;
