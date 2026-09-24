@@ -2,8 +2,22 @@
 defined('ABSPATH') || exit;
 
 function storev1_registration_enabled() {
-    return 'yes' === get_option('woocommerce_enable_myaccount_registration');
+    $value = get_option('woocommerce_enable_myaccount_registration', 'no');
+    return in_array($value, ['yes', '1', 1, true], true);
 }
+
+// The account links are rendered in the cached storefront shell. Purge the
+// common page/object caches as soon as WooCommerce changes this setting so a
+// disabled registration option cannot leave stale "Minha conta" links public.
+add_action('updated_option_woocommerce_enable_myaccount_registration', function($old_value, $value) {
+    if ((string) $old_value === (string) $value) return;
+    if (function_exists('do_action')) {
+        do_action('litespeed_purge_all');
+        do_action('rocket_clean_domain');
+        do_action('w3tc_flush_all');
+    }
+    if (function_exists('wp_cache_flush')) wp_cache_flush();
+}, 10, 2);
 
 /**
  * The storefront account entry follows both WooCommerce settings: the page
