@@ -45,6 +45,8 @@ function storev1_icon($name) {
         'chevron'=>'<path d="m6 9 6 6 6-6"/>',
         'search'=>'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>',
         'trash'=>'<path d="M4 7h16M10 11v6M14 11v6M9 7V4h6v3m-9 0 1 13h8l1-13"/>',
+        'whatsapp'=>'<path d="M20.5 11.5a8.5 8.5 0 0 1-12.7 7.4L3 20l1.1-4.5A8.5 8.5 0 1 1 20.5 11.5Z"/><path d="M8.4 8.3c.2-.4.4-.4.7-.4h.5c.2 0 .4.1.5.4l.6 1.4c.1.3.1.5-.1.7l-.5.6c.5 1 1.3 1.8 2.3 2.3l.6-.5c.2-.2.4-.2.7-.1l1.4.6c.3.1.4.3.4.5v.5c0 .3-.1.5-.4.7-.4.2-1 .4-1.6.2-2.5-.5-4.5-2.4-5.7-4.5-.3-.6-.1-1.2.1-1.7Z"/>',
+        'mail'=>'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
     ];
     if (!isset($paths[$name])) return;
     echo '<svg class="sv1-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' . $paths[$name] . '</svg>';

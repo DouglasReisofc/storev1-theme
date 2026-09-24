@@ -375,3 +375,10 @@ body.loja1-contasvip-theme .sv1-rail-arrow:not(:disabled):hover{background:#e8f1
  .sv1-discovery-with-promo{gap:20px;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
  .sv1-discovery-with-promo .sv1-desktop-categories{flex-basis:220px;width:220px}
 }
+/* Support choice icons */
+.sv1-support-choice{flex-direction:row;align-items:center;gap:12px}
+.sv1-support-choice__icon{display:grid;place-items:center;flex:0 0 42px;width:42px;height:42px;border-radius:12px;background:#eef7ff;color:#2563eb}
+.sv1-support-choice__icon .sv1-icon{width:24px;height:24px}
+.sv1-support-choice--whatsapp .sv1-support-choice__icon{background:#dcfce7;color:#128c4a}
+.sv1-support-choice__copy{display:flex;flex-direction:column;gap:2px}
+.sv1-support-choice__copy>span{color:#64748b;font-size:13px}
