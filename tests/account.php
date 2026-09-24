@@ -7,6 +7,9 @@ function get_option($name) { return $GLOBALS['registration']; }
 function is_page_template($templates) { return in_array($GLOBALS['page_template'], (array)$templates, true); }
 function sanitize_key($key) { return preg_replace('/[^a-z0-9_-]/', '', strtolower($key)); }
 function wp_unslash($text) { return stripslashes($text); }
+class WooCommerce {}
+function wc_get_page_id($page) { return 'myaccount' === $page ? 42 : 0; }
+function get_post_status($id) { return 42 === (int)$id ? 'publish' : false; }
 class WP_Error { public $errors = []; function add($key, $text) { $this->errors[$key] = $text; } }
 require dirname(__DIR__).'/inc/account.php';
 function check($condition, $message) { if (!$condition) throw new Exception($message); echo "PASS $message\n"; }
