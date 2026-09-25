@@ -12,6 +12,22 @@ body.loja1-contasvip-theme .sv1-categories{
  color:#251b08!important;border-color:#c59123!important;
  box-shadow:0 3px 10px #a972091c;
 }
+/* The offer selector is a control surface, not a purchase CTA. Keep it
+ * neutral white even though the gold skin styles other summary buttons. */
+body.loja1-contasvip-theme .summary .sv1-offer-trigger,
+body.loja1-contasvip-theme .summary .sv1-offer-trigger:hover,
+body.loja1-contasvip-theme .summary .sv1-offer-trigger:focus-visible {
+ background:#fff!important;
+ background-image:none!important;
+ color:#272116!important;
+ border-color:#e4ddcf!important;
+ box-shadow:0 3px 14px #30220b12!important;
+}
+body.loja1-contasvip-theme .summary .sv1-offer-trigger:hover,
+body.loja1-contasvip-theme .summary .sv1-offer-trigger:focus-visible {
+ border-color:#c9931d!important;
+ box-shadow:0 0 0 3px #e9b93e26,0 5px 16px #5d430814!important;
+}
 body.loja1-contasvip-theme :is(ul.products,.summary,.woocommerce-cart-form,.cart_totals,.widget_shopping_cart) .button:hover,
 body.loja1-contasvip-theme .sv1-floating-cart:hover,
 body.loja1-contasvip-theme .sv1-desktop-categories summary:hover{
