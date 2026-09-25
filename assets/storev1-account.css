@@ -18,4 +18,28 @@ body.loja1-contasvip-theme .sv1-auth .input-text{box-sizing:border-box;width:100
 .sv1-auth .woocommerce-privacy-policy-text{font-size:12px;color:#62583f;line-height:1.5}
 body.loja1-contasvip-theme .sv1-auth form button[type=submit]{display:block;float:none;width:100%;margin:18px 0 0;border:0;border-radius:999px;padding:12px 18px;min-height:44px;background:#f5cc65;color:#241b09;font-size:15px;font-weight:700}
 .sv1-registration-disabled{padding:12px;background:#fff5d9;border-radius:12px;color:#624716;font-size:13px}
-@media(max-width:767px){.sv1-auth{grid-template-columns:1fr;margin:4px auto 28px;border-radius:18px}.sv1-auth-art{padding:6px 16px}.sv1-auth-art img{height:150px;max-width:340px}.sv1-auth-content{padding:20px}.sv1-auth-content h2{font-size:24px}.sv1-auth-tabs{margin-bottom:18px}.woocommerce-account .woocommerce:has(>.sv1-auth){width:100%}}
+/* O cadastro concentra os campos em duas colunas no desktop para evitar uma
+ * coluna excessivamente alta; no celular volta a uma coluna compacta. */
+@media(min-width:768px){
+    .sv1-auth form.woocommerce-form-register{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 14px;align-items:end}
+    .sv1-auth form.woocommerce-form-register .form-row{margin:0}
+    .sv1-auth form.woocommerce-form-register .woocommerce-privacy-policy-text,
+    .sv1-auth form.woocommerce-form-register button[type=submit]{grid-column:1/-1}
+    .sv1-auth form.woocommerce-form-register button[type=submit]{margin-top:2px}
+}
+@media(max-width:767px){
+    .sv1-auth{grid-template-columns:1fr;margin:0 auto 18px;border-radius:16px}
+    .sv1-auth-art{padding:2px 12px;height:98px}
+    .sv1-auth-art img{height:94px;max-width:280px}
+    .sv1-auth-content{padding:14px 16px 16px}
+    .sv1-auth-content h2{font-size:22px;line-height:1.15;margin-bottom:4px}
+    .sv1-auth-lead{font-size:14px;line-height:1.35;margin-bottom:12px}
+    .sv1-auth-tabs{margin-bottom:12px;padding:3px}
+    .sv1-auth-tabs a{padding:6px 8px;font-size:14px}
+    .sv1-auth form .form-row{margin-bottom:10px}
+    .sv1-auth form label{margin-bottom:4px;font-size:14px}
+    body.loja1-contasvip-theme .sv1-auth .input-text{min-height:40px;padding:8px 12px;font-size:15px;border-radius:10px}
+    .sv1-auth .woocommerce-privacy-policy-text{font-size:11px;line-height:1.35}
+    body.loja1-contasvip-theme .sv1-auth form button[type=submit]{margin-top:10px;min-height:42px;padding:10px 16px}
+    .woocommerce-account .woocommerce:has(>.sv1-auth){width:100%}
+}
