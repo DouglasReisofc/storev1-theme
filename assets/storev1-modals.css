@@ -126,3 +126,20 @@ body.storev1-embedded-checkout .woocommerce-message{margin:12px 0!important;bord
   .sv1-checkout-login-banner .sv1-checkout-login-banner__icon{width:28px;height:28px;border-radius:8px}
   .sv1-checkout-login-banner__icon svg{width:16px;height:16px}
 }
+
+/* Authentication modal: white surface, strong contrast and no gold wash. */
+.sv1-checkout-login-panel,.sv1-checkout-login-copy,.sv1-checkout-auth-views,.sv1-checkout-login-form{background:#fff}
+.sv1-checkout-login-panel{border-color:#d7dfda}
+.sv1-checkout-login-copy h2,.sv1-checkout-login-form label,.sv1-checkout-login-banner strong{color:#101b16}
+.sv1-checkout-login-copy p,.sv1-checkout-login-banner span,.sv1-checkout-auth-help{color:#33433b}
+.sv1-checkout-login-banner:hover,.sv1-checkout-login-banner.is-active{border-color:#0b6b46;background:#fff;box-shadow:0 0 0 2px rgba(11,107,70,.12)}
+.sv1-checkout-login-banner .sv1-checkout-login-banner__icon{background:#edf8f2;color:#0b6b46}
+.sv1-checkout-login-banner[data-sv1-auth-switch="register"] .sv1-checkout-login-banner__icon{background:#eef3ff;color:#234a91}
+.sv1-checkout-login-form input:not([type=checkbox]){border-color:#b8c9c0;color:#111a16}
+.sv1-checkout-login-form input:focus{outline:2px solid rgba(11,107,70,.22);border-color:#0b6b46}
+.sv1-checkout-login-submit{background:#0b6b46;color:#fff}
+.sv1-checkout-login-submit:hover{background:#075638}
+.sv1-checkout-login-secondary{border-color:#b8c9c0;color:#17231d}
+.sv1-checkout-login-actions button{color:#0b6b46}
+.sv1-checkout-login-trigger{border-color:#0b6b46;background:#fff;color:#0b6b46}
+.sv1-checkout-login-trigger:hover{background:#edf8f2}

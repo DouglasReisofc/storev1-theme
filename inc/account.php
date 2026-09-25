@@ -71,18 +71,63 @@ function storev1_ajax_checkout_register() {
 }
 add_action('wp_ajax_nopriv_storev1_checkout_register', 'storev1_ajax_checkout_register');
 
+function storev1_send_password_recovery_email($user, $reset_key, $code) {
+    $site_name = wp_specialchars_decode(get_bloginfo('name'), ENT_QUOTES);
+    $reset_url = add_query_arg(['key' => $reset_key, 'login' => $user->user_login], wp_lostpassword_url());
+    $subject = 'Redefinição segura de senha — ' . $site_name;
+    $safe_name = esc_html($user->display_name ?: $user->user_login);
+    $safe_code = esc_html($code);
+    $safe_url = esc_url($reset_url);
+    $html = '<!doctype html><html><body style="margin:0;background:#f4f7f5;color:#17231d;font-family:Arial,sans-serif"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="padding:28px 12px"><tr><td align="center"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px;background:#fff;border:1px solid #dce8e1;border-radius:16px;overflow:hidden"><tr><td style="padding:24px 28px;background:#0b6b46;color:#fff"><strong style="font-size:20px">' . esc_html($site_name) . '</strong><div style="margin-top:6px;font-size:13px;opacity:.9">Recuperação segura de acesso</div></td></tr><tr><td style="padding:26px 28px"><p style="margin:0 0 14px;font-size:16px">Olá, ' . $safe_name . '.</p><p style="margin:0 0 18px;line-height:1.55;color:#3d4c44">Recebemos uma solicitação para redefinir sua senha. Use o código abaixo no modal de recuperação ou acesse o link seguro.</p><div style="margin:0 0 20px;padding:16px;border:1px dashed #0b6b46;border-radius:10px;text-align:center"><div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#50645a">Seu código</div><strong style="display:block;margin-top:5px;font-size:30px;letter-spacing:.2em;color:#0b6b46">' . $safe_code . '</strong><div style="margin-top:6px;font-size:12px;color:#65766c">Válido por 15 minutos</div></div><p style="margin:0 0 20px;text-align:center"><a href="' . $safe_url . '" style="display:inline-block;padding:12px 20px;border-radius:8px;background:#0b6b46;color:#fff;text-decoration:none;font-weight:700">Redefinir senha pelo link</a></p><p style="margin:0;font-size:12px;line-height:1.5;color:#65766c">Se você não solicitou esta alteração, ignore este e-mail. Sua senha atual continua protegida.</p></td></tr></table></td></tr></table></body></html>';
+    add_filter('wp_mail_content_type', 'storev1_password_mail_content_type');
+    $sent = wp_mail($user->user_email, $subject, $html);
+    remove_filter('wp_mail_content_type', 'storev1_password_mail_content_type');
+    return $sent;
+}
+
+function storev1_password_mail_content_type() {
+    return 'text/html';
+}
+
 function storev1_ajax_checkout_recover() {
     if (!storev1_checkout_login_nonce_valid()) wp_send_json_error(['message' => 'Sessão expirada. Atualize a página e tente novamente.'], 403);
     $email = isset($_POST['email']) ? sanitize_email(wp_unslash($_POST['email'])) : '';
     if (!is_email($email)) wp_send_json_error(['message' => 'Informe um e-mail válido.'], 422);
     $user = get_user_by('email', $email);
     if ($user) {
-        $result = retrieve_password($user->user_login);
-        if (is_wp_error($result)) wp_send_json_error(['message' => 'Não foi possível enviar o link agora. Tente novamente.'], 500);
+        $reset_key = get_password_reset_key($user);
+        if (is_wp_error($reset_key)) wp_send_json_error(['message' => 'Não foi possível gerar a recuperação agora. Tente novamente.'], 500);
+        $code = (string) wp_rand(100000, 999999);
+        update_user_meta($user->ID, '_storev1_password_recovery_code', wp_hash_password($code));
+        update_user_meta($user->ID, '_storev1_password_recovery_expires', time() + 15 * MINUTE_IN_SECONDS);
+        if (!storev1_send_password_recovery_email($user, $reset_key, $code)) wp_send_json_error(['message' => 'Não foi possível enviar o e-mail agora. Tente novamente.'], 500);
     }
-    wp_send_json_success(['message' => 'Se o e-mail estiver cadastrado, você receberá o link para criar uma nova senha.']);
+    wp_send_json_success(['message' => 'Se o e-mail estiver cadastrado, você receberá um código de 6 dígitos e um link seguro.']);
 }
 add_action('wp_ajax_nopriv_storev1_checkout_recover', 'storev1_ajax_checkout_recover');
+
+function storev1_ajax_checkout_reset_password() {
+    if (!storev1_checkout_login_nonce_valid()) wp_send_json_error(['message' => 'Sessão expirada. Atualize a página e tente novamente.'], 403);
+    $email = isset($_POST['email']) ? sanitize_email(wp_unslash($_POST['email'])) : '';
+    $code = isset($_POST['code']) ? preg_replace('/\D+/', '', (string) wp_unslash($_POST['code'])) : '';
+    $password = isset($_POST['password']) ? (string) wp_unslash($_POST['password']) : '';
+    if (!is_email($email) || !preg_match('/^\d{6}$/', $code)) wp_send_json_error(['message' => 'Informe o código de 6 dígitos recebido por e-mail.'], 422);
+    if (strlen($password) < 8) wp_send_json_error(['message' => 'Crie uma senha com pelo menos 8 caracteres.'], 422);
+    $user = get_user_by('email', $email);
+    $stored_hash = $user ? (string) get_user_meta($user->ID, '_storev1_password_recovery_code', true) : '';
+    $expires = $user ? (int) get_user_meta($user->ID, '_storev1_password_recovery_expires', true) : 0;
+    if (!$user || !$stored_hash || $expires < time() || !wp_check_password($code, $stored_hash)) {
+        if ($user && $expires < time()) { delete_user_meta($user->ID, '_storev1_password_recovery_code'); delete_user_meta($user->ID, '_storev1_password_recovery_expires'); }
+        wp_send_json_error(['message' => 'Código inválido ou expirado. Solicite uma nova recuperação.'], 422);
+    }
+    reset_password($user, $password);
+    delete_user_meta($user->ID, '_storev1_password_recovery_code');
+    delete_user_meta($user->ID, '_storev1_password_recovery_expires');
+    wp_set_current_user($user->ID);
+    wp_set_auth_cookie($user->ID, true, is_ssl());
+    wp_send_json_success(['message' => 'Senha redefinida. Retomando sua compra…', 'userId' => (int) $user->ID]);
+}
+add_action('wp_ajax_nopriv_storev1_checkout_reset_password', 'storev1_ajax_checkout_reset_password');
 
 function storev1_registration_enabled() {
     $value = get_option('woocommerce_enable_myaccount_registration', 'no');

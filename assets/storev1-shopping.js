@@ -37,6 +37,15 @@
   const checkoutAuthCopy = checkoutLoginOverlay?.querySelector('[data-sv1-auth-copy]');
   const checkoutLoginConfig = window.StoreV1CheckoutLogin || {};
   const checkoutLoginState = {lastChecked:'', prompted:new Set(), resumeValues:null};
+  const checkoutAuthStorageKey = 'storev1_checkout_auth_state';
+  const readPersistedAuth = () => { try { const value = sessionStorage.getItem(checkoutAuthStorageKey); return value ? JSON.parse(value) : null; } catch (error) { return null; } };
+  const persistAuth = () => {
+    if (!checkoutLoginOverlay || checkoutLoginOverlay.hidden) return;
+    const view = checkoutLoginOverlay.querySelector('[data-sv1-auth-view]:not([hidden])')?.dataset.sv1AuthView || 'login';
+    const state = {open:true, view, email:checkoutLoginEmail?.value || '', registerName:checkoutRegisterForm?.querySelector('[name="name"]')?.value || '', registerEmail:checkoutRegisterForm?.querySelector('[name="email"]')?.value || '', registerPhone:checkoutRegisterForm?.querySelector('[name="phone"]')?.value || '', recoverEmail:checkoutRecoverForm?.querySelector('[name="email"]')?.value || '', recoverCode:checkoutRecoverForm?.querySelector('[name="code"]')?.value || '', recoverStage:checkoutRecoverForm?.dataset.recoveryStage || 'request', frameUrl:accountCheckoutFrame?.src || accountCheckoutDialog?.dataset.checkoutUrl || ''};
+    try { sessionStorage.setItem(checkoutAuthStorageKey, JSON.stringify(state)); } catch (error) {}
+  };
+  const clearPersistedAuth = () => { try { sessionStorage.removeItem(checkoutAuthStorageKey); } catch (error) {} };
   const checkoutFrameDocument = () => {
     try { return accountCheckoutFrame?.contentDocument || null; } catch (error) { return null; }
   };
@@ -76,7 +85,7 @@
     const copy = {
       login: ['Entre para continuar sua compra', 'Encontramos um cadastro com este e-mail. Entre agora e voltaremos automaticamente ao checkout, sem perder seu carrinho.'],
       register: ['Crie sua conta e continue', 'Cadastre seus dados uma única vez. Depois disso, suas próximas compras ficam ainda mais rápidas.'],
-      recover: ['Recupere seu acesso', 'Informe o e-mail cadastrado e enviaremos um link seguro para criar uma nova senha.'],
+      recover: ['Recupere seu acesso', 'Enviaremos um código de 6 dígitos e um link seguro para redefinir sua senha.'],
     }[view] || [];
     checkoutLoginOverlay.querySelectorAll('[data-sv1-auth-view]').forEach(panel => { panel.hidden = panel.dataset.sv1AuthView !== view; });
     checkoutLoginOverlay.querySelectorAll('[data-sv1-auth-switch]').forEach(button => button.classList.toggle('is-active', button.dataset.sv1AuthSwitch === view));
@@ -93,6 +102,7 @@
       const recoverEmail = checkoutRecoverForm?.querySelector('[name="email"]');
       if (recoverEmail && !recoverEmail.value) recoverEmail.value = email;
     }
+    persistAuth();
   };
   const openCheckoutLogin = (email = '') => {
     if (!checkoutLoginOverlay) return;
@@ -103,6 +113,7 @@
     setCheckoutLoginFeedback('');
     checkoutLoginOverlay.hidden = false;
     checkoutLoginOverlay.classList.add('is-open');
+    persistAuth();
     window.setTimeout(() => (value ? checkoutLoginPassword : checkoutLoginEmail)?.focus(), 30);
   };
   const closeCheckoutLogin = () => {
@@ -110,6 +121,7 @@
     checkoutLoginOverlay.classList.remove('is-open');
     checkoutLoginOverlay.hidden = true;
     setCheckoutLoginFeedback('');
+    clearPersistedAuth();
   };
   const checkCheckoutEmail = async (email) => {
     if (!checkoutLoginConfig.ajaxUrl || !checkoutLoginConfig.nonce || !isValidEmail(email) || checkoutLoginState.lastChecked === email) return;
@@ -194,23 +206,68 @@
   const submitCheckoutRecover = async event => {
     event.preventDefault();
     const data = new FormData(checkoutRecoverForm);
-    data.append('action', 'storev1_checkout_recover');
+    const resetStage = checkoutRecoverForm.dataset.recoveryStage === 'reset';
+    data.append('action', resetStage ? 'storev1_checkout_reset_password' : 'storev1_checkout_recover');
     data.append('nonce', checkoutLoginConfig.nonce || '');
     const submit = checkoutRecoverForm.querySelector('[type="submit"]');
     if (submit) submit.disabled = true;
-    setCheckoutLoginFeedback('Enviando instruções…');
+    setCheckoutLoginFeedback(resetStage ? 'Redefinindo sua senha…' : 'Enviando código e link…');
     try {
       const response = await fetch(checkoutLoginConfig.ajaxUrl, {method:'POST', credentials:'same-origin', body:data});
       const result = await response.json();
-      if (!result?.success) throw new Error(result?.data?.message || 'Não foi possível enviar o link.');
-      setCheckoutLoginFeedback(result.data?.message || 'Confira seu e-mail para continuar.');
-      window.setTimeout(() => setCheckoutAuthView('login'), 1800);
-    } catch (error) { setCheckoutLoginFeedback(error.message || 'Não foi possível enviar o link.', true); }
+      if (!result?.success) throw new Error(result?.data?.message || (resetStage ? 'Não foi possível redefinir a senha.' : 'Não foi possível enviar as instruções.'));
+      if (!resetStage) {
+        checkoutRecoverForm.dataset.recoveryStage = 'reset';
+        checkoutRecoverForm.querySelector('[data-sv1-recover-code]')?.removeAttribute('hidden');
+        checkoutRecoverForm.querySelector('[data-sv1-recover-code-label]')?.removeAttribute('hidden');
+        checkoutRecoverForm.querySelector('[data-sv1-recover-password]')?.removeAttribute('hidden');
+        checkoutRecoverForm.querySelector('[data-sv1-recover-password-label]')?.removeAttribute('hidden');
+        if (submit) submit.textContent = 'Redefinir senha';
+        setCheckoutLoginFeedback(result.data?.message || 'Confira seu e-mail, informe o código e crie uma nova senha.');
+        persistAuth();
+      } else {
+        setCheckoutLoginFeedback(result.data?.message || 'Senha redefinida. Retomando sua compra…');
+        resumeCheckoutAfterAuth();
+      }
+    } catch (error) { setCheckoutLoginFeedback(error.message || 'Não foi possível concluir a recuperação.', true); }
     finally { if (submit) submit.disabled = false; }
   };
   checkoutLoginForm?.addEventListener('submit', submitCheckoutLogin);
   checkoutRegisterForm?.addEventListener('submit', submitCheckoutRegister);
   checkoutRecoverForm?.addEventListener('submit', submitCheckoutRecover);
+  checkoutLoginOverlay?.addEventListener('input', persistAuth);
+  const restorePersistentAuth = () => {
+    const state = readPersistedAuth();
+    if (!state?.open || !checkoutLoginOverlay) return;
+    try {
+      if (accountCheckoutDialog && !accountCheckoutDialog.open && typeof accountCheckoutDialog.showModal === 'function') accountCheckoutDialog.showModal();
+      if (accountCheckoutFrame && state.frameUrl && state.frameUrl !== 'about:blank') accountCheckoutFrame.src = state.frameUrl;
+    } catch (error) {}
+    if (checkoutLoginEmail) checkoutLoginEmail.value = state.email || '';
+    const registerName = checkoutRegisterForm?.querySelector('[name="name"]');
+    const registerEmail = checkoutRegisterForm?.querySelector('[name="email"]');
+    const registerPhone = checkoutRegisterForm?.querySelector('[name="phone"]');
+    const recoverEmail = checkoutRecoverForm?.querySelector('[name="email"]');
+    const recoverCode = checkoutRecoverForm?.querySelector('[name="code"]');
+    if (registerName) registerName.value = state.registerName || '';
+    if (registerEmail) registerEmail.value = state.registerEmail || '';
+    if (registerPhone) registerPhone.value = state.registerPhone || '';
+    if (recoverEmail) recoverEmail.value = state.recoverEmail || state.email || '';
+    if (recoverCode) recoverCode.value = state.recoverCode || '';
+    if (state.recoverStage === 'reset') {
+      checkoutRecoverForm.dataset.recoveryStage = 'reset';
+      checkoutRecoverForm.querySelector('[data-sv1-recover-code]')?.removeAttribute('hidden');
+      checkoutRecoverForm.querySelector('[data-sv1-recover-code-label]')?.removeAttribute('hidden');
+      checkoutRecoverForm.querySelector('[data-sv1-recover-password]')?.removeAttribute('hidden');
+      checkoutRecoverForm.querySelector('[data-sv1-recover-password-label]')?.removeAttribute('hidden');
+      const submit = checkoutRecoverForm.querySelector('[data-sv1-recover-submit]');
+      if (submit) submit.textContent = 'Redefinir senha';
+    }
+    checkoutLoginOverlay.hidden = false;
+    checkoutLoginOverlay.classList.add('is-open');
+    setCheckoutAuthView(state.view || 'login');
+  };
+  window.setTimeout(restorePersistentAuth, 0);
   accountCheckoutDialog?.addEventListener('click', event => {
     if (event.target.closest('[data-sv1-login-close]')) closeCheckoutLogin();
     if (event.target.closest('[data-sv1-open-checkout-login]')) openCheckoutLogin();
