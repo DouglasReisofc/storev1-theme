@@ -23,6 +23,11 @@ function storev1_registration_phone_required() {
     return storev1_registration_phone_mode() === 'required';
 }
 
+function storev1_registration_form_context() {
+    $account_page = function_exists('is_account_page') && is_account_page();
+    return !is_admin() && storev1_registration_enabled() && storev1_account_view() === 'register' && ($account_page || storev1_is_auth_page());
+}
+
 // The account links are rendered in the cached storefront shell. Purge the
 // common page/object caches as soon as WooCommerce changes this setting so a
 // disabled registration option cannot leave stale "Minha conta" links public.
@@ -86,7 +91,7 @@ add_filter('woocommerce_process_registration_errors', function($errors) {
 // prevents WooCommerce from replacing the supplied password with a generated
 // one and from displaying a "set your password by email" message.
 add_filter('pre_option_woocommerce_registration_generate_password', function($value) {
-    if (!is_admin() && storev1_registration_enabled() && storev1_is_auth_page() && storev1_account_view() === 'register') return 'no';
+    if (storev1_registration_form_context()) return 'no';
     return $value;
 }, 10);
 
@@ -94,7 +99,7 @@ add_filter('pre_option_woocommerce_registration_generate_password', function($va
 // WooCommerce's internal username generation enabled even if an older store
 // had the optional username field turned on.
 add_filter('pre_option_woocommerce_registration_generate_username', function($value) {
-    if (!is_admin() && storev1_registration_enabled() && storev1_is_auth_page() && storev1_account_view() === 'register') return 'yes';
+    if (storev1_registration_form_context()) return 'yes';
     return $value;
 }, 10);
 
