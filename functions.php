@@ -173,6 +173,9 @@ add_action('wp_footer', function() {
     if (time() - (int)$added < 120) echo '<span hidden data-sv1-cart-added></span>';
 }, 1);
 add_action('wp_footer', function() {
+    // Checkout is rendered inside the payment iframe. Support belongs to the
+    // storefront page behind it and must not compete with the payment UI.
+    if (isset($_GET['storezap_modal_checkout']) && '1' === (string) $_GET['storezap_modal_checkout']) return;
     if (!get_theme_mod('storev1_whatsapp_enabled', true)) return;
     $phone = preg_replace('/[^0-9]/', '', (string)get_theme_mod('storev1_whatsapp_phone', '5511971294939'));
     $message = trim((string)get_theme_mod('storev1_whatsapp_message', 'Olá, Estou em seu site e gostaria de informações a respeito de seus produtos'));

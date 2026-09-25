@@ -25,3 +25,9 @@ test('homepage sharing metadata always has a useful description and image fallba
   assert.match(read('inc/social-metadata.php'), /turbo-contas-og\.png/);
   assert.match(read('inc/social-metadata.php'), /og:image:secure_url/);
 });
+
+test('embedded checkout never renders storefront support controls', () => {
+  assert.match(read('functions.php'), /storezap_modal_checkout/);
+  assert.match(read('assets/storev1-modals.css'), /storev1-embedded-checkout \.sv1-floating-support/);
+  assert.match(read('assets/storev1-modals.css'), /storev1-embedded-checkout \.sv1-support-modal/);
+});
