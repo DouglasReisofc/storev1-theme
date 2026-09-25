@@ -99,6 +99,19 @@ function storev1_cart_count() {
     echo '<span class="sv1-cart-count" aria-label="' . esc_attr(sprintf(__('%d itens no carrinho','storev1-theme'),$count)) . '">' . esc_html($count) . '</span>';
 }
 
+function storev1_cart_has_items(): bool {
+    return function_exists('WC') && WC()->cart && WC()->cart->get_cart_contents_count() > 0;
+}
+
+function storev1_floating_cart_markup(): void {
+    if (!storev1_cart_has_items()) return;
+    echo '<a class="sv1-floating-cart" href="' . esc_url(wc_get_cart_url()) . '">';
+    storev1_icon('cart');
+    echo '<span>Carrinho</span>';
+    storev1_cart_count();
+    echo '</a>';
+}
+
 // A compact account area: only purchase history and an explicit sign-out
 // action remain. WooCommerce still owns the order/payment details and links.
 add_filter('woocommerce_account_menu_items', function($items) {
@@ -109,7 +122,13 @@ add_filter('woocommerce_account_menu_items', function($items) {
 }, 30);
 
 add_filter('woocommerce_add_to_cart_fragments', function($fragments) {
-    ob_start(); storev1_cart_count(); $fragments['span.sv1-cart-count'] = ob_get_clean(); return $fragments;
+    ob_start();
+    echo '<div class="sv1-floating-cart-slot">';
+    storev1_floating_cart_markup();
+    echo '</div>';
+    $fragments['div.sv1-floating-cart-slot'] = ob_get_clean();
+    ob_start(); storev1_cart_count(); $fragments['span.sv1-cart-count'] = ob_get_clean();
+    return $fragments;
 });
 
 // Start loading the cart before the shopper clicks it. Cart and checkout are

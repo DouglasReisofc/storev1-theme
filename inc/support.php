@@ -15,21 +15,45 @@ function storev1_support_recipient() {
     return sanitize_email((string) $email) ?: sanitize_email(get_option('admin_email'));
 }
 
-function storev1_support_orders($email = '') {
-    if (!function_exists('wc_get_orders')) return [];
-    $args = ['limit' => 20, 'orderby' => 'date', 'order' => 'DESC', 'return' => 'objects'];
-    if (is_user_logged_in()) $args['customer_id'] = get_current_user_id();
-    elseif ($email && is_email($email)) $args['billing_email'] = sanitize_email($email);
-    return wc_get_orders($args);
+function storev1_support_orders() {
+    // Never render store-wide order data in a public support form. A guest can
+    // still contact support, but only an authenticated customer can select one
+    // of their own purchases as context.
+    if (!function_exists('wc_get_orders') || !is_user_logged_in()) return [];
+    return wc_get_orders([
+        'limit'       => 20,
+        'orderby'     => 'date',
+        'order'       => 'DESC',
+        'return'      => 'objects',
+        'customer_id' => get_current_user_id(),
+    ]);
 }
 
-function storev1_support_order_context($order_id, $email) {
-    if (!$order_id || !function_exists('wc_get_order')) return '';
+function storev1_support_order_label($order) {
+    if (!$order instanceof WC_Order) return '';
+    $names = [];
+    foreach ($order->get_items() as $item) {
+        if (!$item instanceof WC_Order_Item_Product) continue;
+        $name = trim(wp_strip_all_tags($item->get_name()));
+        if ($name !== '') $names[] = $name;
+    }
+    $account = $names ? $names[0] : 'Conta não informada';
+    if (count($names) > 1) $account .= ' +' . (count($names) - 1);
+    $created = $order->get_date_created();
+    return sprintf(
+        'Pedido #%s · %s · %s · %s',
+        $order->get_order_number(),
+        $account,
+        $created ? wp_date('d/m/Y', $created->getTimestamp()) : '',
+        wp_strip_all_tags($order->get_formatted_order_total())
+    );
+}
+
+function storev1_support_order_context($order_id) {
+    if (!$order_id || !function_exists('wc_get_order') || !is_user_logged_in()) return '';
     $order = wc_get_order(absint($order_id));
     if (!$order instanceof WC_Order) return '';
-    $allowed = is_user_logged_in() && (int) $order->get_customer_id() === get_current_user_id();
-    if (!$allowed && $email && strtolower((string) $order->get_billing_email()) === strtolower($email)) $allowed = true;
-    if (!$allowed) return '';
+    if ((int) $order->get_customer_id() !== (int) get_current_user_id()) return '';
     $items = [];
     foreach ($order->get_items() as $item) {
         if ($item instanceof WC_Order_Item_Product) $items[] = $item->get_name() . ' x' . $item->get_quantity();
@@ -52,7 +76,7 @@ function storev1_support_submit() {
     if (!$name || !is_email($email) || !$reason || mb_strlen($message) < 10) {
         wp_send_json_error(['message' => 'Preencha nome, e-mail, motivo e uma mensagem com pelo menos 10 caracteres.'], 422);
     }
-    $order_context = storev1_support_order_context($_POST['order_id'] ?? 0, $email);
+    $order_context = storev1_support_order_context($_POST['order_id'] ?? 0);
     $body = '<h2>Nova solicitação de suporte</h2>';
     $body .= '<p><strong>Nome:</strong> ' . esc_html($name) . '<br><strong>E-mail:</strong> ' . esc_html($email) . '<br><strong>Motivo:</strong> ' . esc_html($reason) . '</p>';
     if ($order_context) $body .= '<h3>Compra relacionada</h3><p>' . nl2br(esc_html($order_context)) . '</p>';

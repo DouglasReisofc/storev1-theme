@@ -32,6 +32,24 @@ test('embedded checkout never renders storefront support controls', () => {
   assert.match(read('assets/storev1-modals.css'), /storev1-embedded-checkout \.sv1-support-modal/);
 });
 
+test('support order choices are private and include the purchased account name', () => {
+  const support = read('inc/support.php');
+  const theme = read('functions.php');
+  assert.match(support, /!is_user_logged_in\(\)\) return \[\]/);
+  assert.match(support, /'customer_id'\s*=>\s*get_current_user_id\(\)/);
+  assert.match(support, /function storev1_support_order_label/);
+  assert.match(theme, /storev1_support_order_label\(\$order\)/);
+});
+
+test('the floating cart is only rendered for a non-empty cart and refreshes as one fragment', () => {
+  const storefront = read('inc/storefront.php');
+  const footer = read('footer.php');
+  assert.match(storefront, /function storev1_cart_has_items/);
+  assert.match(storefront, /if \(!storev1_cart_has_items\(\)\) return/);
+  assert.match(storefront, /div\.sv1-floating-cart-slot/);
+  assert.match(footer, /sv1-floating-cart-slot/);
+});
+
 test('adult products are isolated in their dedicated category', () => {
   const source = read('inc/launch-readiness.php');
   assert.match(source, /function storev1_isolate_adult_product_category/);
