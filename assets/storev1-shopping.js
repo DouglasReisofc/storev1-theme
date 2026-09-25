@@ -30,6 +30,7 @@
     if (event.origin !== window.location.origin || event.source !== accountCheckoutFrame?.contentWindow) return;
     if (event.data?.type !== 'storezap-checkout-layout') return;
     accountCheckoutDialog?.classList.toggle('is-payment-only', event.data.paymentOnly === true);
+    if (event.data.pixPayment === true) accountCheckoutDialog?.classList.add('is-pix-payment');
   });
   accountCheckoutFrame?.addEventListener('load', () => {
     accountCheckoutDialog?.classList.remove('is-loading');
@@ -37,6 +38,11 @@
       const frameDocument = accountCheckoutFrame.contentDocument;
       frameDocument?.documentElement?.classList.add('storev1-embedded-checkout');
       frameDocument?.body?.classList.add('storev1-embedded-checkout');
+      // The payment-only picker is intentionally compact for logged-in users,
+      // but the Pix QR/copia-e-cola screen needs its own full-height surface.
+      // Detect the same-origin thank-you view after the iframe navigates and
+      // promote the parent dialog without changing WooCommerce's flow.
+      accountCheckoutDialog?.classList.toggle('is-pix-payment', Boolean(frameDocument?.querySelector('[data-storezap-pix-dialog]')));
     } catch (error) {}
   });
   const openAccountOrderPayment = (href) => {
@@ -49,6 +55,7 @@
     } catch (error) { return false; }
     accountCheckoutDialog.dataset.returnUrl = window.location.href;
     accountCheckoutDialog.classList.remove('is-payment-only');
+    accountCheckoutDialog.classList.remove('is-pix-payment');
     accountCheckoutDialog.classList.add('is-loading');
     if (!accountCheckoutDialog.open) accountCheckoutDialog.showModal();
     // Opening the dialog first avoids a mobile Chromium/WebView race where an
