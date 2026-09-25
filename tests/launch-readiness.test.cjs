@@ -22,5 +22,6 @@ test('launch readiness removes author sitemap and seeds essential pages', () => 
 
 test('homepage sharing metadata always has a useful description and image fallback', () => {
   assert.match(read('inc/site-quality.php'), /function storev1_site_description/);
-  assert.match(read('inc/social-metadata.php'), /turbo-contas-logo\.png/);
+  assert.match(read('inc/social-metadata.php'), /turbo-contas-og\.png/);
+  assert.match(read('inc/social-metadata.php'), /og:image:secure_url/);
 });
