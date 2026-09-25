@@ -72,7 +72,7 @@ add_action('wp_head', function() {
         if (function_exists('is_product') && is_product()) $product = wc_get_product($post->ID);
     } elseif (is_front_page() || (function_exists('is_shop') && is_shop())) {
         $url = is_front_page() ? home_url('/') : get_permalink(wc_get_page_id('shop'));
-        $description = storev1_plain_summary(get_bloginfo('description'));
+        $description = storev1_site_description();
     } elseif (is_tax() || is_category() || is_tag()) {
         $term = get_queried_object();
         $url = get_term_link($term);
@@ -90,6 +90,14 @@ add_action('wp_head', function() {
     if (!$image && !$product) {
         $logo = absint(get_theme_mod('custom_logo'));
         if ($logo) $image = storev1_social_image($logo);
+        else {
+            $image = [
+                'url' => get_template_directory_uri() . '/assets/brand/turbo-contas-logo.png',
+                'width' => 1181,
+                'height' => 480,
+                'type' => 'image/png',
+            ];
+        }
     }
     $properties = ['og:type' => $product ? 'product' : 'website', 'og:title' => html_entity_decode($title, ENT_QUOTES, 'UTF-8'), 'og:description' => $description, 'og:url' => $url, 'og:site_name' => get_bloginfo('name'), 'og:locale' => get_locale()];
     if ($image) {
@@ -119,7 +127,7 @@ add_action('template_redirect', function() {
     header('X-Robots-Tag: noindex');
     $name = storev1_plain_summary(get_bloginfo('name'));
     echo '# ' . $name . "\n\n";
-    echo '> ' . storev1_plain_summary(get_bloginfo('description')) . "\n\n";
+    echo '> ' . storev1_site_description() . "\n\n";
     echo "## Loja\n\n- [Página inicial](" . esc_url_raw(home_url('/')) . ")\n";
     if (function_exists('wc_get_page_id') && wc_get_page_id('shop') > 0) echo '- [Catálogo de produtos](' . esc_url_raw(get_permalink(wc_get_page_id('shop'))) . ")\n";
     $sitemap = function_exists('get_sitemap_url') ? get_sitemap_url('index') : '';

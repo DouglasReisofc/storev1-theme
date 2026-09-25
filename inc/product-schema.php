@@ -22,11 +22,17 @@ add_action('wp_head', function() {
         $variation = wc_get_product($variation_id);
         if (!$variation instanceof WC_Product_Variation || $variation->get_status() !== 'publish') continue;
 
-        // The migration keeps the original product ID, title and image on
-        // each variation so structured data can describe the actual offer.
+        // The selectable offer is authoritative. The legacy product title is
+        // only a migration fallback and may be stale after an offer is edited.
         $legacy_id = absint($variation->get_meta('_storezap_legacy_product_id', true));
         $legacy = $legacy_id ? wc_get_product($legacy_id) : null;
-        $name = $legacy ? $legacy->get_name() : trim((string) $variation->get_attribute('pa_oferta'));
+        $name = trim((string) $variation->get_attribute('pa_oferta'));
+        if ($name === '') {
+            $attributes = $variation->get_variation_attributes(false);
+            $labels = array_values(array_filter(array_map('wc_clean', $attributes)));
+            $name = implode(' - ', $labels);
+        }
+        if ($name === '' && $legacy) $name = $legacy->get_name();
         if ($name === '') $name = $product->get_name();
 
         $variant = [
@@ -65,3 +71,12 @@ add_action('wp_head', function() {
     ];
     echo '<script type="application/ld+json">' . wp_json_encode($graph, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "</script>\n";
 }, 16);
+
+// WooCommerce can pass HTML through esc_html() before JSON-LD generation on
+// some versions, producing literal &lt;p&gt; in search-engine descriptions.
+add_filter('woocommerce_structured_data_product', function($markup, $product) {
+    if (!$product instanceof WC_Product) return $markup;
+    $description = storev1_plain_summary($product->get_short_description() ?: $product->get_description());
+    if ($description !== '') $markup['description'] = $description;
+    return $markup;
+}, 20, 2);

@@ -16,11 +16,22 @@ add_action('wp_head', function() {
 function storev1_has_seo_provider() {
     return defined('WPSEO_VERSION') || defined('RANK_MATH_VERSION') || defined('AIOSEO_VERSION') || defined('SEOPRESS_VERSION') || defined('THE_SEO_FRAMEWORK_VERSION') || !apply_filters('storev1_fallback_metadata', true);
 }
+
+/** A useful store summary when the WordPress tagline is empty or generic. */
+function storev1_site_description() {
+    $name = trim(storev1_plain_summary(get_bloginfo('name')));
+    $description = trim(storev1_plain_summary(get_bloginfo('description')));
+    $generic = $description === '' || strtolower(remove_accents(rtrim($description, '.'))) === strtolower(remove_accents(rtrim($name, '.')));
+    if ($generic || strlen($description) < 35) {
+        return 'Contas premium com entrega digital rápida e automática. Escolha a melhor oferta e conte com o suporte da Turbo Contas.';
+    }
+    return $description;
+}
 add_action('wp_head', function() {
     if (storev1_has_seo_provider() || is_404() || is_search() || is_feed()) return;
     if (function_exists('is_account_page') && (is_account_page() || is_cart() || is_checkout())) return;
     $description = '';
-    if (is_front_page()) $description = get_bloginfo('description');
+    if (is_front_page()) $description = storev1_site_description();
     elseif (is_tax() || is_category() || is_tag()) {
         $description = term_description();
         if (!$description && function_exists('storev1_category_description')) $description = storev1_category_description(get_queried_object());
@@ -29,7 +40,7 @@ add_action('wp_head', function() {
         $post = get_queried_object();
         $description = storev1_share_description($post);
     }
-    if (!$description) $description = wp_get_document_title() . '. ' . get_bloginfo('description');
+    if (!$description) $description = wp_get_document_title() . '. ' . storev1_site_description();
     $description = preg_replace('/\s+/u', ' ', wp_strip_all_tags(strip_shortcodes($description)));
     $description = wp_html_excerpt(trim($description), 160, '…');
     echo '<meta name="description" content="' . esc_attr($description) . '">' . "\n";
