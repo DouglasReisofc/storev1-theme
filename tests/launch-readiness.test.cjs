@@ -57,6 +57,12 @@ test('account order payments open the shared checkout modal', () => {
   assert.match(source, /is-payment-only/);
 });
 
+test('payment-only checkout keeps a compact modal on desktop and mobile', () => {
+  const source = read('assets/storev1-modals.css');
+  assert.match(source, /is-payment-only\{width:min\(94vw,980px\);height:min\(500px/);
+  assert.match(source, /is-payment-only\{width:calc\(100vw - 12px\);height:min\(440px/);
+});
+
 test('the theme updater bypasses its release cache on a forced check', () => {
   const source = read('inc/class-storev1-updater.php');
   assert.match(source, /private static function update_data\(\$force = false\)/);
