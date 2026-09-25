@@ -10,11 +10,10 @@ $posted = function($key) { return isset($_POST[$key]) && is_string($_POST[$key])
 do_action('woocommerce_before_customer_login_form');
 ?>
 <section class="sv1-auth" aria-label="<?php echo $register ? 'Criar conta' : 'Entrar'; ?>">
-    <div class="sv1-auth-art" aria-hidden="true"><img src="<?php echo esc_url(get_template_directory_uri().'/assets/account-'.($register ? 'register' : 'login').'-illustration.webp'); ?>" alt="" width="1672" height="941" decoding="async"></div>
     <div class="sv1-auth-content">
         <?php if (!$registration_disabled) : ?><nav class="sv1-auth-tabs" aria-label="Acesso à loja">
-            <a href="<?php echo esc_url(storev1_account_url()); ?>" <?php if (!$register) echo 'aria-current="page"'; ?>>Entrar</a>
-            <?php if (storev1_registration_enabled()) : ?><a href="<?php echo esc_url(storev1_account_url('register')); ?>" <?php if ($register) echo 'aria-current="page"'; ?>>Criar conta</a><?php endif; ?>
+            <a href="<?php echo esc_url(storev1_account_url()); ?>" <?php if (!$register) echo 'aria-current="page"'; ?>><span class="sv1-auth-tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M14 4h5a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-5"/><path d="M3 12h12"/><path d="m11 8 4 4-4 4"/><path d="M3 12V6a2 2 0 0 1 2-2h2"/></svg></span><span>Entrar</span></a>
+            <?php if (storev1_registration_enabled()) : ?><a href="<?php echo esc_url(storev1_account_url('register')); ?>" <?php if ($register) echo 'aria-current="page"'; ?>><span class="sv1-auth-tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M19 8v6"/><path d="M16 11h6"/></svg></span><span>Criar conta</span></a><?php endif; ?>
         </nav><?php endif; ?>
         <h2><?php echo $registration_disabled ? 'Cadastro indisponível' : ($register ? 'Crie sua conta' : 'Bem-vindo de volta'); ?></h2>
         <p class="sv1-auth-lead"><?php echo $registration_disabled ? 'A criação de contas está desativada no momento.' : ($register ? 'Seus pedidos e produtos digitais em um só lugar.' : 'Entre para acompanhar seus pedidos e acessar seus produtos.'); ?></p>
