@@ -9,7 +9,7 @@ add_filter('wp_sitemaps_add_provider', function($provider, $name) {
 
 /** Create the essential public information pages without overwriting edits. */
 function storev1_ensure_information_pages() {
-    $version = '1.12.66';
+    $version = '1.12.67';
     if (get_option('storev1_information_pages_version') === $version) return;
 
     $pages = [
@@ -53,3 +53,32 @@ function storev1_ensure_information_pages() {
     update_option('storev1_information_pages_version', $version, false);
 }
 add_action('init', 'storev1_ensure_information_pages', 30);
+
+/** Keep adult products exclusively inside the dedicated adult catalogue. */
+function storev1_isolate_adult_product_category() {
+    if (get_option('storev1_adult_category_isolated') === '1' || !taxonomy_exists('product_cat')) return;
+    $adult = get_term_by('slug', 'contas-adultas', 'product_cat');
+    if (!$adult || is_wp_error($adult)) return;
+
+    $product_ids = get_posts([
+        'post_type' => 'product',
+        'post_status' => ['publish', 'private', 'draft', 'pending'],
+        'posts_per_page' => -1,
+        'fields' => 'ids',
+        'no_found_rows' => true,
+        'tax_query' => [[
+            'taxonomy' => 'product_cat',
+            'field' => 'term_id',
+            'terms' => [(int) $adult->term_id],
+        ]],
+    ]);
+    if (!$product_ids) return;
+
+    $complete = true;
+    foreach ($product_ids as $product_id) {
+        $updated = wp_set_object_terms((int) $product_id, [(int) $adult->term_id], 'product_cat', false);
+        if (is_wp_error($updated)) $complete = false;
+    }
+    if ($complete) update_option('storev1_adult_category_isolated', '1', false);
+}
+add_action('init', 'storev1_isolate_adult_product_category', 40);

@@ -31,3 +31,16 @@ test('embedded checkout never renders storefront support controls', () => {
   assert.match(read('assets/storev1-modals.css'), /storev1-embedded-checkout \.sv1-floating-support/);
   assert.match(read('assets/storev1-modals.css'), /storev1-embedded-checkout \.sv1-support-modal/);
 });
+
+test('adult products are isolated in their dedicated category', () => {
+  const source = read('inc/launch-readiness.php');
+  assert.match(source, /function storev1_isolate_adult_product_category/);
+  assert.match(source, /get_term_by\('slug', 'contas-adultas', 'product_cat'\)/);
+  assert.match(source, /wp_set_object_terms\(\(int\) \$product_id, \[\(int\) \$adult->term_id\], 'product_cat', false\)/);
+});
+
+test('the mobile drawer lists category names without thumbnails', () => {
+  const source = read('woocommerce/loop/orderby.php');
+  assert.match(source, /if \(!empty\(\$sv1_drawer\)\)/);
+  assert.match(source, /<strong><\?php echo esc_html\(\$term->name\); \?><\/strong><\?php else/);
+});
