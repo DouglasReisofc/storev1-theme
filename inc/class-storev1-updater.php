@@ -15,8 +15,8 @@ final class StoreV1_Updater {
         add_filter('pre_set_site_transient_update_themes', [__CLASS__, 'inject'], 10, 1);
     }
 
-    private static function release() {
-        $release = get_transient(self::RELEASE_CACHE);
+    private static function release($force = false) {
+        $release = $force ? false : get_transient(self::RELEASE_CACHE);
         if (false !== $release && is_array($release)) return $release;
         $response = wp_remote_get(self::API, [
             'timeout' => 10,
@@ -71,7 +71,7 @@ final class StoreV1_Updater {
         $release = get_transient(self::RELEASE_CACHE);
         $force = is_admin() && current_user_can('update_themes') && isset($_GET['force-check']);
         if (false === $release || $force) {
-            $release = self::release();
+            $release = self::release($force);
         }
         if (empty($release['tag_name']) || !empty($release['draft']) || !empty($release['prerelease'])) return $update;
         $version = ltrim($release['tag_name'], 'v');
