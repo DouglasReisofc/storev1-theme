@@ -26,6 +26,14 @@
   // payment picker, validation and Lottie flow continue to work unchanged.
   const accountCheckoutDialog = document.querySelector('[data-storezap-checkout-dialog]');
   const accountCheckoutFrame = accountCheckoutDialog?.querySelector('[data-storezap-checkout-frame]');
+  accountCheckoutFrame?.addEventListener('load', () => {
+    accountCheckoutDialog?.classList.remove('is-loading');
+    try {
+      const frameDocument = accountCheckoutFrame.contentDocument;
+      frameDocument?.documentElement?.classList.add('storev1-embedded-checkout');
+      frameDocument?.body?.classList.add('storev1-embedded-checkout');
+    } catch (error) {}
+  });
   const openAccountOrderPayment = (href) => {
     if (!accountCheckoutDialog || !accountCheckoutFrame || typeof accountCheckoutDialog.showModal !== 'function') return false;
     let url = href;
@@ -36,8 +44,11 @@
     } catch (error) { return false; }
     accountCheckoutDialog.dataset.returnUrl = window.location.href;
     accountCheckoutDialog.classList.add('is-loading');
-    if (accountCheckoutFrame.src !== url) accountCheckoutFrame.src = url;
     if (!accountCheckoutDialog.open) accountCheckoutDialog.showModal();
+    // Opening the dialog first avoids a mobile Chromium/WebView race where an
+    // iframe assigned while its parent dialog is closed can remain a blank
+    // white surface until the modal is reopened.
+    if (accountCheckoutFrame.src !== url) accountCheckoutFrame.src = url;
     return true;
   };
   document.addEventListener('click', (event) => {

@@ -50,5 +50,7 @@ test('account order payments open the shared checkout modal', () => {
   assert.match(source, /data-storezap-checkout-dialog/);
   assert.match(source, /order-pay/);
   assert.match(source, /storezap_modal_checkout/);
+  assert.match(source, /showModal\(\)/);
+  assert.match(source, /contentDocument/);
   assert.match(source, /stopImmediatePropagation/);
 });

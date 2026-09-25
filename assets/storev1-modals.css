@@ -31,7 +31,7 @@
 .storezap-checkout-dialog__head{position:relative;height:58px;display:flex;align-items:center;justify-content:center;padding:0 58px;border-bottom:1px solid #e3ece7;background:#fff;text-align:center}
 .storezap-checkout-dialog__head strong{display:block;color:#163d2d;font-size:17px;line-height:1.2}.storezap-checkout-dialog__head span:last-child{display:none!important}
 .storezap-checkout-dialog__head strong .sv1-checkout-lottie{display:none!important;width:32px;height:32px;flex:0 0 32px;margin-left:4px;vertical-align:middle}.storezap-checkout-dialog__head strong .sv1-checkout-lottie svg{display:block;width:100%;height:100%}
-.storezap-checkout-dialog__close{position:absolute;right:14px;top:11px;flex:0 0 36px}.storezap-checkout-dialog__frame{display:block;width:100%;height:calc(100% - 58px);border:0;background:#fff}.storezap-checkout-dialog.is-loading .storezap-checkout-dialog__frame{opacity:.1}
+.storezap-checkout-dialog__close{position:absolute;right:14px;top:11px;flex:0 0 36px}.storezap-checkout-dialog__frame{display:block;width:100%;height:calc(100% - 58px);min-height:0;border:0;background:#fff}.storezap-checkout-dialog.is-loading .storezap-checkout-dialog__frame{opacity:.1}
 .storezap-checkout-dialog__loading{position:absolute;inset:58px 0 0;display:grid;place-items:center;color:#587267;background:rgba(255,255,255,.84);font-size:13px;font-weight:700;pointer-events:none}.storezap-checkout-dialog:not(.is-loading) .storezap-checkout-dialog__loading{display:none}
 /* The checkout is rendered same-origin in the theme-owned dialog. Keep the
    child document focused on the form instead of nesting the storefront shell
