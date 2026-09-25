@@ -38,7 +38,7 @@
 /* The checkout is rendered same-origin in the theme-owned dialog. Keep the
    child document focused on the form instead of nesting the storefront shell
    (header, footer and mobile toolbar) inside it. */
-html.storev1-embedded-checkout,body.storev1-embedded-checkout{background:#fff!important;overflow-x:hidden!important}
+html.storev1-embedded-checkout,body.storev1-embedded-checkout{background:#fff!important;overflow-x:hidden!important;overflow-y:auto!important;min-height:100%!important}
 body.storev1-embedded-checkout .site-header,
 body.storev1-embedded-checkout .loja1-header,
 body.storev1-embedded-checkout .loja1-discovery,
@@ -57,6 +57,14 @@ body.storev1-embedded-checkout .storezap-checkout-dialog{display:none!important}
 body.storev1-embedded-checkout #main-content,
 body.storev1-embedded-checkout .site-main,
 body.storev1-embedded-checkout main{width:100%!important;max-width:none!important;margin:0!important;padding:0 18px 28px!important}
+body.storev1-embedded-checkout.woocommerce-order-received #main-content,
+body.storev1-embedded-checkout.woocommerce-order-received .site-main,
+body.storev1-embedded-checkout.woocommerce-order-received main{overflow:visible!important;padding-bottom:42px!important}
+body.storev1-embedded-checkout.woocommerce-order-received .woocommerce-order{max-width:820px;margin:0 auto!important;padding-bottom:22px}
+body.storev1-embedded-checkout .storev1-order-payment-pending{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 16px;align-items:center;margin:18px 0;padding:16px 18px;border:1px solid #e7c766;border-radius:12px;background:#fffaf0;color:#1c3d2f}
+body.storev1-embedded-checkout .storev1-order-payment-pending strong{font-size:15px}
+body.storev1-embedded-checkout .storev1-order-payment-pending span{grid-column:1;color:#68796f;font-size:13px}
+body.storev1-embedded-checkout .storev1-order-payment-pending a{grid-column:2;grid-row:1 / span 2;white-space:nowrap}
 body.storev1-embedded-checkout .woocommerce,
 body.storev1-embedded-checkout .woocommerce-checkout{width:100%!important;max-width:820px!important;margin:0 auto!important;padding:14px 0 24px!important;background:#fff!important;border:0!important;box-shadow:none!important}
 body.storev1-embedded-checkout .entry-header,

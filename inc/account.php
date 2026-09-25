@@ -108,8 +108,18 @@ add_filter('woocommerce_my_account_my_orders_actions', function($actions, $order
 // The same recovery action is useful after opening an individual order.
 add_action('woocommerce_order_details_after_order_table', function($order) {
     if (!storev1_order_can_pay_again($order)) return;
+    // `woocommerce_order_details_table` may be rendered both by a thank-you
+    // page and another extension in the same response. Never expose a second
+    // payment action for the same order.
+    static $rendered = [];
+    $order_id = (int) $order->get_id();
+    if (isset($rendered[$order_id])) return;
+    $rendered[$order_id] = true;
     $url = $order->get_checkout_payment_url();
-    echo '<p class="storev1-order-pay-again"><a class="woocommerce-button button pay" href="' . esc_url($url) . '">Pagar agora</a></p>';
+    echo '<section class="storev1-order-payment-pending" data-storev1-order-payment-pending data-storev1-order-pay-action>';
+    echo '<strong>Estamos aguardando seu pagamento</strong><span>Selecione uma forma de pagamento para concluir este pedido.</span>';
+    echo '<a class="woocommerce-button button pay" href="' . esc_url($url) . '">Pagar agora</a>';
+    echo '</section>';
 }, 20, 1);
 
 // WooCommerce 11 can show an English "Confirm your email address" notice on

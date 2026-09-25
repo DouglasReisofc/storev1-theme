@@ -26,25 +26,6 @@
   // payment picker, validation and Lottie flow continue to work unchanged.
   const accountCheckoutDialog = document.querySelector('[data-storezap-checkout-dialog]');
   const accountCheckoutFrame = accountCheckoutDialog?.querySelector('[data-storezap-checkout-frame]');
-  window.addEventListener('message', event => {
-    if (event.origin !== window.location.origin || event.source !== accountCheckoutFrame?.contentWindow) return;
-    if (event.data?.type !== 'storezap-checkout-layout') return;
-    accountCheckoutDialog?.classList.toggle('is-payment-only', event.data.paymentOnly === true);
-    if (event.data.pixPayment === true) accountCheckoutDialog?.classList.add('is-pix-payment');
-  });
-  accountCheckoutFrame?.addEventListener('load', () => {
-    accountCheckoutDialog?.classList.remove('is-loading');
-    try {
-      const frameDocument = accountCheckoutFrame.contentDocument;
-      frameDocument?.documentElement?.classList.add('storev1-embedded-checkout');
-      frameDocument?.body?.classList.add('storev1-embedded-checkout');
-      // The payment-only picker is intentionally compact for logged-in users,
-      // but the Pix QR/copia-e-cola screen needs its own full-height surface.
-      // Detect the same-origin thank-you view after the iframe navigates and
-      // promote the parent dialog without changing WooCommerce's flow.
-      accountCheckoutDialog?.classList.toggle('is-pix-payment', Boolean(frameDocument?.querySelector('[data-storezap-pix-dialog]')));
-    } catch (error) {}
-  });
   const openAccountOrderPayment = (href) => {
     if (!accountCheckoutDialog || !accountCheckoutFrame || typeof accountCheckoutDialog.showModal !== 'function') return false;
     let url = href;
@@ -64,6 +45,29 @@
     if (accountCheckoutFrame.src !== url) accountCheckoutFrame.src = url;
     return true;
   };
+  window.addEventListener('message', event => {
+    if (event.origin !== window.location.origin || event.source !== accountCheckoutFrame?.contentWindow) return;
+    if (event.data?.type === 'storev1-open-order-payment') {
+      openAccountOrderPayment(event.data.href || '');
+      return;
+    }
+    if (event.data?.type !== 'storezap-checkout-layout') return;
+    accountCheckoutDialog?.classList.toggle('is-payment-only', event.data.paymentOnly === true);
+    if (event.data.pixPayment === true) accountCheckoutDialog?.classList.add('is-pix-payment');
+  });
+  accountCheckoutFrame?.addEventListener('load', () => {
+    accountCheckoutDialog?.classList.remove('is-loading');
+    try {
+      const frameDocument = accountCheckoutFrame.contentDocument;
+      frameDocument?.documentElement?.classList.add('storev1-embedded-checkout');
+      frameDocument?.body?.classList.add('storev1-embedded-checkout');
+      // The payment-only picker is intentionally compact for logged-in users,
+      // but the Pix QR/copia-e-cola screen needs its own full-height surface.
+      // Detect the same-origin thank-you view after the iframe navigates and
+      // promote the parent dialog without changing WooCommerce's flow.
+      accountCheckoutDialog?.classList.toggle('is-pix-payment', Boolean(frameDocument?.querySelector('[data-storezap-pix-dialog]')));
+    } catch (error) {}
+  });
   document.addEventListener('click', (event) => {
     const link = event.target.closest?.('a');
     if (!link) return;
@@ -74,6 +78,56 @@
     event.stopPropagation();
     event.stopImmediatePropagation();
   }, true);
+  // The order-details table is rendered inside the same-origin checkout
+  // iframe. Forward its recovery link to the parent so "Pagar agora" always
+  // reopens the theme-owned payment dialog instead of navigating in the frame.
+  if (window.parent !== window) {
+    document.addEventListener('click', event => {
+      const link = event.target.closest?.('a');
+      if (!link) return;
+      const href = link.getAttribute('href') || '';
+      if (!/\/order-pay(?:[\/?#]|$)/i.test(href) && !/[?&]pay_for_order=(?:1|true)/i.test(href)) return;
+      event.preventDefault();
+      event.stopPropagation();
+      window.parent.postMessage({type:'storev1-open-order-payment', href:link.href || href}, window.location.origin);
+    }, true);
+  }
+
+  // Keep the payment recovery action single and predictable when another
+  // extension also prints a WooCommerce pay link for the same order.
+  const dedupeOrderPaymentActions = (root = document) => {
+    if (!root.body?.classList.contains('woocommerce-order-received') && !root.querySelector?.('.woocommerce-order-details')) return;
+    const links = [...root.querySelectorAll('a[href*="order-pay"], a[href*="pay_for_order="]')];
+    if (links.length < 2) return;
+    const preferred = links.find(link => link.closest('[data-storev1-order-payment-pending]')) || links[0];
+    links.forEach(link => {
+      if (link === preferred) return;
+      const wrapper = link.closest('[data-storev1-order-pay-action], .storev1-order-pay-again');
+      if (wrapper) wrapper.remove(); else link.hidden = true;
+    });
+  };
+  dedupeOrderPaymentActions();
+  new MutationObserver(() => dedupeOrderPaymentActions()).observe(document.body, {childList:true, subtree:true});
+
+  const setFloatingCartCount = (count) => {
+    const safeCount = Math.max(0, Number.parseInt(count, 10) || 0);
+    document.querySelectorAll('.sv1-cart-count').forEach(badge => {
+      badge.textContent = String(safeCount);
+      badge.setAttribute('aria-label', `${safeCount} ${safeCount === 1 ? 'item' : 'itens'} no carrinho`);
+    });
+    document.body.classList.toggle('sv1-cart-is-empty', safeCount === 0);
+  };
+  const syncFloatingCart = (root = document) => {
+    const nextSlot = root.querySelector?.('.sv1-floating-cart-slot');
+    const currentSlot = document.querySelector('.sv1-floating-cart-slot');
+    if (nextSlot && currentSlot && root !== document) currentSlot.replaceChildren(...[...nextSlot.childNodes].map(node => node.cloneNode(true)));
+    const count = root.querySelector?.('.sv1-cart-count')?.textContent || document.querySelector('.sv1-cart-count')?.textContent || '0';
+    setFloatingCartCount(count);
+    if (Number.parseInt(count, 10) <= 0) document.querySelector('.sv1-floating-cart')?.remove();
+  };
+  syncFloatingCart();
+  document.body.addEventListener('updated_wc_div', () => syncFloatingCart());
+  document.body.addEventListener('wc_fragments_refreshed', () => syncFloatingCart());
   function quantities() {
     document.querySelectorAll('.quantity input.qty[type="number"]').forEach(input => {
       const box = input.closest('.quantity');
@@ -119,6 +173,9 @@
     const cartDialog = item?.closest('[data-storezap-cart-dialog]');
     const cartRows = cartDialog?.querySelectorAll('.woocommerce-cart-form .cart_item') || [];
     const closesAfterRemove = Boolean(cartDialog && cartRows.length <= 1);
+    const currentCount = Number.parseInt(document.querySelector('.sv1-cart-count')?.textContent || '0', 10) || 0;
+    const removedQuantity = Number.parseInt(item?.querySelector('input.qty')?.value || '1', 10) || 1;
+    setFloatingCartCount(Math.max(0, currentCount - removedQuantity));
     // Do not make the shopper watch an empty-cart state after removing the
     // final item. Close the modal immediately; the request below still
     // confirms the deletion and refreshes the cart count in the background.
@@ -139,6 +196,7 @@
         const currentTotals = document.querySelector('.cart_totals');
         const nextTotals = parsed.querySelector('.cart_totals');
         if (currentTotals && nextTotals) currentTotals.replaceWith(nextTotals);
+        syncFloatingCart(parsed);
         document.body.dispatchEvent(new CustomEvent('updated_wc_div'));
         if (window.jQuery) window.jQuery(document.body).trigger('wc_fragment_refresh');
       })

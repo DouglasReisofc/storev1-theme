@@ -34,7 +34,7 @@ function storev1_support_order_label($order) {
     $names = [];
     foreach ($order->get_items() as $item) {
         if (!$item instanceof WC_Order_Item_Product) continue;
-        $name = trim(wp_strip_all_tags($item->get_name()));
+        $name = storev1_support_item_label($item);
         if ($name !== '') $names[] = $name;
     }
     $account = $names ? $names[0] : 'Conta não informada';
@@ -47,6 +47,29 @@ function storev1_support_order_label($order) {
         $created ? wp_date('d/m/Y', $created->getTimestamp()) : '',
         wp_strip_all_tags($order->get_formatted_order_total())
     );
+}
+
+/**
+ * A variation already represents the selected offer. In support we show only
+ * that offer label (for example "90 dias") instead of repeating the parent
+ * account name and making the selector hard to scan.
+ */
+function storev1_support_item_label($item) {
+    if (!$item instanceof WC_Order_Item_Product) return '';
+    $product = $item->get_product();
+    if (!$product instanceof WC_Product || !$product->is_type('variation')) {
+        return trim(wp_strip_all_tags($item->get_name()));
+    }
+
+    $labels = [];
+    foreach ($product->get_variation_attributes() as $attribute => $value) {
+        $value = (string) $value;
+        if ($value === '') continue;
+        $taxonomy = str_replace('attribute_', '', (string) $attribute);
+        $term = taxonomy_exists($taxonomy) ? get_term_by('slug', $value, $taxonomy) : false;
+        $labels[] = $term && !is_wp_error($term) ? $term->name : ucwords(str_replace(['-', '_'], ' ', rawurldecode($value)));
+    }
+    return $labels ? implode(' · ', $labels) : trim(wp_strip_all_tags($item->get_name()));
 }
 
 function storev1_support_order_context($order_id) {
