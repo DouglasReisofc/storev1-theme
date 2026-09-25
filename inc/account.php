@@ -84,6 +84,17 @@ function storev1_order_can_pay_again($order) {
     return in_array($order->get_status(), ['pending', 'on-hold', 'failed'], true);
 }
 
+// WooCommerce only considers pending/failed orders payable by default. Store
+// Connect deliberately moves generated payments to on-hold ("Aguardando")
+// while waiting for the provider webhook. Permit the owner to reopen that
+// unpaid order without changing its status or creating a duplicate order.
+add_filter('woocommerce_valid_order_statuses_for_payment', function($statuses, $order) {
+    if (!$order instanceof WC_Order || $order->is_paid() || !is_user_logged_in()) return $statuses;
+    if ((int) $order->get_user_id() !== (int) get_current_user_id()) return $statuses;
+    if ($order->has_status('on-hold')) $statuses[] = 'on-hold';
+    return array_values(array_unique($statuses));
+}, 30, 2);
+
 add_filter('woocommerce_my_account_my_orders_actions', function($actions, $order) {
     if (!storev1_order_can_pay_again($order)) return $actions;
     $actions['pay'] = [

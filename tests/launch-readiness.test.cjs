@@ -59,6 +59,8 @@ test('unpaid account orders keep a Portuguese pay-again action and hide Woo emai
   const source = read('inc/account.php');
   assert.match(source, /storev1_order_can_pay_again/);
   assert.match(source, /woocommerce_my_account_my_orders_actions/);
+  assert.match(source, /woocommerce_valid_order_statuses_for_payment/);
+  assert.match(source, /\$statuses\[\] = 'on-hold'/);
   assert.match(source, /Pagar agora/);
   assert.match(source, /woocommerce_order_details_after_order_table/);
   assert.match(source, /woocommerce_customer_email_verification_should_show_prompt/);
