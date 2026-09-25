@@ -103,7 +103,7 @@
     links.forEach(link => {
       if (link === preferred) return;
       const wrapper = link.closest('[data-storev1-order-pay-action], .storev1-order-pay-again');
-      if (wrapper) wrapper.remove(); else link.hidden = true;
+      if (wrapper) wrapper.remove(); else link.remove();
     });
   };
   dedupeOrderPaymentActions();
