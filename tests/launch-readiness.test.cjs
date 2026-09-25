@@ -53,6 +53,8 @@ test('account order payments open the shared checkout modal', () => {
   assert.match(source, /showModal\(\)/);
   assert.match(source, /contentDocument/);
   assert.match(source, /stopImmediatePropagation/);
+  assert.match(source, /storezap-checkout-layout/);
+  assert.match(source, /is-payment-only/);
 });
 
 test('unpaid account orders keep a Portuguese pay-again action and hide Woo email verification', () => {

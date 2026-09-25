@@ -26,6 +26,11 @@
   // payment picker, validation and Lottie flow continue to work unchanged.
   const accountCheckoutDialog = document.querySelector('[data-storezap-checkout-dialog]');
   const accountCheckoutFrame = accountCheckoutDialog?.querySelector('[data-storezap-checkout-frame]');
+  window.addEventListener('message', event => {
+    if (event.origin !== window.location.origin || event.source !== accountCheckoutFrame?.contentWindow) return;
+    if (event.data?.type !== 'storezap-checkout-layout') return;
+    accountCheckoutDialog?.classList.toggle('is-payment-only', event.data.paymentOnly === true);
+  });
   accountCheckoutFrame?.addEventListener('load', () => {
     accountCheckoutDialog?.classList.remove('is-loading');
     try {
@@ -43,6 +48,7 @@
       url = parsed.toString();
     } catch (error) { return false; }
     accountCheckoutDialog.dataset.returnUrl = window.location.href;
+    accountCheckoutDialog.classList.remove('is-payment-only');
     accountCheckoutDialog.classList.add('is-loading');
     if (!accountCheckoutDialog.open) accountCheckoutDialog.showModal();
     // Opening the dialog first avoids a mobile Chromium/WebView race where an
