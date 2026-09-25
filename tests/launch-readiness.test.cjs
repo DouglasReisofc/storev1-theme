@@ -50,6 +50,12 @@ test('the floating cart is only rendered for a non-empty cart and refreshes as o
   assert.match(footer, /sv1-floating-cart-slot/);
 });
 
+test('support button stays above the mobile toolbar and cart', () => {
+  const css = read('assets/storev1-components.css');
+  assert.match(css, /\.sv1-floating-support\{position:fixed;right:22px;bottom:84px/);
+  assert.match(css, /body\.sv1-cart-is-empty \.sv1-floating-support\{bottom:calc\(78px \+ env\(safe-area-inset-bottom\)\)\}/);
+});
+
 test('adult products are isolated in their dedicated category', () => {
   const source = read('inc/launch-readiness.php');
   assert.match(source, /function storev1_isolate_adult_product_category/);
