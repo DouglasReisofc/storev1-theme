@@ -60,6 +60,13 @@
     link.dataset.sv1Removing = '1';
     link.setAttribute('aria-busy', 'true');
     const item = link.closest('.cart_item, .mini_cart_item');
+    const cartDialog = item?.closest('[data-storezap-cart-dialog]');
+    const cartRows = cartDialog?.querySelectorAll('.woocommerce-cart-form .cart_item') || [];
+    const closesAfterRemove = Boolean(cartDialog && cartRows.length <= 1);
+    // Do not make the shopper watch an empty-cart state after removing the
+    // final item. Close the modal immediately; the request below still
+    // confirms the deletion and refreshes the cart count in the background.
+    if (closesAfterRemove && cartDialog.open) cartDialog.close();
     // Remove the visible row immediately. The request still confirms the
     // change server-side; a failure falls back to the canonical cart URL.
     if (item) {
