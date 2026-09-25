@@ -143,3 +143,10 @@ body.storev1-embedded-checkout .woocommerce-message{margin:12px 0!important;bord
 .sv1-checkout-login-actions button{color:#0b6b46}
 .sv1-checkout-login-trigger{border-color:#0b6b46;background:#fff;color:#0b6b46}
 .sv1-checkout-login-trigger:hover{background:#edf8f2}
+.sv1-checkout-login-trigger{transition:opacity .22s ease,visibility .22s ease}
+.sv1-auth-overlay-open .sv1-checkout-login-trigger{opacity:0;visibility:hidden;pointer-events:none}
+.sv1-checkout-login-modal{inset:0}
+.sv1-checkout-login-feedback{position:absolute;left:50%;bottom:16px;z-index:4;width:min(560px,calc(100% - 32px));min-height:0;margin:0;padding:11px 16px;border:1px solid #c8d7cf;border-radius:10px;background:#fff;color:#17231d;font-weight:700;text-align:center;box-shadow:0 10px 28px rgba(8,24,16,.18);opacity:0;pointer-events:none;transform:translate(-50%,10px);transition:opacity .2s ease,transform .2s ease}
+.sv1-checkout-login-feedback:not(:empty){opacity:1;transform:translate(-50%,0)}
+.sv1-checkout-login-feedback.is-error{border-color:#e2bbb7;color:#9b211b}
+@media(max-width:700px){.sv1-checkout-login-modal{inset:0}.sv1-checkout-login-feedback{bottom:10px;width:calc(100% - 20px);font-size:12px}}

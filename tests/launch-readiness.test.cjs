@@ -92,6 +92,7 @@ test('registered checkout e-mails open an in-place login and resume checkout', (
   assert.match(account, /storev1_checkout_recover/);
   assert.match(account, /storev1_checkout_reset_password/);
   assert.match(account, /storev1_send_password_recovery_email/);
+  assert.match(account, /storev1_password_recovery_code/);
   assert.match(modal, /data-sv1-checkout-login/);
   assert.match(modal, /data-sv1-checkout-register-form/);
   assert.match(modal, /data-sv1-checkout-recover-form/);
@@ -102,6 +103,8 @@ test('registered checkout e-mails open an in-place login and resume checkout', (
   assert.match(modal, />Criar conta<\/button>/);
   assert.doesNotMatch(modal, /Continuar como visitante/);
   assert.match(modal, /data-sv1-recover-code/);
+  assert.match(modal, /Enviar código de redefinição de senha/);
+  assert.match(modal, /E-mail já cadastrado\. Entre para continuar\./);
   assert.match(script, /input\[name="billing_email"\]/);
   assert.match(script, /captureCheckoutValues/);
   assert.match(script, /contentWindow\?\.location\.reload/);

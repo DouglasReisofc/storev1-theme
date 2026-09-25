@@ -36,7 +36,7 @@
   const checkoutAuthTitle = checkoutLoginOverlay?.querySelector('[data-sv1-auth-title]');
   const checkoutAuthCopy = checkoutLoginOverlay?.querySelector('[data-sv1-auth-copy]');
   const checkoutLoginConfig = window.StoreV1CheckoutLogin || {};
-  const checkoutLoginState = {lastChecked:'', prompted:new Set(), resumeValues:null};
+  const checkoutLoginState = {lastChecked:'', prompted:new Set(), inlineAttempted:'', resumeValues:null};
   const checkoutAuthStorageKey = 'storev1_checkout_auth_state';
   const readPersistedAuth = () => { try { const value = sessionStorage.getItem(checkoutAuthStorageKey); return value ? JSON.parse(value) : null; } catch (error) { return null; } };
   const persistAuth = () => {
@@ -83,9 +83,9 @@
   const setCheckoutAuthView = view => {
     if (!checkoutLoginOverlay) return;
     const copy = {
-      login: ['Entre para continuar sua compra', 'Encontramos um cadastro com este e-mail. Entre agora e voltaremos automaticamente ao checkout, sem perder seu carrinho.'],
+      login: ['Entre para continuar', 'E-mail já cadastrado. Entre para continuar.'],
       register: ['Crie sua conta e continue', 'Cadastre seus dados uma única vez. Depois disso, suas próximas compras ficam ainda mais rápidas.'],
-      recover: ['Recupere seu acesso', 'Enviaremos um código de 6 dígitos e um link seguro para redefinir sua senha.'],
+      recover: ['Recupere seu acesso', 'Enviaremos um código de redefinição de senha e um link seguro.'],
     }[view] || [];
     checkoutLoginOverlay.querySelectorAll('[data-sv1-auth-view]').forEach(panel => { panel.hidden = panel.dataset.sv1AuthView !== view; });
     checkoutLoginOverlay.querySelectorAll('[data-sv1-auth-switch]').forEach(button => button.classList.toggle('is-active', button.dataset.sv1AuthSwitch === view));
@@ -113,6 +113,7 @@
     setCheckoutLoginFeedback('');
     checkoutLoginOverlay.hidden = false;
     checkoutLoginOverlay.classList.add('is-open');
+    accountCheckoutDialog?.classList.add('sv1-auth-overlay-open');
     persistAuth();
     window.setTimeout(() => (value ? checkoutLoginPassword : checkoutLoginEmail)?.focus(), 30);
   };
@@ -120,6 +121,7 @@
     if (!checkoutLoginOverlay) return;
     checkoutLoginOverlay.classList.remove('is-open');
     checkoutLoginOverlay.hidden = true;
+    accountCheckoutDialog?.classList.remove('sv1-auth-overlay-open');
     setCheckoutLoginFeedback('');
     clearPersistedAuth();
   };
@@ -137,6 +139,26 @@
     } catch (error) {}
   };
   const isValidEmail = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || '').trim());
+  const attemptInlineCheckoutLogin = async (frameDocument) => {
+    if (!checkoutLoginConfig.ajaxUrl || !checkoutLoginConfig.nonce) return;
+    const emailField = frameDocument?.querySelector('input[name="billing_email"],input[name="email"],input[type="email"]');
+    const passwordField = frameDocument?.querySelector('input[name="account_password"],input[name="billing_password"],input[name="password"],input[type="password"]');
+    const email = String(emailField?.value || '').trim().toLowerCase();
+    const password = String(passwordField?.value || '');
+    if (!isValidEmail(email) || password === '') return;
+    const attemptKey = `${email}:${password}`;
+    if (checkoutLoginState.inlineAttempted === attemptKey) return;
+    checkoutLoginState.inlineAttempted = attemptKey;
+    try {
+      const body = new URLSearchParams({action:'storev1_checkout_login', nonce:checkoutLoginConfig.nonce, email, password, remember:'1'});
+      const response = await fetch(checkoutLoginConfig.ajaxUrl, {method:'POST', credentials:'same-origin', headers:{'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}, body});
+      const result = await response.json();
+      if (!result?.success) return;
+      checkoutLoginState.resumeValues = captureCheckoutValues();
+      accountCheckoutDialog?.classList.add('is-loading');
+      accountCheckoutFrame?.contentWindow?.location.reload();
+    } catch (error) {}
+  };
   let checkoutEmailTimer;
   const bindCheckoutLoginDetection = () => {
     const frameDocument = checkoutFrameDocument();
@@ -147,11 +169,19 @@
       if (!field) return;
       const email = String(field.value || '').trim().toLowerCase();
       window.clearTimeout(checkoutEmailTimer);
-      checkoutEmailTimer = window.setTimeout(() => checkCheckoutEmail(email), event.type === 'blur' ? 80 : 550);
+      checkoutEmailTimer = window.setTimeout(() => checkCheckoutEmail(email), event.type === 'blur' ? 250 : 1500);
+    };
+    const inspectPassword = event => {
+      const field = event.target?.closest?.('input[name="account_password"],input[name="billing_password"],input[name="password"],input[type="password"]');
+      if (!field) return;
+      window.clearTimeout(checkoutEmailTimer);
+      window.setTimeout(() => attemptInlineCheckoutLogin(frameDocument), event.type === 'blur' ? 80 : 450);
     };
     frameDocument.addEventListener('input', inspectEmail, true);
     frameDocument.addEventListener('change', inspectEmail, true);
     frameDocument.addEventListener('blur', inspectEmail, true);
+    frameDocument.addEventListener('input', inspectPassword, true);
+    frameDocument.addEventListener('blur', inspectPassword, true);
   };
   const submitCheckoutLogin = async event => {
     event.preventDefault();
@@ -265,6 +295,7 @@
     }
     checkoutLoginOverlay.hidden = false;
     checkoutLoginOverlay.classList.add('is-open');
+    accountCheckoutDialog?.classList.add('sv1-auth-overlay-open');
     setCheckoutAuthView(state.view || 'login');
   };
   window.setTimeout(restorePersistentAuth, 0);
