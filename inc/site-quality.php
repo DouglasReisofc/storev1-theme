@@ -23,7 +23,7 @@ function storev1_site_description() {
     $description = trim(storev1_plain_summary(get_bloginfo('description')));
     $generic = $description === '' || strtolower(remove_accents(rtrim($description, '.'))) === strtolower(remove_accents(rtrim($name, '.')));
     if ($generic || strlen($description) < 35) {
-        return 'Contas premium com entrega digital rápida e automática. Escolha a melhor oferta e conte com o suporte da Turbo Contas.';
+        return 'Tenha acesso às melhores contas premium do mercado por um preço acessível, com entrega digital rápida, automática e suporte garantido na Turbo Contas.';
     }
     return $description;
 }

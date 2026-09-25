@@ -88,20 +88,19 @@ add_action('wp_head', function() {
         if ($category_image) $image = ['url' => $category_image, 'width' => 1438, 'height' => 905, 'type' => 'image/png'];
     }
     if (!$image && !$product) {
-        $logo = absint(get_theme_mod('custom_logo'));
-        if ($logo) $image = storev1_social_image($logo);
-        else {
-            $image = [
-                'url' => get_template_directory_uri() . '/assets/brand/turbo-contas-logo.png',
-                'width' => 1181,
-                'height' => 480,
-                'type' => 'image/png',
-            ];
-        }
+        // Dedicated Open Graph artwork supplied with the theme. Keep the
+        // visual logo asset independent so social previews can use a wide,
+        // descriptive composition without changing the storefront header.
+        $image = [
+            'url' => get_template_directory_uri() . '/assets/brand/turbo-contas-og.png',
+            'width' => 1672,
+            'height' => 941,
+            'type' => 'image/png',
+        ];
     }
     $properties = ['og:type' => $product ? 'product' : 'website', 'og:title' => html_entity_decode($title, ENT_QUOTES, 'UTF-8'), 'og:description' => $description, 'og:url' => $url, 'og:site_name' => get_bloginfo('name'), 'og:locale' => get_locale()];
     if ($image) {
-        $properties += ['og:image' => $image['url'], 'og:image:width' => $image['width'], 'og:image:height' => $image['height'], 'og:image:type' => $image['type'], 'og:image:alt' => $product ? $product->get_name() : $title];
+        $properties += ['og:image' => $image['url'], 'og:image:secure_url' => $image['url'], 'og:image:width' => $image['width'], 'og:image:height' => $image['height'], 'og:image:type' => $image['type'], 'og:image:alt' => $product ? $product->get_name() : 'Turbo Contas — contas premium com entrega rápida'];
     }
     if ($product && $product->get_price() !== '') {
         $properties['product:price:amount'] = wc_format_decimal(wc_get_price_to_display($product), wc_get_price_decimals());
