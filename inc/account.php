@@ -69,6 +69,43 @@ function storev1_account_url($view = 'login') {
     return $pages ? get_permalink($pages[0]) : add_query_arg('account-view', $view, wc_get_page_permalink('myaccount'));
 }
 
+/**
+ * Keep an unpaid order payable from the purchase history.
+ *
+ * WooCommerce normally removes the "pay" action when a gateway reports that
+ * an order does not need payment.  Store Connect orders in "Aguardando"
+ * (on-hold) are still intentionally payable, so the customer must be able to
+ * reopen the same payment flow after closing the checkout modal.
+ */
+function storev1_order_can_pay_again($order) {
+    if (!$order instanceof WC_Order || !is_user_logged_in()) return false;
+    if ((int) $order->get_user_id() !== (int) get_current_user_id()) return false;
+    if ($order->is_paid()) return false;
+    return in_array($order->get_status(), ['pending', 'on-hold', 'failed'], true);
+}
+
+add_filter('woocommerce_my_account_my_orders_actions', function($actions, $order) {
+    if (!storev1_order_can_pay_again($order)) return $actions;
+    $actions['pay'] = [
+        'url' => $order->get_checkout_payment_url(),
+        'name' => 'Pagar agora',
+        'aria-label' => 'Pagar novamente o pedido ' . $order->get_order_number(),
+    ];
+    return $actions;
+}, 30, 2);
+
+// The same recovery action is useful after opening an individual order.
+add_action('woocommerce_order_details_after_order_table', function($order) {
+    if (!storev1_order_can_pay_again($order)) return;
+    $url = $order->get_checkout_payment_url();
+    echo '<p class="storev1-order-pay-again"><a class="woocommerce-button button pay" href="' . esc_url($url) . '">Pagar agora</a></p>';
+}, 20, 1);
+
+// WooCommerce 11 can show an English "Confirm your email address" notice on
+// the Orders endpoint when guest checkout is enabled.  Byteplant validates
+// the address during checkout, so this extra flow is not used in our store.
+add_filter('woocommerce_customer_email_verification_should_show_prompt', '__return_false', 20);
+
 // Keep the WooCommerce dashboard useful and intentionally small: customers
 // land on their purchase history instead of seeing unrelated endpoints.
 add_action('template_redirect', function() {
