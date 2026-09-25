@@ -35,6 +35,7 @@
 .storezap-checkout-dialog__head strong .sv1-checkout-lottie{display:none!important;width:32px;height:32px;flex:0 0 32px;margin-left:4px;vertical-align:middle}.storezap-checkout-dialog__head strong .sv1-checkout-lottie svg{display:block;width:100%;height:100%}
 .storezap-checkout-dialog__close{position:absolute;right:14px;top:11px;flex:0 0 36px}.storezap-checkout-dialog__frame{display:block;width:100%;height:calc(100% - 58px);min-height:0;border:0;background:#fff}.storezap-checkout-dialog.is-loading .storezap-checkout-dialog__frame{opacity:.1}
 .storezap-checkout-dialog__loading{position:absolute;inset:58px 0 0;display:grid;place-items:center;color:#587267;background:rgba(255,255,255,.84);font-size:13px;font-weight:700;pointer-events:none}.storezap-checkout-dialog:not(.is-loading) .storezap-checkout-dialog__loading{display:none}
+.storezap-checkout-dialog.storezap-pix-active{background:transparent!important;box-shadow:none!important}.storezap-checkout-dialog.storezap-pix-active .storezap-checkout-dialog__head,.storezap-checkout-dialog.storezap-pix-active .storezap-checkout-dialog__loading{display:none!important}.storezap-checkout-dialog.storezap-pix-active .storezap-checkout-dialog__frame{height:100%;background:transparent}
 /* The checkout is rendered same-origin in the theme-owned dialog. Keep the
    child document focused on the form instead of nesting the storefront shell
    (header, footer and mobile toolbar) inside it. */

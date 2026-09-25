@@ -81,6 +81,13 @@ test('account order payments open the shared checkout modal', () => {
   assert.match(source, /is-payment-only/);
 });
 
+test('Pix temporarily hides the checkout shell without unloading its iframe', () => {
+  const css = read('assets/storev1-modals.css');
+  assert.match(css, /storezap-checkout-dialog\.storezap-pix-active/);
+  assert.match(css, /storezap-pix-active \.storezap-checkout-dialog__head/);
+  assert.match(css, /storezap-pix-active \.storezap-checkout-dialog__frame\{height:100%/);
+});
+
 test('payment-only checkout keeps a compact modal on desktop and mobile', () => {
   const source = read('assets/storev1-modals.css');
   assert.match(source, /is-payment-only\{width:min\(94vw,980px\);height:min\(500px/);
