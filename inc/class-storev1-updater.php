@@ -29,8 +29,8 @@ final class StoreV1_Updater {
         return $release;
     }
 
-    private static function update_data() {
-        $release = self::release();
+    private static function update_data($force = false) {
+        $release = self::release($force);
         if (empty($release['tag_name']) || !empty($release['draft']) || !empty($release['prerelease'])) return [];
         $version = ltrim((string) $release['tag_name'], 'v');
         if (!preg_match('/^\d+\.\d+\.\d+$/', $version)) return [];
@@ -52,7 +52,8 @@ final class StoreV1_Updater {
         if (!is_object($transient)) return $transient;
         $stylesheet = self::stylesheet();
         $current = wp_get_theme($stylesheet)->get('Version');
-        $update = self::update_data();
+        $force = is_admin() && current_user_can('update_themes') && isset($_GET['force-check']);
+        $update = self::update_data($force);
         if ($update && version_compare($current, $update['version'], '<')) {
             if (!isset($transient->response) || !is_array($transient->response)) $transient->response = [];
             $update['theme'] = $stylesheet;

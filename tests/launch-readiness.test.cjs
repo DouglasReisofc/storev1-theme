@@ -57,6 +57,13 @@ test('account order payments open the shared checkout modal', () => {
   assert.match(source, /is-payment-only/);
 });
 
+test('the theme updater bypasses its release cache on a forced check', () => {
+  const source = read('inc/class-storev1-updater.php');
+  assert.match(source, /private static function update_data\(\$force = false\)/);
+  assert.match(source, /self::update_data\(\$force\)/);
+  assert.match(source, /self::release\(\$force\)/);
+});
+
 test('unpaid account orders keep a Portuguese pay-again action and hide Woo email verification', () => {
   const source = read('inc/account.php');
   assert.match(source, /storev1_order_can_pay_again/);
