@@ -129,7 +129,7 @@
   document.body.addEventListener('updated_wc_div', () => syncFloatingCart());
   document.body.addEventListener('wc_fragments_refreshed', () => syncFloatingCart());
   if (window.jQuery) {
-    window.jQuery(document.body).on('updated_wc_div wc_fragments_refreshed wc_fragments_loaded', () => syncFloatingCart());
+    window.jQuery(document.body).on('added_to_cart removed_from_cart updated_wc_div wc_fragments_refreshed wc_fragments_loaded', () => syncFloatingCart());
   }
   function quantities() {
     document.querySelectorAll('.quantity input.qty[type="number"]').forEach(input => {
