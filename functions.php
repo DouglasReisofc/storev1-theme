@@ -81,6 +81,8 @@ function storev1_assets(){
     wp_localize_script('storev1-shopping', 'StoreV1CheckoutLogin', [
         'ajaxUrl' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('storev1_checkout_login'),
+        'registrationEnabled' => function_exists('storev1_registration_enabled') && storev1_registration_enabled(),
+        'phoneMode' => function_exists('storev1_registration_phone_mode') ? storev1_registration_phone_mode() : 'required',
     ]);
     if (function_exists('is_product') && is_product()) wp_enqueue_script('storev1-variations',get_template_directory_uri() . '/assets/storev1-variations.js',['jquery','wc-add-to-cart-variation'],wp_get_theme()->get('Version'),true);
     if (class_exists('WooCommerce')) {

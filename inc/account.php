@@ -36,6 +36,54 @@ function storev1_ajax_checkout_login() {
 add_action('wp_ajax_storev1_checkout_login', 'storev1_ajax_checkout_login');
 add_action('wp_ajax_nopriv_storev1_checkout_login', 'storev1_ajax_checkout_login');
 
+function storev1_ajax_checkout_register() {
+    if (!storev1_checkout_login_nonce_valid()) wp_send_json_error(['message' => 'Sessão expirada. Atualize a página e tente novamente.'], 403);
+    if (!storev1_registration_enabled()) wp_send_json_error(['message' => 'A criação de contas está desativada no momento.'], 403);
+    if (!function_exists('wc_create_new_customer')) wp_send_json_error(['message' => 'Não foi possível criar sua conta agora.'], 500);
+    $name = isset($_POST['name']) ? trim(sanitize_text_field(wp_unslash($_POST['name']))) : '';
+    $email = isset($_POST['email']) ? sanitize_email(wp_unslash($_POST['email'])) : '';
+    $password = isset($_POST['password']) ? (string) wp_unslash($_POST['password']) : '';
+    $phone = isset($_POST['phone']) ? sanitize_text_field(wp_unslash($_POST['phone'])) : '';
+    $parts = array_values(array_filter(preg_split('/\s+/', $name) ?: []));
+    if (count($parts) < 2) wp_send_json_error(['message' => 'Informe nome e sobrenome.'], 422);
+    if (!is_email($email)) wp_send_json_error(['message' => 'Informe um e-mail válido.'], 422);
+    if (email_exists($email)) wp_send_json_error(['message' => 'Este e-mail já possui cadastro. Use a opção Entrar.'], 409);
+    if (strlen($password) < 8) wp_send_json_error(['message' => 'Crie uma senha com pelo menos 8 caracteres.'], 422);
+    if (storev1_registration_phone_required() || ($phone !== '' && storev1_registration_phone_visible())) {
+        $digits = preg_replace('/\D+/', '', $phone);
+        $valid_phone = class_exists('StoreZap_Cart') && method_exists('StoreZap_Cart', 'is_brazil_mobile')
+            ? StoreZap_Cart::is_brazil_mobile($phone)
+            : (bool) preg_match('/^[1-9][0-9]9[0-9]{8}$/', $digits);
+        if (!$valid_phone) wp_send_json_error(['message' => 'Informe um WhatsApp brasileiro válido com DDD e nono dígito.'], 422);
+    }
+    $first_name = (string) array_shift($parts);
+    $last_name = implode(' ', $parts);
+    $customer_id = wc_create_new_customer($email, '', $password, ['first_name' => $first_name, 'last_name' => $last_name]);
+    if (is_wp_error($customer_id)) wp_send_json_error(['message' => wp_strip_all_tags($customer_id->get_error_message())], 422);
+    wp_update_user(['ID' => $customer_id, 'display_name' => trim($first_name . ' ' . $last_name)]);
+    update_user_meta($customer_id, 'billing_first_name', $first_name);
+    update_user_meta($customer_id, 'billing_last_name', $last_name);
+    update_user_meta($customer_id, 'billing_email', $email);
+    if ($phone !== '') update_user_meta($customer_id, 'billing_phone', $phone);
+    wp_set_current_user($customer_id);
+    wp_set_auth_cookie($customer_id, true, is_ssl());
+    wp_send_json_success(['message' => 'Conta criada. Retomando sua compra…', 'userId' => (int) $customer_id]);
+}
+add_action('wp_ajax_nopriv_storev1_checkout_register', 'storev1_ajax_checkout_register');
+
+function storev1_ajax_checkout_recover() {
+    if (!storev1_checkout_login_nonce_valid()) wp_send_json_error(['message' => 'Sessão expirada. Atualize a página e tente novamente.'], 403);
+    $email = isset($_POST['email']) ? sanitize_email(wp_unslash($_POST['email'])) : '';
+    if (!is_email($email)) wp_send_json_error(['message' => 'Informe um e-mail válido.'], 422);
+    $user = get_user_by('email', $email);
+    if ($user) {
+        $result = retrieve_password($user->user_login);
+        if (is_wp_error($result)) wp_send_json_error(['message' => 'Não foi possível enviar o link agora. Tente novamente.'], 500);
+    }
+    wp_send_json_success(['message' => 'Se o e-mail estiver cadastrado, você receberá o link para criar uma nova senha.']);
+}
+add_action('wp_ajax_nopriv_storev1_checkout_recover', 'storev1_ajax_checkout_recover');
+
 function storev1_registration_enabled() {
     $value = get_option('woocommerce_enable_myaccount_registration', 'no');
     return in_array($value, ['yes', '1', 1, true], true);

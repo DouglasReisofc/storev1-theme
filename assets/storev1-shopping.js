@@ -28,9 +28,13 @@
   const accountCheckoutFrame = accountCheckoutDialog?.querySelector('[data-storezap-checkout-frame]');
   const checkoutLoginOverlay = accountCheckoutDialog?.querySelector('[data-sv1-checkout-login]');
   const checkoutLoginForm = checkoutLoginOverlay?.querySelector('[data-sv1-checkout-login-form]');
+  const checkoutRegisterForm = checkoutLoginOverlay?.querySelector('[data-sv1-checkout-register-form]');
+  const checkoutRecoverForm = checkoutLoginOverlay?.querySelector('[data-sv1-checkout-recover-form]');
   const checkoutLoginEmail = checkoutLoginOverlay?.querySelector('[data-sv1-login-email]');
   const checkoutLoginPassword = checkoutLoginOverlay?.querySelector('[data-sv1-login-password]');
   const checkoutLoginFeedback = checkoutLoginOverlay?.querySelector('[data-sv1-login-feedback]');
+  const checkoutAuthTitle = checkoutLoginOverlay?.querySelector('[data-sv1-auth-title]');
+  const checkoutAuthCopy = checkoutLoginOverlay?.querySelector('[data-sv1-auth-copy]');
   const checkoutLoginConfig = window.StoreV1CheckoutLogin || {};
   const checkoutLoginState = {lastChecked:'', prompted:new Set(), resumeValues:null};
   const checkoutFrameDocument = () => {
@@ -67,11 +71,35 @@
     checkoutLoginFeedback.classList.toggle('is-error', isError);
     checkoutLoginFeedback.classList.toggle('is-success', Boolean(message) && !isError);
   };
+  const setCheckoutAuthView = view => {
+    if (!checkoutLoginOverlay) return;
+    const copy = {
+      login: ['Entre para continuar sua compra', 'Encontramos um cadastro com este e-mail. Entre agora e voltaremos automaticamente ao checkout, sem perder seu carrinho.'],
+      register: ['Crie sua conta e continue', 'Cadastre seus dados uma única vez. Depois disso, suas próximas compras ficam ainda mais rápidas.'],
+      recover: ['Recupere seu acesso', 'Informe o e-mail cadastrado e enviaremos um link seguro para criar uma nova senha.'],
+    }[view] || [];
+    checkoutLoginOverlay.querySelectorAll('[data-sv1-auth-view]').forEach(panel => { panel.hidden = panel.dataset.sv1AuthView !== view; });
+    checkoutLoginOverlay.querySelectorAll('[data-sv1-auth-switch]').forEach(button => button.classList.toggle('is-active', button.dataset.sv1AuthSwitch === view));
+    if (checkoutAuthTitle && copy[0]) checkoutAuthTitle.textContent = copy[0];
+    if (checkoutAuthCopy && copy[1]) checkoutAuthCopy.textContent = copy[1];
+    setCheckoutLoginFeedback('');
+    if (view === 'register') {
+      const email = checkoutLoginEmail?.value || '';
+      const registerEmail = checkoutRegisterForm?.querySelector('[name="email"]');
+      if (registerEmail && !registerEmail.value) registerEmail.value = email;
+    }
+    if (view === 'recover') {
+      const email = checkoutLoginEmail?.value || '';
+      const recoverEmail = checkoutRecoverForm?.querySelector('[name="email"]');
+      if (recoverEmail && !recoverEmail.value) recoverEmail.value = email;
+    }
+  };
   const openCheckoutLogin = (email = '') => {
     if (!checkoutLoginOverlay) return;
     const value = String(email || checkoutFrameDocument()?.querySelector('input[name="billing_email"],input[name="email"],input[type="email"]')?.value || '').trim();
     if (checkoutLoginEmail) checkoutLoginEmail.value = value;
     if (checkoutLoginPassword) checkoutLoginPassword.value = '';
+    setCheckoutAuthView('login');
     setCheckoutLoginFeedback('');
     checkoutLoginOverlay.hidden = false;
     checkoutLoginOverlay.classList.add('is-open');
@@ -140,10 +168,54 @@
       if (submit) { submit.disabled = false; submit.removeAttribute('aria-busy'); }
     }
   };
+  const resumeCheckoutAfterAuth = () => {
+    checkoutLoginState.resumeValues = captureCheckoutValues();
+    accountCheckoutDialog?.classList.add('is-loading');
+    closeCheckoutLogin();
+    accountCheckoutFrame?.contentWindow?.location.reload();
+  };
+  const submitCheckoutRegister = async event => {
+    event.preventDefault();
+    const data = new FormData(checkoutRegisterForm);
+    data.append('action', 'storev1_checkout_register');
+    data.append('nonce', checkoutLoginConfig.nonce || '');
+    const submit = checkoutRegisterForm.querySelector('[type="submit"]');
+    if (submit) submit.disabled = true;
+    setCheckoutLoginFeedback('Criando sua conta…');
+    try {
+      const response = await fetch(checkoutLoginConfig.ajaxUrl, {method:'POST', credentials:'same-origin', body:data});
+      const result = await response.json();
+      if (!result?.success) throw new Error(result?.data?.message || 'Não foi possível criar sua conta.');
+      setCheckoutLoginFeedback(result.data?.message || 'Conta criada. Retomando sua compra…');
+      resumeCheckoutAfterAuth();
+    } catch (error) { setCheckoutLoginFeedback(error.message || 'Não foi possível criar sua conta.', true); }
+    finally { if (submit) submit.disabled = false; }
+  };
+  const submitCheckoutRecover = async event => {
+    event.preventDefault();
+    const data = new FormData(checkoutRecoverForm);
+    data.append('action', 'storev1_checkout_recover');
+    data.append('nonce', checkoutLoginConfig.nonce || '');
+    const submit = checkoutRecoverForm.querySelector('[type="submit"]');
+    if (submit) submit.disabled = true;
+    setCheckoutLoginFeedback('Enviando instruções…');
+    try {
+      const response = await fetch(checkoutLoginConfig.ajaxUrl, {method:'POST', credentials:'same-origin', body:data});
+      const result = await response.json();
+      if (!result?.success) throw new Error(result?.data?.message || 'Não foi possível enviar o link.');
+      setCheckoutLoginFeedback(result.data?.message || 'Confira seu e-mail para continuar.');
+      window.setTimeout(() => setCheckoutAuthView('login'), 1800);
+    } catch (error) { setCheckoutLoginFeedback(error.message || 'Não foi possível enviar o link.', true); }
+    finally { if (submit) submit.disabled = false; }
+  };
   checkoutLoginForm?.addEventListener('submit', submitCheckoutLogin);
+  checkoutRegisterForm?.addEventListener('submit', submitCheckoutRegister);
+  checkoutRecoverForm?.addEventListener('submit', submitCheckoutRecover);
   accountCheckoutDialog?.addEventListener('click', event => {
     if (event.target.closest('[data-sv1-login-close]')) closeCheckoutLogin();
     if (event.target.closest('[data-sv1-open-checkout-login]')) openCheckoutLogin();
+    const switchButton = event.target.closest('[data-sv1-auth-switch]');
+    if (switchButton) setCheckoutAuthView(switchButton.dataset.sv1AuthSwitch || 'login');
   });
   const openAccountOrderPayment = (href) => {
     if (!accountCheckoutDialog || !accountCheckoutFrame || typeof accountCheckoutDialog.showModal !== 'function') return false;
@@ -168,6 +240,14 @@
     if (event.origin !== window.location.origin || event.source !== accountCheckoutFrame?.contentWindow) return;
     if (event.data?.type === 'storev1-open-order-payment') {
       openAccountOrderPayment(event.data.href || '');
+      return;
+    }
+    if (event.data?.type === 'storev1-checkout-existing-account') {
+      openCheckoutLogin(event.data.email || '');
+      return;
+    }
+    if (event.data?.type === 'storev1-checkout-email') {
+      checkCheckoutEmail(String(event.data.email || '').trim().toLowerCase());
       return;
     }
     if (event.data?.type !== 'storezap-checkout-layout') return;
@@ -203,6 +283,30 @@
   // iframe. Forward its recovery link to the parent so "Pagar agora" always
   // reopens the theme-owned payment dialog instead of navigating in the frame.
   if (window.parent !== window) {
+    let checkoutNoticeTimer;
+    const checkoutEmailField = () => document.querySelector('input[name="billing_email"],input[name="email"],input[type="email"]');
+    const notifyCheckoutEmail = () => {
+      const email = String(checkoutEmailField()?.value || '').trim().toLowerCase();
+      if (!email) return;
+      window.parent.postMessage({type:'storev1-checkout-email', email}, window.location.origin);
+    };
+    document.addEventListener('input', event => {
+      if (!event.target?.matches?.('input[name="billing_email"],input[name="email"],input[type="email"]')) return;
+      window.clearTimeout(checkoutNoticeTimer);
+      checkoutNoticeTimer = window.setTimeout(notifyCheckoutEmail, 450);
+    }, true);
+    document.addEventListener('blur', event => {
+      if (event.target?.matches?.('input[name="billing_email"],input[name="email"],input[type="email"]')) notifyCheckoutEmail();
+    }, true);
+    const existingAccountNotice = () => {
+      const notice = [...document.querySelectorAll('.woocommerce-error,.woocommerce-message,.woocommerce-info,.wc-block-components-notice-banner,.woocommerce-invalid')].find(node => /usu[aá]rio\s+.*j[aá]\s+existe|j[aá]\s+existe\s+uma\s+conta|j[aá]\s+est[aá]\s+registrad|already\s+(?:exists|registered)|e-mail.*cadastrad/i.test(node.textContent || ''));
+      if (!notice) return;
+      const email = String(checkoutEmailField()?.value || '').trim().toLowerCase();
+      window.parent.postMessage({type:'storev1-checkout-existing-account', email}, window.location.origin);
+      notice.remove();
+    };
+    existingAccountNotice();
+    new MutationObserver(existingAccountNotice).observe(document.body, {childList:true, subtree:true});
     document.addEventListener('click', event => {
       const link = event.target.closest?.('a');
       if (!link) return;

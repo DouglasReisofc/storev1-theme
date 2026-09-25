@@ -88,12 +88,18 @@ test('registered checkout e-mails open an in-place login and resume checkout', (
   assert.match(account, /storev1_check_login_email/);
   assert.match(account, /storev1_checkout_login/);
   assert.match(account, /wp_signon/);
+  assert.match(account, /storev1_checkout_register/);
+  assert.match(account, /storev1_checkout_recover/);
   assert.match(modal, /data-sv1-checkout-login/);
+  assert.match(modal, /data-sv1-checkout-register-form/);
+  assert.match(modal, /data-sv1-checkout-recover-form/);
   assert.match(modal, /account-login-illustration\.webp/);
   assert.match(modal, /account-register-illustration\.webp/);
   assert.match(script, /input\[name="billing_email"\]/);
   assert.match(script, /captureCheckoutValues/);
   assert.match(script, /contentWindow\?\.location\.reload/);
+  assert.match(script, /storev1-checkout-existing-account/);
+  assert.match(script, /existingAccountNotice/);
 });
 
 test('Pix temporarily hides the checkout shell without unloading its iframe', () => {
