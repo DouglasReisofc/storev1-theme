@@ -10,7 +10,7 @@ $posted = function($key) { return isset($_POST[$key]) && is_string($_POST[$key])
 do_action('woocommerce_before_customer_login_form');
 ?>
 <section class="sv1-auth" aria-label="<?php echo $register ? 'Criar conta' : 'Entrar'; ?>">
-    <div class="sv1-auth-art" aria-hidden="true"><img src="<?php echo esc_url(get_template_directory_uri().'/assets/account-'.($register ? 'register' : 'login').'-illustration.webp'); ?>" alt="" width="900" height="600" decoding="async"></div>
+    <div class="sv1-auth-art" aria-hidden="true"><img src="<?php echo esc_url(get_template_directory_uri().'/assets/account-'.($register ? 'register' : 'login').'-illustration.webp'); ?>" alt="" width="1672" height="941" decoding="async"></div>
     <div class="sv1-auth-content">
         <?php if (!$registration_disabled) : ?><nav class="sv1-auth-tabs" aria-label="Acesso à loja">
             <a href="<?php echo esc_url(storev1_account_url()); ?>" <?php if (!$register) echo 'aria-current="page"'; ?>>Entrar</a>
@@ -35,9 +35,10 @@ do_action('woocommerce_before_customer_login_form');
         <?php else : ?>
         <form method="post" class="woocommerce-form woocommerce-form-register register" <?php do_action('woocommerce_register_form_tag'); ?>>
             <?php do_action('woocommerce_register_form_start'); ?>
-            <?php if ('no' === get_option('woocommerce_registration_generate_username')) : ?><p class="form-row form-row-wide"><label for="reg_username">Nome de usuário <span aria-hidden="true">*</span></label><input type="text" class="input-text" name="username" id="reg_username" autocomplete="username" value="<?php echo $posted('username'); ?>" required aria-required="true"></p><?php endif; ?>
+            <p class="form-row form-row-wide"><label for="storev1_name">Nome e sobrenome <span aria-hidden="true">*</span></label><input type="text" class="input-text" name="storev1_name" id="storev1_name" autocomplete="name" value="<?php echo $posted('storev1_name'); ?>" placeholder="Ex.: Maria da Silva" required aria-required="true"></p>
             <p class="form-row form-row-wide"><label for="reg_email">E-mail <span aria-hidden="true">*</span></label><input type="email" class="input-text" name="email" id="reg_email" autocomplete="email" value="<?php echo $posted('email'); ?>" required aria-required="true"></p>
-            <?php if ('no' === get_option('woocommerce_registration_generate_password')) : ?><p class="form-row form-row-wide"><label for="reg_password">Senha <span aria-hidden="true">*</span></label><input type="password" class="input-text" name="password" id="reg_password" autocomplete="new-password" required aria-required="true"></p><?php else : ?><p>Você receberá um link por e-mail para definir sua senha.</p><?php endif; ?>
+            <?php if (storev1_registration_phone_visible()) : ?><p class="form-row form-row-wide"><label for="storev1_phone">WhatsApp<?php if (storev1_registration_phone_required()) : ?> <span aria-hidden="true">*</span><?php endif; ?></label><input type="tel" class="input-text" name="storev1_phone" id="storev1_phone" autocomplete="tel-national" inputmode="numeric" maxlength="16" value="<?php echo $posted('storev1_phone'); ?>" placeholder="(11) 91234-5678" <?php if (storev1_registration_phone_required()) echo 'required aria-required="true"'; ?>></p><?php endif; ?>
+            <p class="form-row form-row-wide"><label for="reg_password">Senha <span aria-hidden="true">*</span></label><input type="password" class="input-text" name="password" id="reg_password" autocomplete="new-password" required aria-required="true" minlength="6" placeholder="Crie uma senha para acessar seus pedidos"></p>
             <?php do_action('woocommerce_register_form'); wp_nonce_field('woocommerce-register', 'woocommerce-register-nonce'); ?>
             <input type="hidden" name="redirect" value="<?php echo esc_url(wc_get_page_permalink('myaccount')); ?>">
             <button type="submit" class="woocommerce-Button button woocommerce-form-register__submit" name="register" value="Criar conta">Criar conta</button>

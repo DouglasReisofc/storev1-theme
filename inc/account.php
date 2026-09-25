@@ -6,6 +6,23 @@ function storev1_registration_enabled() {
     return in_array($value, ['yes', '1', 1, true], true);
 }
 
+/** Keep the standalone registration form in lockstep with checkout fields. */
+function storev1_registration_phone_mode() {
+    if (class_exists('StoreZap_Settings') && method_exists('StoreZap_Settings', 'enabled')) {
+        return StoreZap_Settings::enabled('checkout_require_phone') ? 'required' : 'hidden';
+    }
+    $mode = (string) get_option('woocommerce_checkout_phone_field', 'required');
+    return in_array($mode, ['required', 'optional'], true) ? $mode : 'hidden';
+}
+
+function storev1_registration_phone_visible() {
+    return storev1_registration_phone_mode() !== 'hidden';
+}
+
+function storev1_registration_phone_required() {
+    return storev1_registration_phone_mode() === 'required';
+}
+
 // The account links are rendered in the cached storefront shell. Purge the
 // common page/object caches as soon as WooCommerce changes this setting so a
 // disabled registration option cannot leave stale "Minha conta" links public.
@@ -64,6 +81,50 @@ add_filter('woocommerce_process_registration_errors', function($errors) {
     if (!storev1_registration_enabled()) $errors->add('storev1_registration_disabled', 'A criação de contas está desativada no momento. Entre com uma conta existente.');
     return $errors;
 }, 5);
+
+// The account page uses the same direct-password model as the checkout. This
+// prevents WooCommerce from replacing the supplied password with a generated
+// one and from displaying a "set your password by email" message.
+add_filter('pre_option_woocommerce_registration_generate_password', function($value) {
+    if (!is_admin() && storev1_registration_enabled() && storev1_is_auth_page() && storev1_account_view() === 'register') return 'no';
+    return $value;
+}, 10);
+
+// The customer-facing form identifies the customer by email and name; keep
+// WooCommerce's internal username generation enabled even if an older store
+// had the optional username field turned on.
+add_filter('pre_option_woocommerce_registration_generate_username', function($value) {
+    if (!is_admin() && storev1_registration_enabled() && storev1_is_auth_page() && storev1_account_view() === 'register') return 'yes';
+    return $value;
+}, 10);
+
+add_filter('woocommerce_registration_errors', function($errors, $username, $email) {
+    if (!storev1_registration_enabled() || storev1_account_view() !== 'register') return $errors;
+    $name = isset($_POST['storev1_name']) && is_string($_POST['storev1_name']) ? trim(sanitize_text_field(wp_unslash($_POST['storev1_name']))) : '';
+    $parts = array_values(array_filter(preg_split('/\s+/', $name) ?: []));
+    if (count($parts) < 2) $errors->add('storev1_registration_name', 'Informe nome e sobrenome.');
+    if (storev1_registration_phone_required() || (storev1_registration_phone_visible() && !empty($_POST['storev1_phone']))) {
+        $phone = isset($_POST['storev1_phone']) && is_string($_POST['storev1_phone']) ? (string) wp_unslash($_POST['storev1_phone']) : '';
+        $valid = class_exists('StoreZap_Cart') && method_exists('StoreZap_Cart', 'is_brazil_mobile')
+            ? StoreZap_Cart::is_brazil_mobile($phone)
+            : (bool) preg_match('/^[1-9][0-9]9[0-9]{8}$/', preg_replace('/\D+/', '', $phone));
+        if (!$valid) $errors->add('storev1_registration_phone', 'Informe um WhatsApp brasileiro válido com DDD e nono dígito.');
+    }
+    return $errors;
+}, 10, 3);
+
+add_action('woocommerce_created_customer', function($customer_id) {
+    $name = isset($_POST['storev1_name']) && is_string($_POST['storev1_name']) ? trim(sanitize_text_field(wp_unslash($_POST['storev1_name']))) : '';
+    if ($name === '') return;
+    $parts = array_values(array_filter(preg_split('/\s+/', $name) ?: []));
+    $first = (string) array_shift($parts);
+    $last = implode(' ', $parts);
+    $phone = isset($_POST['storev1_phone']) && is_string($_POST['storev1_phone']) ? sanitize_text_field(wp_unslash($_POST['storev1_phone'])) : '';
+    wp_update_user(['ID' => absint($customer_id), 'first_name' => $first, 'last_name' => $last, 'display_name' => trim($first . ' ' . $last)]);
+    update_user_meta($customer_id, 'billing_first_name', $first);
+    update_user_meta($customer_id, 'billing_last_name', $last);
+    if ($phone !== '') update_user_meta($customer_id, 'billing_phone', $phone);
+}, 10, 1);
 
 add_action('template_redirect', function() {
     if (!storev1_is_auth_page() || !function_exists('WC')) return;
