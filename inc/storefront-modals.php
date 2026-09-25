@@ -54,9 +54,8 @@ function storev1_render_storefront_modals() {
     echo '<header class="storezap-cart-dialog__head"><div><span class="sv1-modal-eyebrow">Seu pedido</span><h2>' . esc_html(storev1_modal_setting('cart_modal_title', 'Seu carrinho')) . '</h2></div><button type="button" class="storezap-cart-dialog__close" data-storezap-cart-close aria-label="Fechar">&times;</button></header>';
     echo '<div class="storezap-cart-dialog__body">' . do_shortcode('[woocommerce_cart]') . '</div></dialog>';
 
-    $login_trigger = is_user_logged_in() ? '' : '<button type="button" class="sv1-checkout-login-trigger" data-sv1-open-checkout-login>Já tenho cadastro</button>';
     echo '<dialog class="storezap-checkout-dialog sv1-storefront-modal" data-storezap-checkout-dialog data-storev1-modal="checkout" data-checkout-url="' . esc_url($checkout_url) . '">';
-    echo '<header class="storezap-checkout-dialog__head"><strong>Finalizar compra <span class="sv1-checkout-lottie" data-sv1-checkout-lottie data-lottie-url="' . esc_url($lottie_url) . '" aria-hidden="true"></span></strong>' . $login_trigger . '<button type="button" class="storezap-checkout-dialog__close" data-storezap-checkout-close aria-label="Fechar">&times;</button></header>';
+    echo '<header class="storezap-checkout-dialog__head"><strong>Finalizar compra <span class="sv1-checkout-lottie" data-sv1-checkout-lottie data-lottie-url="' . esc_url($lottie_url) . '" aria-hidden="true"></span></strong><button type="button" class="storezap-checkout-dialog__close" data-storezap-checkout-close aria-label="Fechar">&times;</button></header>';
     echo '<iframe class="storezap-checkout-dialog__frame" data-storezap-checkout-frame title="Finalizar compra" loading="lazy"></iframe><div class="storezap-checkout-dialog__loading" data-storezap-checkout-loading>Carregando checkout…</div>';
     if (!is_user_logged_in()) {
     echo '<div class="sv1-checkout-login-modal" data-sv1-checkout-login hidden role="dialog" aria-modal="true" aria-labelledby="sv1-checkout-login-title">';
