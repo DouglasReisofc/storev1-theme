@@ -26,6 +26,125 @@
   // payment picker, validation and Lottie flow continue to work unchanged.
   const accountCheckoutDialog = document.querySelector('[data-storezap-checkout-dialog]');
   const accountCheckoutFrame = accountCheckoutDialog?.querySelector('[data-storezap-checkout-frame]');
+  const checkoutLoginOverlay = accountCheckoutDialog?.querySelector('[data-sv1-checkout-login]');
+  const checkoutLoginForm = checkoutLoginOverlay?.querySelector('[data-sv1-checkout-login-form]');
+  const checkoutLoginEmail = checkoutLoginOverlay?.querySelector('[data-sv1-login-email]');
+  const checkoutLoginPassword = checkoutLoginOverlay?.querySelector('[data-sv1-login-password]');
+  const checkoutLoginFeedback = checkoutLoginOverlay?.querySelector('[data-sv1-login-feedback]');
+  const checkoutLoginConfig = window.StoreV1CheckoutLogin || {};
+  const checkoutLoginState = {lastChecked:'', prompted:new Set(), resumeValues:null};
+  const checkoutFrameDocument = () => {
+    try { return accountCheckoutFrame?.contentDocument || null; } catch (error) { return null; }
+  };
+  const captureCheckoutValues = () => {
+    const frameDocument = checkoutFrameDocument();
+    if (!frameDocument) return null;
+    const values = {};
+    frameDocument.querySelectorAll('input[name],select[name],textarea[name]').forEach(field => {
+      if (!field.name || field.type === 'password' || field.type === 'file') return;
+      values[field.name] = field.type === 'checkbox' || field.type === 'radio' ? field.checked : field.value;
+    });
+    return values;
+  };
+  const restoreCheckoutValues = () => {
+    const values = checkoutLoginState.resumeValues;
+    const frameDocument = checkoutFrameDocument();
+    if (!values || !frameDocument) return;
+    Object.entries(values).forEach(([name, value]) => {
+      frameDocument.querySelectorAll(`[name="${CSS.escape(name)}"]`).forEach(field => {
+        if (field.type === 'password' || field.type === 'file') return;
+        if (field.type === 'checkbox' || field.type === 'radio') field.checked = Boolean(value);
+        else if (!field.value && value !== '') field.value = value;
+        field.dispatchEvent(new Event('input', {bubbles:true}));
+        field.dispatchEvent(new Event('change', {bubbles:true}));
+      });
+    });
+    checkoutLoginState.resumeValues = null;
+  };
+  const setCheckoutLoginFeedback = (message = '', isError = false) => {
+    if (!checkoutLoginFeedback) return;
+    checkoutLoginFeedback.textContent = message;
+    checkoutLoginFeedback.classList.toggle('is-error', isError);
+    checkoutLoginFeedback.classList.toggle('is-success', Boolean(message) && !isError);
+  };
+  const openCheckoutLogin = (email = '') => {
+    if (!checkoutLoginOverlay) return;
+    const value = String(email || checkoutFrameDocument()?.querySelector('input[name="billing_email"],input[name="email"],input[type="email"]')?.value || '').trim();
+    if (checkoutLoginEmail) checkoutLoginEmail.value = value;
+    if (checkoutLoginPassword) checkoutLoginPassword.value = '';
+    setCheckoutLoginFeedback('');
+    checkoutLoginOverlay.hidden = false;
+    checkoutLoginOverlay.classList.add('is-open');
+    window.setTimeout(() => (value ? checkoutLoginPassword : checkoutLoginEmail)?.focus(), 30);
+  };
+  const closeCheckoutLogin = () => {
+    if (!checkoutLoginOverlay) return;
+    checkoutLoginOverlay.classList.remove('is-open');
+    checkoutLoginOverlay.hidden = true;
+    setCheckoutLoginFeedback('');
+  };
+  const checkCheckoutEmail = async (email) => {
+    if (!checkoutLoginConfig.ajaxUrl || !checkoutLoginConfig.nonce || !isValidEmail(email) || checkoutLoginState.lastChecked === email) return;
+    checkoutLoginState.lastChecked = email;
+    try {
+      const body = new URLSearchParams({action:'storev1_check_login_email', nonce:checkoutLoginConfig.nonce, email});
+      const response = await fetch(checkoutLoginConfig.ajaxUrl, {method:'POST', credentials:'same-origin', headers:{'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}, body});
+      const data = await response.json();
+      if (data?.success && data.data?.exists && !checkoutLoginState.prompted.has(email)) {
+        checkoutLoginState.prompted.add(email);
+        openCheckoutLogin(email);
+      }
+    } catch (error) {}
+  };
+  const isValidEmail = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || '').trim());
+  let checkoutEmailTimer;
+  const bindCheckoutLoginDetection = () => {
+    const frameDocument = checkoutFrameDocument();
+    if (!frameDocument || frameDocument.__storev1CheckoutLoginBound) return;
+    frameDocument.__storev1CheckoutLoginBound = true;
+    const inspectEmail = event => {
+      const field = event.target?.closest?.('input[name="billing_email"],input[name="email"],input[type="email"]');
+      if (!field) return;
+      const email = String(field.value || '').trim().toLowerCase();
+      window.clearTimeout(checkoutEmailTimer);
+      checkoutEmailTimer = window.setTimeout(() => checkCheckoutEmail(email), event.type === 'blur' ? 80 : 550);
+    };
+    frameDocument.addEventListener('input', inspectEmail, true);
+    frameDocument.addEventListener('change', inspectEmail, true);
+    frameDocument.addEventListener('blur', inspectEmail, true);
+  };
+  const submitCheckoutLogin = async event => {
+    event.preventDefault();
+    if (!checkoutLoginConfig.ajaxUrl || !checkoutLoginConfig.nonce || !checkoutLoginEmail?.value || !checkoutLoginPassword?.value) {
+      setCheckoutLoginFeedback('Informe seu e-mail e sua senha.', true);
+      return;
+    }
+    const submit = checkoutLoginForm.querySelector('[type="submit"]');
+    if (submit) { submit.disabled = true; submit.setAttribute('aria-busy', 'true'); }
+    setCheckoutLoginFeedback('Validando seu acesso…');
+    try {
+      const body = new URLSearchParams({action:'storev1_checkout_login', nonce:checkoutLoginConfig.nonce, email:checkoutLoginEmail.value.trim(), password:checkoutLoginPassword.value, remember:checkoutLoginOverlay.querySelector('[data-sv1-login-remember]')?.checked ? '1' : '0'});
+      const response = await fetch(checkoutLoginConfig.ajaxUrl, {method:'POST', credentials:'same-origin', headers:{'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}, body});
+      const data = await response.json();
+      if (!data?.success) throw new Error(data?.data?.message || 'Não foi possível entrar.');
+      checkoutLoginState.resumeValues = captureCheckoutValues();
+      setCheckoutLoginFeedback('Login realizado. Retomando sua compra…');
+      accountCheckoutDialog?.classList.add('is-loading');
+      closeCheckoutLogin();
+      // Reload only the embedded WooCommerce document. The cart dialog and
+      // the shopper's place in the purchase flow remain open in the parent.
+      accountCheckoutFrame?.contentWindow?.location.reload();
+    } catch (error) {
+      setCheckoutLoginFeedback(error.message || 'E-mail ou senha inválidos.', true);
+    } finally {
+      if (submit) { submit.disabled = false; submit.removeAttribute('aria-busy'); }
+    }
+  };
+  checkoutLoginForm?.addEventListener('submit', submitCheckoutLogin);
+  accountCheckoutDialog?.addEventListener('click', event => {
+    if (event.target.closest('[data-sv1-login-close]')) closeCheckoutLogin();
+    if (event.target.closest('[data-sv1-open-checkout-login]')) openCheckoutLogin();
+  });
   const openAccountOrderPayment = (href) => {
     if (!accountCheckoutDialog || !accountCheckoutFrame || typeof accountCheckoutDialog.showModal !== 'function') return false;
     let url = href;
@@ -66,6 +185,8 @@
       // Detect the same-origin thank-you view after the iframe navigates and
       // promote the parent dialog without changing WooCommerce's flow.
       accountCheckoutDialog?.classList.toggle('is-pix-payment', Boolean(frameDocument?.querySelector('[data-storezap-pix-dialog]')));
+      bindCheckoutLoginDetection();
+      restoreCheckoutValues();
     } catch (error) {}
   });
   document.addEventListener('click', (event) => {

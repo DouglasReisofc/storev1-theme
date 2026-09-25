@@ -1,6 +1,41 @@
 <?php
 defined('ABSPATH') || exit;
 
+/**
+ * Checkout login hand-off. The checkout stays open in the parent dialog while
+ * these small same-origin requests check an e-mail and authenticate the
+ * customer. No password is ever sent to the browser-side e-mail check.
+ */
+function storev1_checkout_login_nonce_valid() {
+    return isset($_REQUEST['nonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['nonce'])), 'storev1_checkout_login');
+}
+
+function storev1_ajax_check_login_email() {
+    if (!storev1_checkout_login_nonce_valid()) wp_send_json_error(['message' => 'Sessão expirada. Atualize a página e tente novamente.'], 403);
+    $email = isset($_REQUEST['email']) ? sanitize_email(wp_unslash($_REQUEST['email'])) : '';
+    if (!is_email($email)) wp_send_json_success(['exists' => false]);
+    wp_send_json_success(['exists' => (bool) email_exists($email)]);
+}
+add_action('wp_ajax_storev1_check_login_email', 'storev1_ajax_check_login_email');
+add_action('wp_ajax_nopriv_storev1_check_login_email', 'storev1_ajax_check_login_email');
+
+function storev1_ajax_checkout_login() {
+    if (!storev1_checkout_login_nonce_valid()) wp_send_json_error(['message' => 'Sessão expirada. Atualize a página e tente novamente.'], 403);
+    if (is_user_logged_in()) wp_send_json_success(['message' => 'Você já está conectado.']);
+    $email = isset($_POST['email']) ? sanitize_email(wp_unslash($_POST['email'])) : '';
+    $password = isset($_POST['password']) ? (string) wp_unslash($_POST['password']) : '';
+    $remember = !empty($_POST['remember']);
+    if (!is_email($email) || $password === '') wp_send_json_error(['message' => 'Informe seu e-mail e sua senha.'], 422);
+    $user = get_user_by('email', $email);
+    if (!$user) wp_send_json_error(['message' => 'E-mail ou senha inválidos.'], 401);
+    $signed_in = wp_signon(['user_login' => $user->user_login, 'user_password' => $password, 'remember' => $remember], is_ssl());
+    if (is_wp_error($signed_in)) wp_send_json_error(['message' => 'E-mail ou senha inválidos.'], 401);
+    wp_set_current_user($signed_in->ID);
+    wp_send_json_success(['message' => 'Login realizado. Retomando sua compra…', 'userId' => (int) $signed_in->ID]);
+}
+add_action('wp_ajax_storev1_checkout_login', 'storev1_ajax_checkout_login');
+add_action('wp_ajax_nopriv_storev1_checkout_login', 'storev1_ajax_checkout_login');
+
 function storev1_registration_enabled() {
     $value = get_option('woocommerce_enable_myaccount_registration', 'no');
     return in_array($value, ['yes', '1', 1, true], true);

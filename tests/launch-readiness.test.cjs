@@ -81,6 +81,21 @@ test('account order payments open the shared checkout modal', () => {
   assert.match(source, /is-payment-only/);
 });
 
+test('registered checkout e-mails open an in-place login and resume checkout', () => {
+  const account = read('inc/account.php');
+  const modal = read('inc/storefront-modals.php');
+  const script = read('assets/storev1-shopping.js');
+  assert.match(account, /storev1_check_login_email/);
+  assert.match(account, /storev1_checkout_login/);
+  assert.match(account, /wp_signon/);
+  assert.match(modal, /data-sv1-checkout-login/);
+  assert.match(modal, /account-login-illustration\.webp/);
+  assert.match(modal, /account-register-illustration\.webp/);
+  assert.match(script, /input\[name="billing_email"\]/);
+  assert.match(script, /captureCheckoutValues/);
+  assert.match(script, /contentWindow\?\.location\.reload/);
+});
+
 test('Pix temporarily hides the checkout shell without unloading its iframe', () => {
   const css = read('assets/storev1-modals.css');
   assert.match(css, /storezap-checkout-dialog\.storezap-pix-active/);
