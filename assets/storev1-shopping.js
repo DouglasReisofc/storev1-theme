@@ -18,6 +18,38 @@
       cartLink?.click();
     }
   });
+
+  // WooCommerce exposes a separate /order-pay/ route for unpaid orders in
+  // Minha conta. Keep that action inside the same checkout dialog used by the
+  // storefront instead of navigating the customer to WooCommerce's full
+  // payment page. The iframe remains same-origin, so Store Connect's native
+  // payment picker, validation and Lottie flow continue to work unchanged.
+  const accountCheckoutDialog = document.querySelector('[data-storezap-checkout-dialog]');
+  const accountCheckoutFrame = accountCheckoutDialog?.querySelector('[data-storezap-checkout-frame]');
+  const openAccountOrderPayment = (href) => {
+    if (!accountCheckoutDialog || !accountCheckoutFrame || typeof accountCheckoutDialog.showModal !== 'function') return false;
+    let url = href;
+    try {
+      const parsed = new URL(href, window.location.href);
+      parsed.searchParams.set('storezap_modal_checkout', '1');
+      url = parsed.toString();
+    } catch (error) { return false; }
+    accountCheckoutDialog.dataset.returnUrl = window.location.href;
+    accountCheckoutDialog.classList.add('is-loading');
+    if (accountCheckoutFrame.src !== url) accountCheckoutFrame.src = url;
+    if (!accountCheckoutDialog.open) accountCheckoutDialog.showModal();
+    return true;
+  };
+  document.addEventListener('click', (event) => {
+    const link = event.target.closest?.('a');
+    if (!link) return;
+    const href = link.getAttribute('href') || '';
+    if (!/\/order-pay(?:[/?#]|$)/i.test(href) && !/[?&]pay_for_order=(?:1|true)/i.test(href)) return;
+    if (!openAccountOrderPayment(href)) return;
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+  }, true);
   function quantities() {
     document.querySelectorAll('.quantity input.qty[type="number"]').forEach(input => {
       const box = input.closest('.quantity');

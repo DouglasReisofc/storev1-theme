@@ -9,7 +9,7 @@ add_filter('wp_sitemaps_add_provider', function($provider, $name) {
 
 /** Create the essential public information pages without overwriting edits. */
 function storev1_ensure_information_pages() {
-    $version = '1.12.67';
+    $version = '1.12.68';
     if (get_option('storev1_information_pages_version') === $version) return;
 
     $pages = [

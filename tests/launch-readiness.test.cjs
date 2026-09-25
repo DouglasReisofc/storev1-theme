@@ -44,3 +44,11 @@ test('the mobile drawer lists category names without thumbnails', () => {
   assert.match(source, /if \(!empty\(\$sv1_drawer\)\)/);
   assert.match(source, /<strong><\?php echo esc_html\(\$term->name\); \?><\/strong><\?php else/);
 });
+
+test('account order payments open the shared checkout modal', () => {
+  const source = read('assets/storev1-shopping.js');
+  assert.match(source, /data-storezap-checkout-dialog/);
+  assert.match(source, /order-pay/);
+  assert.match(source, /storezap_modal_checkout/);
+  assert.match(source, /stopImmediatePropagation/);
+});
