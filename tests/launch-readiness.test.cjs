@@ -93,8 +93,9 @@ test('registered checkout e-mails open an in-place login and resume checkout', (
   assert.match(modal, /data-sv1-checkout-login/);
   assert.match(modal, /data-sv1-checkout-register-form/);
   assert.match(modal, /data-sv1-checkout-recover-form/);
-  assert.match(modal, /account-login-illustration\.webp/);
-  assert.match(modal, /account-register-illustration\.webp/);
+  assert.match(modal, /sv1-checkout-login-banner__icon/);
+  assert.match(modal, /data-sv1-auth-switch="login"/);
+  assert.match(modal, /data-sv1-auth-switch="register"/);
   assert.match(script, /input\[name="billing_email"\]/);
   assert.match(script, /captureCheckoutValues/);
   assert.match(script, /contentWindow\?\.location\.reload/);
