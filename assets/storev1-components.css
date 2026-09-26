@@ -402,3 +402,7 @@ body.loja1-contasvip-theme .sv1-rail-arrow:not(:disabled):hover{background:#e8f1
  * yellow catalogue trigger. The trigger is gone, so the first real category
  * (currently Contas 30 dias) must remain visible. */
 body.loja1-contasvip-theme .sv1-category-rail>.loja1-menu>li:first-child{display:flex!important}
+
+/* Safety net for WooCommerce/plugin templates that print the excerpt markup
+ * directly instead of using the standard summary callback. */
+body.loja1-contasvip-theme.single-product div.product .summary .woocommerce-product-details__short-description{display:none!important}

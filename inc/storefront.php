@@ -144,6 +144,15 @@ add_action('wp_head', function() {
 // Keep the purchase controls independent from long product descriptions. The
 // full description remains in WooCommerce's tabs below the summary/actions.
 remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_excerpt', 20);
+// WooCommerce registers its summary callbacks after the theme is loaded, so
+// the early remove_action above is not sufficient on every installation.
+// Remove the native short-description callback again once the main query is
+// ready; the full description remains in the lower Description tab.
+add_action('wp', function() {
+    if (function_exists('is_product') && is_product()) {
+        remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_excerpt', 20);
+    }
+}, 30);
 add_action('woocommerce_single_product_summary', function() {
     global $product;
     if (!$product instanceof WC_Product) return;
