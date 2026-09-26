@@ -425,9 +425,9 @@
     existingAccountNotice();
     new MutationObserver(existingAccountNotice).observe(document.body, {childList:true, subtree:true});
     document.addEventListener('click', event => {
-      const link = event.target.closest?.('a');
+      const link = event.target.closest?.('a[href], [data-storev1-order-pay-action]');
       if (!link) return;
-      const href = link.getAttribute('href') || '';
+      const href = link.getAttribute('href') || link.closest?.('[data-storev1-order-pay-action]')?.querySelector?.('a[href]')?.getAttribute('href') || '';
       if (!/\/order-pay(?:[\/?#]|$)/i.test(href) && !/[?&]pay_for_order=(?:1|true)/i.test(href)) return;
       event.preventDefault();
       event.stopPropagation();
