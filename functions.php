@@ -140,6 +140,31 @@ add_action('customize_register', function($wp_customize) {
 });
 add_filter('woocommerce_product_add_to_cart_text',function($text,$product){return $product->is_type('simple') && $product->is_purchasable() && $product->is_in_stock() ? __('Comprar','storev1-theme') : $text;},10,2);
 add_filter('woocommerce_product_single_add_to_cart_text',function(){return __('Comprar agora','storev1-theme');});
+// Imported descriptions occasionally contain escaped markup (for example
+// literal "&lt;p&gt;") or unsafe fragments that leak into the product page.
+// Normalize only on the storefront; the editor keeps the original value so
+// administrators can still revise it later.
+function storev1_clean_product_description($value, $product = null) {
+    if (is_admin() && !wp_doing_ajax()) return $value;
+    $value = (string) $value;
+    if (strpos($value, '&lt;') !== false || strpos($value, '&#60;') !== false) {
+        $value = html_entity_decode($value, ENT_QUOTES, 'UTF-8');
+    }
+    $value = wp_kses_post($value);
+    if (trim(wp_strip_all_tags($value)) !== '' || !$product instanceof WC_Product || !function_exists('is_product') || !is_product()) return $value;
+    $name = esc_html($product->get_name());
+    return '<p><strong>' . $name . '</strong> com acesso digital premium e entrega rápida após a confirmação do pagamento.</p><p>Receba os dados de acesso por e-mail e conte com suporte para utilizar o serviço durante o período da oferta.</p>';
+}
+add_filter('woocommerce_product_get_description', 'storev1_clean_product_description', 20, 2);
+add_filter('woocommerce_product_get_short_description', 'storev1_clean_product_description', 20, 2);
+add_filter('the_content', function($content) {
+    if (function_exists('is_product') && is_product()) return storev1_clean_product_description($content, function_exists('wc_get_product') ? wc_get_product(get_queried_object_id()) : null);
+    return $content;
+}, 20);
+add_filter('woocommerce_short_description', function($content) {
+    if (function_exists('is_product') && is_product()) return storev1_clean_product_description($content, function_exists('wc_get_product') ? wc_get_product(get_queried_object_id()) : null);
+    return $content;
+}, 20);
 // Add concise, semantic product facts to WooCommerce's native additional
 // information tab. This gives crawlers useful context without keyword stuffing
 // or replacing the product's original description.

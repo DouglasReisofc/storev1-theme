@@ -36,7 +36,7 @@
   const checkoutAuthTitle = checkoutLoginOverlay?.querySelector('[data-sv1-auth-title]');
   const checkoutAuthCopy = checkoutLoginOverlay?.querySelector('[data-sv1-auth-copy]');
   const checkoutLoginConfig = window.StoreV1CheckoutLogin || {};
-  const checkoutLoginState = {lastChecked:'', prompted:new Set(), inlineAttempted:'', resumeValues:null};
+  const checkoutLoginState = {lastChecked:'', knownExistingEmail:'', prompted:new Set(), inlineAttempted:'', resumeValues:null};
   const checkoutAuthStorageKey = 'storev1_checkout_auth_state';
   const readPersistedAuth = () => { try { const value = sessionStorage.getItem(checkoutAuthStorageKey); return value ? JSON.parse(value) : null; } catch (error) { return null; } };
   const persistAuth = () => {
@@ -88,6 +88,7 @@
       recover: ['Recupere seu acesso', 'Enviaremos um código de redefinição de senha e um link seguro.'],
     }[view] || [];
     checkoutLoginOverlay.querySelectorAll('[data-sv1-auth-view]').forEach(panel => { panel.hidden = panel.dataset.sv1AuthView !== view; });
+    checkoutLoginOverlay.classList.toggle('is-login-view', view === 'login');
     checkoutLoginOverlay.querySelectorAll('[data-sv1-auth-switch]').forEach(button => button.classList.toggle('is-active', button.dataset.sv1AuthSwitch === view));
     if (checkoutAuthTitle && copy[0]) checkoutAuthTitle.textContent = copy[0];
     if (checkoutAuthCopy && copy[1]) checkoutAuthCopy.textContent = copy[1];
@@ -132,10 +133,12 @@
       const body = new URLSearchParams({action:'storev1_check_login_email', nonce:checkoutLoginConfig.nonce, email});
       const response = await fetch(checkoutLoginConfig.ajaxUrl, {method:'POST', credentials:'same-origin', headers:{'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}, body});
       const data = await response.json();
-      if (data?.success && data.data?.exists && !checkoutLoginState.prompted.has(email)) {
-        checkoutLoginState.prompted.add(email);
-        openCheckoutLogin(email);
-      }
+      if (data?.success && data.data?.exists) {
+        // Keep the checkout in place. When the shopper fills the password
+        // field that WooCommerce already renders, attempt the login silently
+        // and refresh the same checkout iframe with the cart preserved.
+        checkoutLoginState.knownExistingEmail = email;
+      } else if (checkoutLoginState.knownExistingEmail === email) checkoutLoginState.knownExistingEmail = '';
     } catch (error) {}
   };
   const isValidEmail = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || '').trim());

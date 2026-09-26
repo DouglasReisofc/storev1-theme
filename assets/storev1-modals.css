@@ -137,6 +137,7 @@ body.storev1-embedded-checkout .woocommerce-message{margin:12px 0!important;bord
 .sv1-checkout-login-panel{border-color:#d7dfda}
 .sv1-checkout-login-copy h2,.sv1-checkout-login-form label,.sv1-checkout-login-banner strong{color:#101b16}
 .sv1-checkout-login-copy p,.sv1-checkout-login-banner span,.sv1-checkout-auth-help{color:#33433b}
+.sv1-checkout-login-modal.is-login-view .sv1-checkout-login-copy [data-sv1-auth-copy]{color:#b42318;font-weight:850}
 .sv1-checkout-login-banner:hover,.sv1-checkout-login-banner.is-active{border-color:#0b6b46;background:#fff;box-shadow:0 0 0 2px rgba(11,107,70,.12)}
 .sv1-checkout-login-banner .sv1-checkout-login-banner__icon{background:#edf8f2;color:#0b6b46}
 .sv1-checkout-login-banner[data-sv1-auth-switch="register"] .sv1-checkout-login-banner__icon{background:#eef3ff;color:#234a91}

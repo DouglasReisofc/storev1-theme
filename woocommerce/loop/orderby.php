@@ -13,13 +13,13 @@ $search_id = wp_unique_id('sv1-category-search-');
         <label for="<?php echo esc_attr($search_id); ?>"><?php esc_html_e('Buscar categorias e produtos', 'storev1-theme'); ?></label>
         <input id="<?php echo esc_attr($search_id); ?>" type="search" placeholder="Digite uma categoria ou produto…" autocomplete="off" data-category-search>
         <ul class="sv1-category-options">
-            <li data-category-option><a href="<?php echo esc_url(wc_get_page_permalink('shop')); ?>" <?php if (!$current) echo 'aria-current="page"'; ?>><?php esc_html_e('Todas as categorias', 'storev1-theme'); ?></a></li>
             <?php if (!is_wp_error($terms)) : foreach ($terms as $term) :
                 $url = get_term_link($term);
                 if (is_wp_error($url)) continue;
             ?>
             <li data-category-option><a href="<?php echo esc_url($url); ?>" <?php if ($current === $term->term_id) echo 'aria-current="page"'; ?> aria-label="<?php echo esc_attr($term->name); ?>"><?php if (!empty($sv1_drawer)) : ?><strong><?php echo esc_html($term->name); ?></strong><?php else : ?><span class="sv1-category-option-main"><?php $image = storev1_category_image_url($term); if ($image) : ?><img src="<?php echo esc_url($image); ?>" alt="" loading="lazy" decoding="async" width="72" height="44"><?php endif; ?><span><strong><?php echo esc_html($term->name); ?></strong><em><?php echo esc_html(storev1_category_description($term)); ?></em></span></span><small><?php echo absint($term->count); ?></small><?php endif; ?></a></li>
             <?php endforeach; endif; ?>
+            <li data-category-option><a href="<?php echo esc_url(wc_get_page_permalink('shop')); ?>" <?php if (!$current) echo 'aria-current="page"'; ?>><?php esc_html_e('Todas as categorias', 'storev1-theme'); ?></a></li>
             <?php
             $sv1_products = get_posts(['post_type'=>'product','post_status'=>'publish','posts_per_page'=>40,'orderby'=>'title','order'=>'ASC']);
             foreach ($sv1_products as $sv1_product_post) :

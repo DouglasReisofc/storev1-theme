@@ -16,6 +16,15 @@
         option,
         variation: variations.find(item => item.attributes && item.attributes[attributeKey] === option.value)
       })).filter(item => item.variation);
+      // Show the most accessible offer first. WooCommerce still owns the
+      // native select and variation validation; this only orders the modal
+      // presentation and the initial selected offer by numeric price.
+      optionData.sort((a, b) => {
+        const priceA = Number(a.variation.display_price ?? a.variation.display_regular_price ?? Number.POSITIVE_INFINITY);
+        const priceB = Number(b.variation.display_price ?? b.variation.display_regular_price ?? Number.POSITIVE_INFINITY);
+        if (priceA !== priceB) return priceA - priceB;
+        return String(a.option.textContent || '').localeCompare(String(b.option.textContent || ''), 'pt-BR');
+      });
       if (!optionData.length) return;
 
       const sourceRow = select.closest('tr') || select.closest('.value');
