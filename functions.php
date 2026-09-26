@@ -161,7 +161,10 @@ function storev1_clean_product_description($value, $product = null) {
     $length = function_exists('mb_strlen') ? mb_strlen($plain, 'UTF-8') : strlen($plain);
     if (($plain !== '' && $length >= 260) || !$product instanceof WC_Product || !function_exists('is_product') || !is_product()) return $value;
     $name = esc_html($product->get_name());
-    return '<p><strong>' . $name . '</strong> com acesso digital premium e entrega rápida após a confirmação do pagamento.</p><p>Receba os dados de acesso por e-mail e conte com suporte para utilizar o serviço durante o período da oferta.</p>';
+    return '<p><strong>' . $name . '</strong> é uma oferta de acesso digital premium para quem procura praticidade e entrega rápida. Escolha a opção disponível no seletor do produto e confira o período correspondente antes de finalizar.</p>'
+        . '<p>Após a confirmação do pagamento, os dados de acesso da oferta <strong>' . $name . '</strong> são enviados para o e-mail informado no checkout. Assim você recebe as instruções de utilização de forma rápida e organizada.</p>'
+        . '<h3>O que você recebe</h3><ul><li>Acesso referente à oferta selecionada;</li><li>Envio digital após a aprovação do pagamento;</li><li>Orientações para iniciar o uso do serviço.</li></ul>'
+        . '<p>Conte com suporte pelo WhatsApp da Turbo Contas para dúvidas sobre o acesso e o período contratado. A descrição, o título e a oferta exibida correspondem ao produto selecionado nesta página.</p>';
 }
 add_filter('woocommerce_product_get_description', 'storev1_clean_product_description', 20, 2);
 add_filter('woocommerce_product_get_short_description', 'storev1_clean_product_description', 20, 2);
