@@ -111,6 +111,15 @@ body.storev1-embedded-checkout .woocommerce-message{margin:12px 0!important;bord
   body.storev1-embedded-checkout .wc-block-components-checkout-step__heading{font-size:16px!important}
 }
 
+/* Give the cart table room to breathe on desktop without changing the
+ * mobile modal dimensions. */
+@media(min-width:701px){
+  .storezap-cart-dialog{width:min(94vw,1040px);max-height:88vh}
+  .storezap-cart-dialog__body{max-height:calc(88vh - 132px);padding:20px 24px}
+  .storezap-cart-dialog__body .woocommerce-cart-form,
+  .storezap-cart-dialog__body .cart_totals{width:min(100%,900px)!important}
+}
+
 /* Checkout auth choices: compact icon buttons keep the desktop modal clear. */
 .sv1-checkout-login-banners{gap:10px;margin-top:20px}
 .sv1-checkout-login-banner{grid-template-columns:38px minmax(0,1fr);gap:2px 9px;min-height:58px;padding:9px 11px}

@@ -1,4 +1,55 @@
 (() => {
+  // Header search: show matching products while the customer types, without
+  // navigating away from the current page. Enter still performs the normal
+  // WooCommerce search for the complete result page.
+  const headerForms = [...document.querySelectorAll('.sv1-search-form')];
+  if (headerForms.length) {
+    headerForms.forEach(form => {
+      const input = form.querySelector('input[type="search"]');
+      if (!input || form.dataset.sv1LiveSearch === '1') return;
+      form.dataset.sv1LiveSearch = '1';
+      form.classList.add('sv1-live-search-form');
+      const panel = document.createElement('div');
+      panel.className = 'sv1-live-search-results';
+      panel.hidden = true;
+      panel.setAttribute('role', 'listbox');
+      form.appendChild(panel);
+      let timer = 0, controller, sequence = 0;
+      const close = () => { panel.hidden = true; panel.innerHTML = ''; };
+      const search = async () => {
+        const query = input.value.trim();
+        window.clearTimeout(timer);
+        controller?.abort();
+        if (query.length < 2) { close(); return; }
+        timer = window.setTimeout(async () => {
+          const request = ++sequence;
+          controller = new AbortController();
+          panel.hidden = false;
+          panel.setAttribute('aria-busy', 'true');
+          panel.innerHTML = '<p class="sv1-live-search-loading">Buscando produtos…</p>';
+          try {
+            const url = new URL(window.location.origin + '/wp-admin/admin-ajax.php');
+            url.searchParams.set('action', 'storev1_catalog_search');
+            url.searchParams.set('q', query);
+            const response = await fetch(url, {signal: controller.signal, credentials: 'same-origin'});
+            const payload = await response.json();
+            if (request !== sequence) return;
+            panel.innerHTML = payload.success && payload.data.html
+              ? payload.data.html
+              : '<p class="sv1-live-search-empty">Nenhum produto encontrado.</p>';
+          } catch (error) {
+            if (error.name !== 'AbortError' && request === sequence) panel.innerHTML = '<p class="sv1-live-search-empty">Não foi possível buscar agora.</p>';
+          } finally {
+            if (request === sequence) panel.removeAttribute('aria-busy');
+          }
+        }, 180);
+      };
+      input.addEventListener('input', search);
+      input.addEventListener('focus', () => { if (input.value.trim().length >= 2) search(); });
+      document.addEventListener('click', event => { if (!form.contains(event.target)) close(); });
+      input.addEventListener('keydown', event => { if (event.key === 'Escape') close(); });
+    });
+  }
   const resultCount = document.querySelector('.woocommerce-result-count');
   if (!resultCount) return;
   const toolbar = resultCount.parentElement;
