@@ -151,7 +151,11 @@ function storev1_clean_product_description($value, $product = null) {
         $value = html_entity_decode($value, ENT_QUOTES, 'UTF-8');
     }
     $value = wp_kses_post($value);
-    if (trim(wp_strip_all_tags($value)) !== '' || !$product instanceof WC_Product || !function_exists('is_product') || !is_product()) return $value;
+    $plain = trim(wp_strip_all_tags($value));
+    // Descriptions imported as a single sentence are effectively empty for
+    // shoppers and search engines. Keep the long AI-written descriptions,
+    // but provide the same clean fallback for these short legacy entries.
+    if (($plain !== '' && function_exists('mb_strlen') && mb_strlen($plain, 'UTF-8') >= 120) || ($plain !== '' && !function_exists('mb_strlen') && strlen($plain) >= 120) || !$product instanceof WC_Product || !function_exists('is_product') || !is_product()) return $value;
     $name = esc_html($product->get_name());
     return '<p><strong>' . $name . '</strong> com acesso digital premium e entrega rápida após a confirmação do pagamento.</p><p>Receba os dados de acesso por e-mail e conte com suporte para utilizar o serviço durante o período da oferta.</p>';
 }
