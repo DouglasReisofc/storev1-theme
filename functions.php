@@ -147,6 +147,13 @@ add_filter('woocommerce_product_single_add_to_cart_text',function(){return __('C
 function storev1_clean_product_description($value, $product = null) {
     if (is_admin() && !wp_doing_ajax()) return $value;
     $value = (string) $value;
+    // Xvideos Red has its complete, structured copy in the description tab.
+    // Keep the short-description area empty so the storefront does not add a
+    // second summary beside the purchase controls.
+    if ($product instanceof WC_Product && (int) $product->get_id() === 914
+        && in_array(current_filter(), ['woocommerce_product_get_short_description', 'woocommerce_short_description'], true)) {
+        return '';
+    }
     if (strpos($value, '&lt;') !== false || strpos($value, '&#60;') !== false) {
         $value = html_entity_decode($value, ENT_QUOTES, 'UTF-8');
     }
