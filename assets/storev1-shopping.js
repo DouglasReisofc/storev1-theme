@@ -26,6 +26,7 @@
   // payment picker, validation and Lottie flow continue to work unchanged.
   const accountCheckoutDialog = document.querySelector('[data-storezap-checkout-dialog]');
   const accountCheckoutFrame = accountCheckoutDialog?.querySelector('[data-storezap-checkout-frame]');
+  const accountOrdersUrl = accountCheckoutDialog?.dataset.accountOrdersUrl || '/minha-conta/orders/';
   const checkoutLoginOverlay = accountCheckoutDialog?.querySelector('[data-sv1-checkout-login]');
   const checkoutLoginForm = checkoutLoginOverlay?.querySelector('[data-sv1-checkout-login-form]');
   const checkoutRegisterForm = checkoutLoginOverlay?.querySelector('[data-sv1-checkout-register-form]');
@@ -355,6 +356,15 @@
     accountCheckoutDialog?.classList.remove('is-loading');
     try {
       const frameDocument = accountCheckoutFrame.contentDocument;
+      // Do not keep the WooCommerce "Pedido recebido" screen inside the
+      // checkout modal. After payment, close the modal and take the customer
+      // directly to the purchase history, where the order and its status are
+      // already available.
+      if (frameDocument?.body?.classList.contains('woocommerce-order-received')) {
+        accountCheckoutDialog?.close?.();
+        window.location.assign(accountOrdersUrl);
+        return;
+      }
       frameDocument?.documentElement?.classList.add('storev1-embedded-checkout');
       frameDocument?.body?.classList.add('storev1-embedded-checkout');
       // The payment-only picker is intentionally compact for logged-in users,

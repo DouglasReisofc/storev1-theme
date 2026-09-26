@@ -54,7 +54,8 @@ function storev1_render_storefront_modals() {
     echo '<header class="storezap-cart-dialog__head"><div><span class="sv1-modal-eyebrow">Seu pedido</span><h2>' . esc_html(storev1_modal_setting('cart_modal_title', 'Seu carrinho')) . '</h2></div><button type="button" class="storezap-cart-dialog__close" data-storezap-cart-close aria-label="Fechar">&times;</button></header>';
     echo '<div class="storezap-cart-dialog__body">' . do_shortcode('[woocommerce_cart]') . '</div></dialog>';
 
-    echo '<dialog class="storezap-checkout-dialog sv1-storefront-modal" data-storezap-checkout-dialog data-storev1-modal="checkout" data-checkout-url="' . esc_url($checkout_url) . '">';
+    $account_orders_url = function_exists('wc_get_account_endpoint_url') ? wc_get_account_endpoint_url('orders') : home_url('/minha-conta/orders/');
+    echo '<dialog class="storezap-checkout-dialog sv1-storefront-modal" data-storezap-checkout-dialog data-storev1-modal="checkout" data-checkout-url="' . esc_url($checkout_url) . '" data-account-orders-url="' . esc_url($account_orders_url) . '">';
     echo '<header class="storezap-checkout-dialog__head"><strong>Finalizar compra <span class="sv1-checkout-lottie" data-sv1-checkout-lottie data-lottie-url="' . esc_url($lottie_url) . '" aria-hidden="true"></span></strong><button type="button" class="storezap-checkout-dialog__close" data-storezap-checkout-close aria-label="Fechar">&times;</button></header>';
     echo '<iframe class="storezap-checkout-dialog__frame" data-storezap-checkout-frame title="Finalizar compra" loading="lazy"></iframe><div class="storezap-checkout-dialog__loading" data-storezap-checkout-loading>Carregando checkout…</div>';
     if (!is_user_logged_in()) {
