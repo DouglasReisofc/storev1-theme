@@ -26,11 +26,20 @@ add_action('after_setup_theme','storev1_setup');
 // categories until the administrator creates a custom menu.
 function storev1_category_menu_fallback() {
     if (!taxonomy_exists('product_cat')) return;
-    $terms = get_terms(['taxonomy' => 'product_cat', 'hide_empty' => true, 'parent' => 0]);
+    $terms = get_terms(['taxonomy' => 'product_cat', 'hide_empty' => true, 'parent' => 0, 'orderby' => 'name', 'order' => 'ASC']);
     if (is_wp_error($terms) || !$terms) return;
+    // Keep the catalogue periods in a useful shopping order, then append any
+    // additional top-level categories created in WooCommerce.
+    $priority = ['contas 30 dias' => 10, 'contas 60 dias' => 20, 'contas 90 dias' => 30, 'contas 1 ano' => 40, 'contas especiais' => 50, 'contas adultas' => 60, 'todas as contas' => 70];
+    usort($terms, static function($a, $b) use ($priority) {
+        $a_key = strtolower(trim($a->name));
+        $b_key = strtolower(trim($b->name));
+        $a_rank = $priority[$a_key] ?? 1000;
+        $b_rank = $priority[$b_key] ?? 1000;
+        return $a_rank === $b_rank ? strcasecmp($a->name, $b->name) : $a_rank <=> $b_rank;
+    });
     echo '<ul id="sv1-category-track" class="loja1-menu">';
     foreach ($terms as $term) {
-        if (stripos($term->name, '60 dias') !== false) continue;
         printf('<li><a href="%s">%s</a></li>', esc_url(get_term_link($term)), esc_html($term->name));
     }
     echo '</ul>';

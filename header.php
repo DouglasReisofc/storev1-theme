@@ -24,7 +24,7 @@ $storev1_promo = ob_get_clean();
 <nav class="loja1-primary-nav" aria-label="Produtos e categorias"><div class="sv1-nav-row">
 <div class="sv1-category-rail" data-category-rail>
 <button type="button" class="sv1-rail-arrow" data-category-prev aria-label="Categorias anteriores" aria-controls="sv1-category-track" hidden>‹</button>
-<?php wp_nav_menu(['theme_location'=>'primary','container'=>false,'menu_class'=>'loja1-menu','menu_id'=>'sv1-category-track','depth'=>1,'fallback_cb'=>'storev1_category_menu_fallback']); ?>
+<?php storev1_category_menu_fallback(); ?>
 <button type="button" class="sv1-rail-arrow" data-category-next aria-label="Próximas categorias" aria-controls="sv1-category-track" hidden>›</button>
 </div>
 </div></nav>
