@@ -20,7 +20,9 @@
         const query = input.value.trim();
         window.clearTimeout(timer);
         controller?.abort();
-        if (query.length < 2) { close(); return; }
+        // Start searching from the first character so the customer gets
+        // immediate feedback (the endpoint still applies its normal limits).
+        if (query.length < 1) { close(); return; }
         timer = window.setTimeout(async () => {
           const request = ++sequence;
           controller = new AbortController();
@@ -45,7 +47,7 @@
         }, 180);
       };
       input.addEventListener('input', search);
-      input.addEventListener('focus', () => { if (input.value.trim().length >= 2) search(); });
+      input.addEventListener('focus', () => { if (input.value.trim().length >= 1) search(); });
       document.addEventListener('click', event => { if (!form.contains(event.target)) close(); });
       input.addEventListener('keydown', event => { if (event.key === 'Escape') close(); });
     });
