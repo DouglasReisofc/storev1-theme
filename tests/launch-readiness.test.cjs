@@ -81,6 +81,7 @@ test('account order payments open the shared checkout modal', () => {
   assert.match(source, /is-payment-only/);
   assert.match(source, /data-storev1-order-pay-action/);
   assert.match(source, /storev1-open-order-payment/);
+  assert.match(source, /storev1-order-received-no-pix/);
 });
 
 test('registered checkout e-mails open an in-place login and resume checkout', () => {
