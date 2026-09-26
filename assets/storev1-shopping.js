@@ -365,8 +365,8 @@
       // dialog must win over the generic thank-you redirect: closing the
       // parent here races dialog.showModal() in the iframe and makes the QR
       // modal flash and disappear immediately.
-      const frameHasPixDialog = Boolean(frameDocument?.querySelector('[data-storezap-pix-dialog]'));
       const pixElement = frameDocument?.querySelector('[data-storezap-pix-dialog]');
+      const frameHasPixDialog = pixElement?.open === true;
       if (pixElement && !pixElement.dataset.storev1CloseBound) {
         pixElement.dataset.storev1CloseBound = '1';
         pixElement.addEventListener('close', () => {
@@ -439,16 +439,6 @@
     };
     existingAccountNotice();
     new MutationObserver(existingAccountNotice).observe(document.body, {childList:true, subtree:true});
-    // Never leave the WooCommerce thank-you screen trapped inside the theme
-    // checkout modal. The only exception is the provider Pix dialog, which
-    // must remain visible so the customer can copy/scan the QR code.
-    const notifyOrderReceived = () => {
-      if (!document.body.classList.contains('woocommerce-order-received')) return;
-      if (document.querySelector('[data-storezap-pix-dialog]')) return;
-      window.parent.postMessage({type:'storev1-order-received-no-pix'}, window.location.origin);
-    };
-    notifyOrderReceived();
-    new MutationObserver(notifyOrderReceived).observe(document.body, {childList:true, subtree:true});
     document.addEventListener('click', event => {
       const link = event.target.closest?.('a[href], [data-storev1-order-pay-action]');
       if (!link) return;
