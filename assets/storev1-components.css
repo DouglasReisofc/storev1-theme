@@ -389,11 +389,11 @@ body.loja1-contasvip-theme .sv1-rail-arrow:not(:disabled):hover{background:#e8f1
  * category navigation in a full-width rail so every label is readable; the
  * arrows are revealed by storev1-discovery.js only when the rail overflows. */
 @media (min-width:768px){
- body.loja1-contasvip-theme .sv1-discovery-with-promo{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;align-items:start;padding-top:8px}
+ body.loja1-contasvip-theme .sv1-discovery-with-promo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.85fr);gap:28px;align-items:start;padding-top:8px}
  body.loja1-contasvip-theme .sv1-discovery-with-promo>.loja1-primary-nav{grid-column:1;width:100%;min-width:0}
  body.loja1-contasvip-theme .sv1-discovery-with-promo .sv1-nav-row{display:flex;align-items:center;gap:0;padding:0;min-width:0}
  body.loja1-contasvip-theme .sv1-discovery-with-promo .sv1-category-rail{width:100%;max-width:none;min-width:0;flex:1}
  body.loja1-contasvip-theme .sv1-discovery-with-promo .sv1-category-rail>.loja1-menu{width:100%;justify-content:flex-start;overflow-x:auto}
- body.loja1-contasvip-theme .sv1-discovery-with-promo>.sv1-promo{grid-column:1;width:min(100%,920px);max-width:none;margin:0 0 0 auto}
+ body.loja1-contasvip-theme .sv1-discovery-with-promo>.sv1-promo{grid-column:2;grid-row:1;width:100%;max-width:none;margin:0;justify-self:stretch}
  body.loja1-contasvip-theme .sv1-discovery-with-promo .sv1-promo-track{height:clamp(180px,min(20vw,30svh),260px)}
 }
