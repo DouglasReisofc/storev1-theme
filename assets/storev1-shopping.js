@@ -356,11 +356,15 @@
     accountCheckoutDialog?.classList.remove('is-loading');
     try {
       const frameDocument = accountCheckoutFrame.contentDocument;
-      // Do not keep the WooCommerce "Pedido recebido" screen inside the
-      // checkout modal. After payment, close the modal and take the customer
-      // directly to the purchase history, where the order and its status are
-      // already available.
-      if (frameDocument?.body?.classList.contains('woocommerce-order-received')) {
+      // Pix is rendered on WooCommerce's order-received document. The Pix
+      // dialog must win over the generic thank-you redirect: closing the
+      // parent here races dialog.showModal() in the iframe and makes the QR
+      // modal flash and disappear immediately.
+      const frameHasPixDialog = Boolean(frameDocument?.querySelector('[data-storezap-pix-dialog]'));
+      // Do not keep a thank-you screen without Pix inside the checkout modal.
+      // After a non-Pix payment, close the modal and take the customer to the
+      // purchase history, where the order and its status are available.
+      if (frameDocument?.body?.classList.contains('woocommerce-order-received') && !frameHasPixDialog) {
         accountCheckoutDialog?.close?.();
         window.location.assign(accountOrdersUrl);
         return;
@@ -371,7 +375,7 @@
       // but the Pix QR/copia-e-cola screen needs its own full-height surface.
       // Detect the same-origin thank-you view after the iframe navigates and
       // promote the parent dialog without changing WooCommerce's flow.
-      const pixDialog = Boolean(frameDocument?.querySelector('[data-storezap-pix-dialog]'));
+      const pixDialog = frameHasPixDialog;
       accountCheckoutDialog?.classList.toggle('is-pix-payment', pixDialog);
       // The payment view is itself a modal inside the same-origin checkout
       // iframe. Lock the embedded document while it is open so the checkout

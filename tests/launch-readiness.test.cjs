@@ -114,9 +114,12 @@ test('registered checkout e-mails open an in-place login and resume checkout', (
 
 test('Pix temporarily hides the checkout shell without unloading its iframe', () => {
   const css = read('assets/storev1-modals.css');
+  const script = read('assets/storev1-shopping.js');
   assert.match(css, /storezap-checkout-dialog\.storezap-pix-active/);
   assert.match(css, /storezap-pix-active \.storezap-checkout-dialog__head/);
   assert.match(css, /storezap-pix-active \.storezap-checkout-dialog__frame\{height:100%/);
+  assert.match(script, /frameHasPixDialog/);
+  assert.match(script, /woocommerce-order-received.*&& !frameHasPixDialog/);
 });
 
 test('payment-only checkout keeps a compact modal on desktop and mobile', () => {
