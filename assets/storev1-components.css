@@ -384,3 +384,16 @@ body.loja1-contasvip-theme .sv1-rail-arrow:not(:disabled):hover{background:#e8f1
 .sv1-support-choice--whatsapp .sv1-support-choice__icon{background:#dcfce7;color:#128c4a}
 .sv1-support-choice__copy{display:flex;flex-direction:column;gap:2px}
 .sv1-support-choice__copy>span{color:#64748b;font-size:13px}
+
+/* The storefront header has one search field (the header search). Keep the
+ * category navigation in a full-width rail so every label is readable; the
+ * arrows are revealed by storev1-discovery.js only when the rail overflows. */
+@media (min-width:768px){
+ body.loja1-contasvip-theme .sv1-discovery-with-promo{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;align-items:start;padding-top:8px}
+ body.loja1-contasvip-theme .sv1-discovery-with-promo>.loja1-primary-nav{grid-column:1;width:100%;min-width:0}
+ body.loja1-contasvip-theme .sv1-discovery-with-promo .sv1-nav-row{display:flex;align-items:center;gap:0;padding:0;min-width:0}
+ body.loja1-contasvip-theme .sv1-discovery-with-promo .sv1-category-rail{width:100%;max-width:none;min-width:0;flex:1}
+ body.loja1-contasvip-theme .sv1-discovery-with-promo .sv1-category-rail>.loja1-menu{width:100%;justify-content:flex-start;overflow-x:auto}
+ body.loja1-contasvip-theme .sv1-discovery-with-promo>.sv1-promo{grid-column:1;width:min(100%,920px);max-width:none;margin:0 0 0 auto}
+ body.loja1-contasvip-theme .sv1-discovery-with-promo .sv1-promo-track{height:clamp(180px,min(20vw,30svh),260px)}
+}

@@ -22,7 +22,6 @@ $storev1_promo = ob_get_clean();
 ?>
 <div class="loja1-shell sv1-discovery<?php echo $storev1_promo ? ' sv1-discovery-with-promo' : ''; ?>">
 <nav class="loja1-primary-nav" aria-label="Produtos e categorias"><div class="sv1-nav-row">
-<div class="sv1-desktop-categories"><?php if(class_exists('WooCommerce')) wc_get_template('loop/orderby.php',['sv1_header'=>true]); else storev1_categories(); ?></div>
 <div class="sv1-category-rail" data-category-rail>
 <button type="button" class="sv1-rail-arrow" data-category-prev aria-label="Categorias anteriores" aria-controls="sv1-category-track" hidden>‹</button>
 <?php wp_nav_menu(['theme_location'=>'primary','container'=>false,'menu_class'=>'loja1-menu','menu_id'=>'sv1-category-track','depth'=>1,'fallback_cb'=>'storev1_category_menu_fallback']); ?>
