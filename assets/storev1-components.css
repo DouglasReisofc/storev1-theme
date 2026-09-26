@@ -397,3 +397,8 @@ body.loja1-contasvip-theme .sv1-rail-arrow:not(:disabled):hover{background:#e8f1
  body.loja1-contasvip-theme .sv1-discovery-with-promo>.sv1-promo{grid-column:2;grid-row:1;width:100%;max-width:none;margin:0;justify-self:stretch}
  body.loja1-contasvip-theme .sv1-discovery-with-promo .sv1-promo-track{height:clamp(180px,min(20vw,30svh),260px)}
 }
+
+/* The legacy nav hid its first item because it used to be duplicated by the
+ * yellow catalogue trigger. The trigger is gone, so the first real category
+ * (currently Contas 30 dias) must remain visible. */
+body.loja1-contasvip-theme .sv1-category-rail>.loja1-menu>li:first-child{display:flex!important}
