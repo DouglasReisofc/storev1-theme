@@ -340,7 +340,13 @@
     }
     if (event.data?.type !== 'storezap-checkout-layout') return;
     accountCheckoutDialog?.classList.toggle('is-payment-only', event.data.paymentOnly === true);
-    if (event.data.pixPayment === true) accountCheckoutDialog?.classList.add('is-pix-payment');
+    if (typeof event.data.pixPayment === 'boolean') {
+      const pixPayment = event.data.pixPayment;
+      accountCheckoutDialog?.classList.toggle('is-pix-payment', pixPayment);
+      const frameDocument = checkoutFrameDocument();
+      frameDocument?.documentElement?.classList.toggle('storev1-pix-embedded', pixPayment);
+      frameDocument?.body?.classList.toggle('storev1-pix-embedded', pixPayment);
+    }
   });
   accountCheckoutFrame?.addEventListener('load', () => {
     accountCheckoutDialog?.classList.remove('is-loading');
@@ -352,7 +358,13 @@
       // but the Pix QR/copia-e-cola screen needs its own full-height surface.
       // Detect the same-origin thank-you view after the iframe navigates and
       // promote the parent dialog without changing WooCommerce's flow.
-      accountCheckoutDialog?.classList.toggle('is-pix-payment', Boolean(frameDocument?.querySelector('[data-storezap-pix-dialog]')));
+      const pixDialog = Boolean(frameDocument?.querySelector('[data-storezap-pix-dialog]'));
+      accountCheckoutDialog?.classList.toggle('is-pix-payment', pixDialog);
+      // The payment view is itself a modal inside the same-origin checkout
+      // iframe. Lock the embedded document while it is open so the checkout
+      // page behind it cannot expose a second scrollbar beside the QR modal.
+      frameDocument?.documentElement?.classList.toggle('storev1-pix-embedded', pixDialog);
+      frameDocument?.body?.classList.toggle('storev1-pix-embedded', pixDialog);
       bindCheckoutLoginDetection();
       restoreCheckoutValues();
     } catch (error) {}
