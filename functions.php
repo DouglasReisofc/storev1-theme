@@ -165,6 +165,22 @@ function storev1_clean_product_description($value, $product = null) {
 }
 add_filter('woocommerce_product_get_description', 'storev1_clean_product_description', 20, 2);
 add_filter('woocommerce_product_get_short_description', 'storev1_clean_product_description', 20, 2);
+// WooCommerce's description tab renders the template directly in some
+// versions, bypassing `the_content`. Replace only that tab callback so the
+// same entity decoding, sanitization and short-copy fallback are guaranteed
+// for the full description shown to shoppers.
+add_filter('woocommerce_product_tabs', function($tabs) {
+    if (function_exists('is_product') && is_product() && isset($tabs['description'])) {
+        $tabs['description']['callback'] = 'storev1_render_product_description_tab';
+    }
+    return $tabs;
+}, 30);
+function storev1_render_product_description_tab() {
+    $product = function_exists('wc_get_product') ? wc_get_product(get_queried_object_id()) : null;
+    if (!$product instanceof WC_Product) return;
+    echo '<h2>Descrição</h2>';
+    echo storev1_clean_product_description($product->get_description(), $product);
+}
 add_filter('the_content', function($content) {
     if (function_exists('is_product') && is_product()) return storev1_clean_product_description($content, function_exists('wc_get_product') ? wc_get_product(get_queried_object_id()) : null);
     return $content;
