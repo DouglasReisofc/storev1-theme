@@ -366,6 +366,16 @@
       // parent here races dialog.showModal() in the iframe and makes the QR
       // modal flash and disappear immediately.
       const frameHasPixDialog = Boolean(frameDocument?.querySelector('[data-storezap-pix-dialog]'));
+      const pixElement = frameDocument?.querySelector('[data-storezap-pix-dialog]');
+      if (pixElement && !pixElement.dataset.storev1CloseBound) {
+        pixElement.dataset.storev1CloseBound = '1';
+        pixElement.addEventListener('close', () => {
+          // Once the shopper dismisses QR/copia-e-cola, do not reveal the
+          // obsolete order-received page trapped behind the Pix dialog.
+          accountCheckoutDialog?.close?.();
+          window.location.assign(accountOrdersUrl);
+        }, {once:true});
+      }
       // Do not keep a thank-you screen without Pix inside the checkout modal.
       // After a non-Pix payment, close the modal and take the customer to the
       // purchase history, where the order and its status are available.

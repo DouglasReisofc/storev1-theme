@@ -123,6 +123,7 @@ test('Pix temporarily hides the checkout shell without unloading its iframe', ()
   assert.match(css, /storezap-pix-active \.storezap-checkout-dialog__frame\{height:100%/);
   assert.match(script, /frameHasPixDialog/);
   assert.match(script, /woocommerce-order-received.*&& !frameHasPixDialog/);
+  assert.match(script, /pixElement\.addEventListener\('close'/);
 });
 
 test('payment-only checkout keeps a compact modal on desktop and mobile', () => {
