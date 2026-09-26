@@ -320,6 +320,7 @@
     accountCheckoutDialog.dataset.returnUrl = window.location.href;
     accountCheckoutDialog.classList.remove('is-payment-only');
     accountCheckoutDialog.classList.remove('is-pix-payment');
+    accountCheckoutDialog.classList.remove('storezap-pix-active');
     accountCheckoutDialog.classList.add('is-loading');
     if (!accountCheckoutDialog.open) accountCheckoutDialog.showModal();
     // Opening the dialog first avoids a mobile Chromium/WebView race where an
@@ -352,6 +353,7 @@
     if (typeof event.data.pixPayment === 'boolean') {
       const pixPayment = event.data.pixPayment;
       accountCheckoutDialog?.classList.toggle('is-pix-payment', pixPayment);
+      accountCheckoutDialog?.classList.toggle('storezap-pix-active', pixPayment);
       const frameDocument = checkoutFrameDocument();
       frameDocument?.documentElement?.classList.toggle('storev1-pix-embedded', pixPayment);
       frameDocument?.body?.classList.toggle('storev1-pix-embedded', pixPayment);
@@ -392,6 +394,7 @@
       // promote the parent dialog without changing WooCommerce's flow.
       const pixDialog = frameHasPixDialog;
       accountCheckoutDialog?.classList.toggle('is-pix-payment', pixDialog);
+      accountCheckoutDialog?.classList.toggle('storezap-pix-active', pixDialog);
       // The payment view is itself a modal inside the same-origin checkout
       // iframe. Lock the embedded document while it is open so the checkout
       // page behind it cannot expose a second scrollbar beside the QR modal.
