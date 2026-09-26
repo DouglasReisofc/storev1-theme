@@ -406,3 +406,6 @@ body.loja1-contasvip-theme .sv1-category-rail>.loja1-menu>li:first-child{display
 /* Safety net for WooCommerce/plugin templates that print the excerpt markup
  * directly instead of using the standard summary callback. */
 body.loja1-contasvip-theme.single-product div.product .summary .woocommerce-product-details__short-description{display:none!important}
+/* Variation descriptions are injected after offer changes; their complete
+ * product copy remains available in the Description tab below the form. */
+body.loja1-contasvip-theme.single-product div.product .summary .woocommerce-variation-description{display:none!important}

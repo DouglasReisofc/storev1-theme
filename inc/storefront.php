@@ -153,6 +153,15 @@ add_action('wp', function() {
         remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_excerpt', 20);
     }
 }, 30);
+// WooCommerce also inserts a *variation* description inside the buy form
+// after an offer is selected. It is separate from the normal short excerpt,
+// so suppress that duplicate here while preserving the full Description tab.
+add_filter('woocommerce_available_variation', function($data) {
+    if (function_exists('is_product') && is_product()) {
+        $data['variation_description'] = '';
+    }
+    return $data;
+}, 50);
 add_action('woocommerce_single_product_summary', function() {
     global $product;
     if (!$product instanceof WC_Product) return;
