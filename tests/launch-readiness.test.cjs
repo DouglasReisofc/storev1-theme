@@ -11,6 +11,15 @@ test('variation schema prefers the current offer title over legacy metadata', ()
   assert.match(source, /woocommerce_structured_data_product/);
 });
 
+test('catalog variable products show only their lowest offer price', () => {
+  const source = read('inc/storefront.php');
+  assert.match(source, /function storev1_catalog_price_context/);
+  assert.match(source, /woocommerce_get_price_html/);
+  assert.match(source, /get_variation_prices\(true\)/);
+  assert.match(source, /min\(\$prices\)/);
+  assert.match(source, /is_front_page\(\)/);
+});
+
 test('launch readiness removes author sitemap and seeds essential pages', () => {
   const source = read('inc/launch-readiness.php');
   assert.match(source, /wp_sitemaps_add_provider/);
