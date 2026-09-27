@@ -12,17 +12,13 @@ test('variation schema prefers the current offer title over legacy metadata', ()
 });
 
 test('catalog variable products show only their lowest offer price', () => {
-  const source = read('inc/storefront.php');
-  assert.match(source, /function storev1_catalog_price_context/);
-  assert.match(source, /woocommerce_get_price_html/);
+  const source = read('woocommerce/loop/price.php');
+  assert.match(source, /\$product->is_type\('variable'\)/);
   assert.match(source, /get_variation_prices\(true\)/);
   assert.match(source, /min\(\$prices\)/);
-  assert.match(source, /woocommerce_get_price_html/);
-  assert.match(source, /9999, 2/);
-  assert.match(source, /woocommerce_variable_price_html/);
-  assert.match(source, /woocommerce_loop_price_html/);
-  assert.match(source, /is_product\(\)/);
-  assert.match(source, /is_checkout\(\)/);
+  assert.match(source, /wc_price\(\(float\) min\(\$prices\)\)/);
+  assert.match(source, /\$product->get_price_html\(\)/);
+  assert.doesNotMatch(read('inc/storefront.php'), /storev1_compact_catalog_price/);
 });
 
 test('launch readiness removes author sitemap and seeds essential pages', () => {

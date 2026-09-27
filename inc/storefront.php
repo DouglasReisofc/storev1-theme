@@ -13,45 +13,6 @@ function storev1_offer_display_name($product) {
     return $product instanceof WC_Product ? $product->get_name() : '';
 }
 
-/**
- * Keep catalogue cards easy to scan when a parent product has several offers.
- * The offer chooser and the product detail price remain untouched; this only
- * replaces WooCommerce's range (for example, R$ 5,00 – R$ 19,00) in the main
- * storefront grids with the lowest currently available variation price.
- */
-function storev1_catalog_price_context(): bool {
-    if (is_admin()) return false;
-    // Product detail, cart and checkout retain WooCommerce's native price
-    // output; only public catalogue/discovery loops use the compact value.
-    if (function_exists('is_product') && is_product()) return false;
-    if (function_exists('is_cart') && is_cart()) return false;
-    if (function_exists('is_checkout') && is_checkout()) return false;
-    return true;
-}
-
-// Run after Store Connect/other catalog extensions so their range formatter
-// cannot replace the compact catalogue value again.
-function storev1_compact_catalog_price($price_html, $product) {
-    if (!storev1_catalog_price_context() || !$product instanceof WC_Product || !$product->is_type('variable')) {
-        return $price_html;
-    }
-    $variation_prices = $product->get_variation_prices(true);
-    $prices = isset($variation_prices['display_price']) && is_array($variation_prices['display_price'])
-        ? array_values(array_filter($variation_prices['display_price'], static function($value) {
-            return $value !== '' && is_numeric($value);
-        }))
-        : [];
-    if (!$prices) return $price_html;
-    return wc_price((float) min($prices));
-}
-
-// Cover both WooCommerce's final wrapper and its variable-product formatter.
-// Store Connect can emit the latter directly in catalogue loops.
-add_filter('woocommerce_get_price_html', 'storev1_compact_catalog_price', 9999, 2);
-add_filter('woocommerce_variable_price_html', 'storev1_compact_catalog_price', 9999, 2);
-add_filter('woocommerce_variable_sale_price_html', 'storev1_compact_catalog_price', 9999, 2);
-add_filter('woocommerce_loop_price_html', 'storev1_compact_catalog_price', 99999, 2);
-
 // Catalogue and related-product cards always expose the parent product name.
 remove_action('woocommerce_shop_loop_item_title', 'woocommerce_template_loop_product_title', 10);
 add_action('woocommerce_shop_loop_item_title', function() {
