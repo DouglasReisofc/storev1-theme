@@ -29,6 +29,8 @@ function storev1_catalog_price_context(): bool {
     return true;
 }
 
+// Run after Store Connect/other catalog extensions so their range formatter
+// cannot replace the compact catalogue value again.
 add_filter('woocommerce_get_price_html', function($price_html, $product) {
     if (!storev1_catalog_price_context() || !$product instanceof WC_Product || !$product->is_type('variable')) {
         return $price_html;
@@ -41,7 +43,7 @@ add_filter('woocommerce_get_price_html', function($price_html, $product) {
         : [];
     if (!$prices) return $price_html;
     return wc_price((float) min($prices));
-}, 20, 2);
+}, 9999, 2);
 
 // Catalogue and related-product cards always expose the parent product name.
 remove_action('woocommerce_shop_loop_item_title', 'woocommerce_template_loop_product_title', 10);
