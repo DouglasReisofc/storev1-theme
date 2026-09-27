@@ -13,6 +13,26 @@
     nodes.forEach(item => item.remove());
   };
   removeStrayEscapedNewline();
+  // Store Connect can hydrate catalogue cards with the native variable-price
+  // range after WooCommerce has rendered the loop. In public cards the first
+  // amount is already the lowest offer; keep it and remove only the range
+  // suffix. Product detail selectors and checkout are intentionally excluded.
+  const compactCatalogRanges = (root = document) => {
+    if (document.body?.classList?.contains('single-product')) return;
+    root.querySelectorAll?.('ul.products li.product .price, [data-discovery-product] small').forEach(price => {
+      const amounts = price.querySelectorAll('.woocommerce-Price-amount');
+      if (amounts.length < 2) return;
+      const first = amounts[0];
+      let reachedFirst = false;
+      Array.from(price.childNodes || []).forEach(node => {
+        if (node === first) { reachedFirst = true; return; }
+        if (reachedFirst) node.remove();
+      });
+      price.setAttribute?.('aria-label', String(first.textContent || '').trim());
+    });
+  };
+  compactCatalogRanges();
+  if (document.body) new MutationObserver(() => compactCatalogRanges()).observe(document.body, {childList:true, subtree:true});
   const drawer = document.getElementById('sv1-drawer');
   const triggers = document.querySelectorAll('[data-sv1-open]');
   let previousFocus;

@@ -21,6 +21,8 @@ test('catalog variable products show only their lowest offer price', () => {
   assert.match(read('inc/storefront.php'), /function storev1_catalog_min_price_html/);
   assert.match(read('inc/storefront.php'), /PHP_INT_MAX/);
   assert.match(read('woocommerce/loop/orderby.php'), /\$sv1_product->get_variation_prices\(true\)/);
+  assert.match(read('assets/storev1-ui.js'), /compactCatalogRanges/);
+  assert.match(read('assets/storev1-ui.js'), /single-product/);
 });
 
 test('launch readiness removes author sitemap and seeds essential pages', () => {
