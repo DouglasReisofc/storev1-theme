@@ -34,5 +34,6 @@ check(substr_count($html,'property="og:image"') === 1,'single product image');
 check(strpos($html,'content="Mega &amp; Turbo Contas"') !== false,'escaped social title');
 check(strpos($html,'content="15.00"') !== false,'current offer price');
 check(strpos($html,'summary_large_image') !== false,'large social card');
+check(strpos($html,'turbo-contas-og.png?v=1.13.13') !== false,'versioned homepage social artwork');
 $seo=true;ob_start();$actions['wp_head']();check(ob_get_clean()==='','SEO provider avoids duplicate tags');
 $seo=false;$private=true;ob_start();$actions['wp_head']();check(ob_get_clean()==='','private product metadata suppressed');

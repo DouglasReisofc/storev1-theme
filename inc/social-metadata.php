@@ -92,7 +92,10 @@ add_action('wp_head', function() {
         // visual logo asset independent so social previews can use a wide,
         // descriptive composition without changing the storefront header.
         $image = [
-            'url' => get_template_directory_uri() . '/assets/brand/turbo-contas-og.png',
+            // Version the URL so WhatsApp, Facebook, Telegram and LinkedIn
+            // do not keep serving the previous artwork from their crawler
+            // cache after the image is replaced in the theme.
+            'url' => get_template_directory_uri() . '/assets/brand/turbo-contas-og.png?v=1.13.13',
             'width' => 1672,
             'height' => 941,
             'type' => 'image/png',
