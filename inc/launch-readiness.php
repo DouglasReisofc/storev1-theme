@@ -11,6 +11,19 @@ add_filter('wp_sitemaps_add_provider', function($provider, $name) {
 // Keep the oldest published page as the canonical sitemap entry and omit only
 // the duplicate from the XML index; no page content is deleted or overwritten.
 add_filter('wp_sitemaps_posts_query_args', function($args, $post_type) {
+    // The stock "Hello world!" post is an installation placeholder, not a
+    // storefront page. Keep it accessible for administrators to remove, but
+    // never advertise it to search engines.
+    if ($post_type === 'post') {
+        $hello_world = get_page_by_path('hello-world', OBJECT, 'post');
+        if ($hello_world && $hello_world->post_status === 'publish') {
+            $args['post__not_in'] = array_values(array_unique(array_merge(
+                $args['post__not_in'] ?? [],
+                [(int) $hello_world->ID]
+            )));
+        }
+        return $args;
+    }
     if ($post_type !== 'page') return $args;
     $pages = get_posts([
         'post_type' => 'page',
@@ -33,6 +46,19 @@ add_filter('wp_sitemaps_posts_query_args', function($args, $post_type) {
         else $seen[$key] = (int) $page_id;
     }
     if ($duplicates) $args['post__not_in'] = array_values(array_unique(array_merge($args['post__not_in'] ?? [], $duplicates)));
+    return $args;
+}, 10, 2);
+
+// WordPress creates an "Uncategorized" term by default. It is not part of
+// the store catalogue and should not become an indexable landing page.
+add_filter('wp_sitemaps_taxonomies_query_args', function($args, $taxonomy) {
+    if ($taxonomy !== 'category') return $args;
+    $uncategorized = get_term_by('slug', 'uncategorized', 'category');
+    if (!$uncategorized || is_wp_error($uncategorized)) return $args;
+    $args['exclude'] = array_values(array_unique(array_merge(
+        $args['exclude'] ?? [],
+        [(int) $uncategorized->term_id]
+    )));
     return $args;
 }, 10, 2);
 
