@@ -7,6 +7,35 @@ add_filter('wp_sitemaps_add_provider', function($provider, $name) {
     return $name === 'users' ? false : $provider;
 }, 10, 2);
 
+// Older imports can leave two published copies of the same information page.
+// Keep the oldest published page as the canonical sitemap entry and omit only
+// the duplicate from the XML index; no page content is deleted or overwritten.
+add_filter('wp_sitemaps_posts_query_args', function($args, $post_type) {
+    if ($post_type !== 'page') return $args;
+    $pages = get_posts([
+        'post_type' => 'page',
+        'post_status' => 'publish',
+        'posts_per_page' => -1,
+        'orderby' => 'ID',
+        'order' => 'ASC',
+        'fields' => 'ids',
+        'no_found_rows' => true,
+    ]);
+    if (!$pages) return $args;
+    $seen = [];
+    $duplicates = [];
+    foreach ($pages as $page_id) {
+        $page = get_post((int) $page_id);
+        if (!$page) continue;
+        $key = sanitize_title((string) $page->post_title);
+        if ($key === '') continue;
+        if (isset($seen[$key])) $duplicates[] = (int) $page_id;
+        else $seen[$key] = (int) $page_id;
+    }
+    if ($duplicates) $args['post__not_in'] = array_values(array_unique(array_merge($args['post__not_in'] ?? [], $duplicates)));
+    return $args;
+}, 10, 2);
+
 /** Create the essential public information pages without overwriting edits. */
 function storev1_ensure_information_pages() {
     $version = '1.12.71';

@@ -20,4 +20,6 @@ test('variation offers require an explicit shopper selection', () => {
   assert.match(variations, /if \(select\.value\) return;/);
   assert.match(variations, /markSelectionRequired/);
   assert.match(components, /\.sv1-offer-trigger\.is-invalid/);
+  assert.match(variations, /sv1-offer-buy-prompt/);
+  assert.match(variations, /openDialog\(\)/);
 });

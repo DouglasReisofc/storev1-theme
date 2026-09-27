@@ -60,12 +60,13 @@
       const list = dialog.querySelector('.sv1-offer-dialog__list');
       const markSelectionRequired = () => {
         trigger.classList.add('is-invalid');
+        dialog.classList.add('is-invalid');
         trigger.setAttribute('aria-invalid', 'true');
         trigger.querySelector('.sv1-offer-trigger__copy small').textContent = 'SELECIONE UMA OPÇÃO PARA CONTINUAR';
-        trigger.scrollIntoView({ behavior: 'smooth', block: 'center' });
       };
       const clearSelectionRequired = () => {
         trigger.classList.remove('is-invalid');
+        dialog.classList.remove('is-invalid');
         trigger.removeAttribute('aria-invalid');
         trigger.querySelector('.sv1-offer-trigger__copy small').textContent = 'ESCOLHA SUA OFERTA';
       };
@@ -84,6 +85,7 @@
       };
       const sync = () => {
         const selected = optionData.find(item => item.option.value === select.value);
+        form.classList.toggle('sv1-offer-unselected', !selected);
         list.querySelectorAll('.sv1-offer-option').forEach(item => {
           const active = item.dataset.value === select.value;
           item.classList.toggle('is-selected', active);
@@ -150,7 +152,21 @@
         markSelectionRequired();
       };
       const addToCartButton = form.querySelector('.single_add_to_cart_button');
-      if (addToCartButton) addToCartButton.addEventListener('click', requireSelection, true);
+      if (addToCartButton) {
+        // WooCommerce disables its submit button while no variation exists.
+        // Keep that native safeguard, and show a separate clickable prompt
+        // until the shopper selects a real variation.
+        const buyPrompt = document.createElement('button');
+        buyPrompt.type = 'button';
+        buyPrompt.className = 'single_add_to_cart_button button alt sv1-offer-buy-prompt';
+        buyPrompt.textContent = addToCartButton.textContent.trim() || 'Comprar agora';
+        buyPrompt.addEventListener('click', () => {
+          markSelectionRequired();
+          openDialog();
+        });
+        addToCartButton.insertAdjacentElement('beforebegin', buyPrompt);
+        addToCartButton.addEventListener('click', requireSelection, true);
+      }
       form.addEventListener('submit', requireSelection, true);
 
       trigger.addEventListener('click', openDialog);

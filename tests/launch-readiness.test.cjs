@@ -14,6 +14,8 @@ test('variation schema prefers the current offer title over legacy metadata', ()
 test('launch readiness removes author sitemap and seeds essential pages', () => {
   const source = read('inc/launch-readiness.php');
   assert.match(source, /wp_sitemaps_add_provider/);
+  assert.match(source, /wp_sitemaps_posts_query_args/);
+  assert.match(source, /post__not_in/);
   assert.match(source, /\$name === 'users'/);
   for (const slug of ['politica-de-privacidade', 'termos-de-uso', 'entrega-e-reembolso', 'contato-e-suporte']) {
     assert.ok(source.includes(slug));
