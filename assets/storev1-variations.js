@@ -58,17 +58,14 @@
       dialog.innerHTML = `<div class="sv1-offer-dialog__panel"><header class="sv1-offer-dialog__header"><div><small>Opções disponíveis</small><h2 id="${dialogId}-title">Escolha sua oferta</h2></div><button type="button" class="sv1-offer-dialog__close" aria-label="Fechar seletor">×</button></header><div class="sv1-offer-dialog__list" role="radiogroup" aria-label="Escolha sua oferta"></div></div>`;
 
       const list = dialog.querySelector('.sv1-offer-dialog__list');
+      const dialogHint = dialog.querySelector('.sv1-offer-dialog__header small');
       const markSelectionRequired = () => {
-        trigger.classList.add('is-invalid');
         dialog.classList.add('is-invalid');
-        trigger.setAttribute('aria-invalid', 'true');
-        trigger.querySelector('.sv1-offer-trigger__copy small').textContent = 'SELECIONE UMA OPÇÃO PARA CONTINUAR';
+        dialogHint.textContent = 'SELECIONE UMA OPÇÃO PARA CONTINUAR';
       };
       const clearSelectionRequired = () => {
-        trigger.classList.remove('is-invalid');
         dialog.classList.remove('is-invalid');
-        trigger.removeAttribute('aria-invalid');
-        trigger.querySelector('.sv1-offer-trigger__copy small').textContent = 'ESCOLHA SUA OFERTA';
+        dialogHint.textContent = 'Opções disponíveis';
       };
       const closeDialog = () => {
         trigger.setAttribute('aria-expanded', 'false');
@@ -160,10 +157,12 @@
         buyPrompt.type = 'button';
         buyPrompt.className = 'single_add_to_cart_button button alt sv1-offer-buy-prompt';
         buyPrompt.textContent = addToCartButton.textContent.trim() || 'Comprar agora';
-        buyPrompt.addEventListener('click', () => {
+        buyPrompt.addEventListener('click', event => {
+          event.preventDefault();
+          event.stopPropagation();
           markSelectionRequired();
           openDialog();
-        });
+        }, true);
         addToCartButton.insertAdjacentElement('beforebegin', buyPrompt);
         addToCartButton.addEventListener('click', requireSelection, true);
       }

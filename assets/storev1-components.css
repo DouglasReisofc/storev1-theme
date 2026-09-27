@@ -212,7 +212,6 @@ body.loja1-contasvip-theme .sv1-toast a.restore-item,body.loja1-contasvip-theme 
 .sv1-offer-trigger.is-invalid{border-color:#d92d45;background:#fff7f8;box-shadow:0 0 0 3px #d92d4533,0 7px 20px #d92d4517;animation:sv1-offer-shake .22s ease-in-out}
 .sv1-offer-trigger.is-invalid .sv1-offer-trigger__copy small{color:#b42318}
 .sv1-offer-dialog.is-invalid .sv1-offer-dialog__header small{color:#b42318}
-.sv1-offer-dialog.is-invalid .sv1-offer-dialog__header small::after{content:' — selecione uma opção para continuar'}
 .sv1-has-offer-modal .sv1-offer-buy-prompt{display:none!important}
 .sv1-has-offer-modal.sv1-offer-unselected .sv1-offer-buy-prompt{display:inline-flex!important;align-items:center;justify-content:center;opacity:1!important;cursor:pointer!important}
 .sv1-has-offer-modal.sv1-offer-unselected .single_add_to_cart_button:not(.sv1-offer-buy-prompt){display:none!important}
