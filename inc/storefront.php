@@ -20,13 +20,13 @@ function storev1_offer_display_name($product) {
  * storefront grids with the lowest currently available variation price.
  */
 function storev1_catalog_price_context(): bool {
-    return function_exists('is_front_page') && (
-        is_front_page() ||
-        (function_exists('is_shop') && is_shop()) ||
-        (function_exists('is_product_category') && is_product_category()) ||
-        (function_exists('is_product_tag') && is_product_tag()) ||
-        (function_exists('is_search') && is_search())
-    );
+    if (is_admin()) return false;
+    // Product detail, cart and checkout retain WooCommerce's native price
+    // output; only public catalogue/discovery loops use the compact value.
+    if (function_exists('is_product') && is_product()) return false;
+    if (function_exists('is_cart') && is_cart()) return false;
+    if (function_exists('is_checkout') && is_checkout()) return false;
+    return true;
 }
 
 add_filter('woocommerce_get_price_html', function($price_html, $product) {
