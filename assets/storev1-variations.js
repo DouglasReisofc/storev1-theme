@@ -18,7 +18,7 @@
       })).filter(item => item.variation);
       // Show the most accessible offer first. WooCommerce still owns the
       // native select and variation validation; this only orders the modal
-      // presentation and the initial selected offer by numeric price.
+      // presentation by numeric price without selecting an offer for the shopper.
       optionData.sort((a, b) => {
         const priceA = Number(a.variation.display_price ?? a.variation.display_regular_price ?? Number.POSITIVE_INFINITY);
         const priceB = Number(b.variation.display_price ?? b.variation.display_regular_price ?? Number.POSITIVE_INFINITY);
@@ -38,17 +38,11 @@
       if (summary) summary.classList.add('sv1-has-offer-summary');
       select.classList.add('sv1-native-variation-select');
       if (sourceRow) sourceRow.classList.add('sv1-variation-source');
-      // Give the shopper a usable state immediately. WooCommerce still owns
-      // the select and receives the normal change event, so stock/price/add
-      // to cart validation remain native.
-      if (!select.value) {
-        const firstAvailable = optionData.find(item => item.variation.is_in_stock !== false);
-        if (firstAvailable) {
-          select.value = firstAvailable.option.value;
-          select.dispatchEvent(new Event('change', { bubbles: true }));
-        }
-      }
-
+      // Always start with the placeholder. The customer must consciously pick
+      // an offer, even if WooCommerce or a previous browser state supplied a
+      // default attribute value.
+      select.value = '';
+      select.selectedIndex = 0;
       const trigger = document.createElement('button');
       trigger.type = 'button';
       trigger.className = 'sv1-offer-trigger';
@@ -64,6 +58,17 @@
       dialog.innerHTML = `<div class="sv1-offer-dialog__panel"><header class="sv1-offer-dialog__header"><div><small>Opções disponíveis</small><h2 id="${dialogId}-title">Escolha sua oferta</h2></div><button type="button" class="sv1-offer-dialog__close" aria-label="Fechar seletor">×</button></header><div class="sv1-offer-dialog__list" role="radiogroup" aria-label="Escolha sua oferta"></div></div>`;
 
       const list = dialog.querySelector('.sv1-offer-dialog__list');
+      const markSelectionRequired = () => {
+        trigger.classList.add('is-invalid');
+        trigger.setAttribute('aria-invalid', 'true');
+        trigger.querySelector('.sv1-offer-trigger__copy small').textContent = 'SELECIONE UMA OPÇÃO PARA CONTINUAR';
+        trigger.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      };
+      const clearSelectionRequired = () => {
+        trigger.classList.remove('is-invalid');
+        trigger.removeAttribute('aria-invalid');
+        trigger.querySelector('.sv1-offer-trigger__copy small').textContent = 'ESCOLHA SUA OFERTA';
+      };
       const closeDialog = () => {
         trigger.setAttribute('aria-expanded', 'false');
         document.documentElement.classList.remove('sv1-offer-modal-open');
@@ -89,7 +94,8 @@
         const price = trigger.querySelector('.sv1-offer-trigger__price');
         imageSlot.replaceChildren();
         price.replaceChildren();
-        if (!selected) { title.textContent = 'Ver opções disponíveis'; return; }
+        if (!selected) { title.textContent = 'Escolha uma opção'; return; }
+        clearSelectionRequired();
         const offerTitle = selected.option.textContent.trim();
         title.textContent = offerTitle;
         // Keep the visible product heading and the browser title aligned with
@@ -133,6 +139,19 @@
         });
         list.appendChild(button);
       });
+
+      // The native WooCommerce select remains authoritative, but it is hidden
+      // for this modal UI. Stop an accidental purchase before WooCommerce's
+      // delegated handlers run and make the missing choice visible.
+      const requireSelection = event => {
+        if (select.value) return;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        markSelectionRequired();
+      };
+      const addToCartButton = form.querySelector('.single_add_to_cart_button');
+      if (addToCartButton) addToCartButton.addEventListener('click', requireSelection, true);
+      form.addEventListener('submit', requireSelection, true);
 
       trigger.addEventListener('click', openDialog);
       dialog.querySelector('.sv1-offer-dialog__close').addEventListener('click', closeDialog);
