@@ -20,6 +20,7 @@ test('catalog variable products show only their lowest offer price', () => {
   assert.match(source, /woocommerce_get_price_html/);
   assert.match(source, /9999, 2/);
   assert.match(source, /woocommerce_variable_price_html/);
+  assert.match(source, /woocommerce_loop_price_html/);
   assert.match(source, /is_product\(\)/);
   assert.match(source, /is_checkout\(\)/);
 });

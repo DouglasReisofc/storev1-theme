@@ -50,6 +50,7 @@ function storev1_compact_catalog_price($price_html, $product) {
 add_filter('woocommerce_get_price_html', 'storev1_compact_catalog_price', 9999, 2);
 add_filter('woocommerce_variable_price_html', 'storev1_compact_catalog_price', 9999, 2);
 add_filter('woocommerce_variable_sale_price_html', 'storev1_compact_catalog_price', 9999, 2);
+add_filter('woocommerce_loop_price_html', 'storev1_compact_catalog_price', 99999, 2);
 
 // Catalogue and related-product cards always expose the parent product name.
 remove_action('woocommerce_shop_loop_item_title', 'woocommerce_template_loop_product_title', 10);
