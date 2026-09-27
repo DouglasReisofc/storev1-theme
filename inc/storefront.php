@@ -5,6 +5,30 @@ add_filter('body_class', function($classes) { $classes[] = 'loja1-contasvip-them
 add_filter('woocommerce_attribute_label', function($label, $name) { return in_array($name, ['pa_oferta', 'pa_validade'], true) ? 'Escolha sua oferta' : $label; }, 10, 2);
 
 /**
+ * Store Connect renders some catalogue cards directly instead of loading
+ * WooCommerce's loop/price.php. Keep those cards consistent with the theme
+ * template: variable products expose only their lowest display price in
+ * public catalogue contexts; product details retain the full offer selector.
+ */
+function storev1_catalog_min_price_html($price_html, $product) {
+    if (!$product instanceof WC_Product || !$product->is_type('variable')) return $price_html;
+    if (is_admin() || (function_exists('is_product') && is_product())
+        || (function_exists('is_cart') && is_cart()) || (function_exists('is_checkout') && is_checkout())) {
+        return $price_html;
+    }
+    $variation_prices = $product->get_variation_prices(true);
+    $prices = isset($variation_prices['display_price']) && is_array($variation_prices['display_price'])
+        ? array_values(array_filter($variation_prices['display_price'], static function($value) {
+            return $value !== '' && is_numeric($value);
+        }))
+        : [];
+    return $prices ? wc_price((float) min($prices)) : $price_html;
+}
+add_filter('woocommerce_get_price_html', 'storev1_catalog_min_price_html', PHP_INT_MAX, 2);
+add_filter('woocommerce_variable_price_html', 'storev1_catalog_min_price_html', PHP_INT_MAX, 2);
+add_filter('woocommerce_variable_sale_price_html', 'storev1_catalog_min_price_html', PHP_INT_MAX, 2);
+
+/**
  * Keep the parent product as the canonical catalogue identity. Variations
  * are offers inside the product detail selector and are updated there by
  * the variation UI, so cards do not change order or title based on stock.

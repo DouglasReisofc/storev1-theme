@@ -25,8 +25,16 @@ $search_id = wp_unique_id('sv1-category-search-');
             foreach ($sv1_products as $sv1_product_post) :
                 $sv1_product = wc_get_product($sv1_product_post->ID);
                 if (!$sv1_product || !$sv1_product->is_visible()) continue;
+                $sv1_discovery_price = $sv1_product->get_price_html();
+                if ($sv1_product->is_type('variable')) {
+                    $sv1_variation_prices = $sv1_product->get_variation_prices(true);
+                    $sv1_prices = isset($sv1_variation_prices['display_price']) && is_array($sv1_variation_prices['display_price'])
+                        ? array_values(array_filter($sv1_variation_prices['display_price'], static function($value) { return $value !== '' && is_numeric($value); }))
+                        : [];
+                    if ($sv1_prices) $sv1_discovery_price = wc_price((float) min($sv1_prices));
+                }
             ?>
-            <li data-category-option data-discovery-product><a href="<?php echo esc_url(get_permalink($sv1_product_post)); ?>"><span><?php echo esc_html(get_the_title($sv1_product_post)); ?></span><small><?php echo wp_kses_post($sv1_product->get_price_html()); ?></small></a></li>
+            <li data-category-option data-discovery-product><a href="<?php echo esc_url(get_permalink($sv1_product_post)); ?>"><span><?php echo esc_html(get_the_title($sv1_product_post)); ?></span><small><?php echo wp_kses_post($sv1_discovery_price); ?></small></a></li>
             <?php endforeach; ?>
         </ul>
         <p class="sv1-category-status" role="status" aria-live="polite" data-category-status></p>
